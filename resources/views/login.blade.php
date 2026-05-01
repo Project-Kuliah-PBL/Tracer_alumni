@@ -50,8 +50,10 @@
                         <h3 class="text-xl font-[800] text-[#1E3A8A] mb-1.5 tracking-tight">Portal Tracking Alumni</h3>
                         <p class="text-slate-400 text-xs mb-8 font-medium">Masuk untuk mengakses dashbord karir Anda.</p>
 
-                        <form action="#" method="POST" class="space-y-5">
+                        <form action="{{ route('login') }}" method="POST" class="space-y-5">
                             @csrf
+
+                            {{-- Username field --}}
                             <div>
                                 <label class="block text-[9px] font-black text-slate-400 uppercase tracking-[0.1em] mb-2.5 ml-1">Username</label>
                                 <div class="relative">
@@ -60,11 +62,21 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                         </svg>
                                     </span>
-                                    <input type="text" name="username" placeholder="username" 
-                                        class="w-full bg-slate-50 border-none rounded-xl py-3.5 pl-14 pr-6 text-sm font-medium focus:ring-2 focus:ring-[#0067B1]/10 transition-all outline-none">
+                                    <input type="text" name="username" value="{{ old('username') }}" placeholder="Masukkan username"
+                                        required
+                                        class="w-full bg-slate-50 border-none rounded-xl py-3.5 pl-14 pr-6 text-sm font-medium focus:ring-2 focus:ring-[#0067B1]/10 transition-all outline-none @error('username') ring-2 ring-red-300 @enderror">
                                 </div>
+                                @error('username')
+                                    <p class="mt-1.5 ml-1 text-[11px] text-red-500 font-semibold flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M12 3a9 9 0 100 18A9 9 0 0012 3z"/>
+                                        </svg>
+                                        {{ $message }}
+                                    </p>
+                                @enderror
                             </div>
 
+                            {{-- Password field --}}
                             <div>
                                 <label class="block text-[9px] font-black text-slate-400 uppercase tracking-[0.1em] mb-2.5 ml-1">Password</label>
                                 <div class="relative">
@@ -73,9 +85,18 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                         </svg>
                                     </span>
-                                    <input type="password" name="password" placeholder="••••••••" 
-                                        class="w-full bg-slate-50 border-none rounded-xl py-3.5 pl-14 pr-6 text-sm font-medium focus:ring-2 focus:ring-[#0067B1]/10 transition-all outline-none">
+                                    <input type="password" name="password" placeholder="Masukkan password"
+                                        required
+                                        class="w-full bg-slate-50 border-none rounded-xl py-3.5 pl-14 pr-6 text-sm font-medium focus:ring-2 focus:ring-[#0067B1]/10 transition-all outline-none @error('password') ring-2 ring-red-300 @enderror">
                                 </div>
+                                @error('password')
+                                    <p class="mt-1.5 ml-1 text-[11px] text-red-500 font-semibold flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M12 3a9 9 0 100 18A9 9 0 0012 3z"/>
+                                        </svg>
+                                        {{ $message }}
+                                    </p>
+                                @enderror
                             </div>
 
                             <button type="submit" 

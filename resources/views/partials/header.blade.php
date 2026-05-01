@@ -14,8 +14,8 @@
 
         <!-- Bagian Kanan: Hanya Tombol Keluar -->
         <div class="flex items-center">
-            <a href="/" class="text-[#FF0000] font-bold text-xs hover:underline transition-all uppercase tracking-wider">
-                Keluar
+            <a href="/" class="text-[#2563EB] font-bold text-xs hover:underline transition-all uppercase tracking-wider">
+                Home
             </a>
         </div>
         
