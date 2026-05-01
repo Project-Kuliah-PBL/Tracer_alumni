@@ -17,7 +17,7 @@
 
     @include('partials.header')
 
-    <main class="max-w-[1200px] mx-auto w-full px-6 py-12">
+    <main class="w-full px-8 py-12">
         <div class="text-center mb-12">
             <h2 class="text-4xl font-[800] text-[#1E3A8A] mb-4 tracking-tight">Temukan Koneksi Alumni</h2>
             <p class="text-slate-500 text-sm max-w-2xl mx-auto font-medium opacity-80">
@@ -103,7 +103,7 @@
     </main>
 
     <footer class="mt-auto py-10 bg-white border-t border-slate-100">
-        <div class="max-w-[1200px] mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+        <div class="w-full px-8 flex flex-col md:flex-row justify-between items-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">
             <p>© 2026 Politeknik Negeri Jember</p>
             <div class="flex space-x-8 mt-4 md:mt-0">
                 <a href="#" class="hover:text-blue-500">Kebijakan Privasi</a>

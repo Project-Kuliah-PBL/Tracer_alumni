@@ -16,7 +16,7 @@
 <body class="bg-slate-50 h-screen flex flex-col">
 
      <nav class="w-full shrink-0 bg-white shadow-sm">
-        <div class="max-w-[1440px] mx-auto px-10 py-5 flex items-center justify-between">
+        <div class="w-full px-8 py-5 flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <img src="{{ asset('image/PolijeLogo.png') }}" alt="Logo" class="h-10 w-auto">
                 <div class="flex flex-col">

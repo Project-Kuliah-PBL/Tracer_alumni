@@ -1,5 +1,5 @@
 <nav class="w-full shrink-0 bg-white shadow-sm sticky top-0 z-50">
-    <div class="max-w-[1440px] mx-auto px-10 py-5 flex items-center justify-between">
+    <div class="w-full px-8 py-5 flex items-center justify-between">
         
         <!-- Bagian Kiri: Logo dan Identitas -->
         <div class="flex items-center space-x-3">

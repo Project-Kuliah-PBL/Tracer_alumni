@@ -29,11 +29,11 @@
 
     <!-- Header (Tetap di Atas) -->
     <div class="shrink-0">
-        @include('partials.header')
+        @include('partials.header-admin')
     </div>
 
     <!-- Container Utama -->
-    <div class="flex flex-1 overflow-hidden max-w-[1440px] mx-auto w-full">
+    <div class="flex flex-1 overflow-hidden w-full">
         
         <!-- Sidebar: Fixed (Tidak Ikut Scroll) -->
         <aside class="w-64 shrink-0 px-6 py-8 flex flex-col gap-2 bg-white border-r border-slate-100 shadow-sm">

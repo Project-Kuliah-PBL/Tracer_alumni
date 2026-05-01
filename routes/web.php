@@ -32,7 +32,7 @@ Route::middleware('auth')->group(function () {
         })->name('admin.dashboard');
 
         Route::get('/admin/kelola-akun', function () {
-            return response(view('kelolaakun'))->withHeaders([
+            return response(view('Admin.kelolaakun'))->withHeaders([
                 'Cache-Control' => 'no-store, no-cache, must-revalidate',
                 'Pragma'        => 'no-cache',
                 'Expires'       => '0',
