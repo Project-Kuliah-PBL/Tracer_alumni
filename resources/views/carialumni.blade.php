@@ -14,8 +14,27 @@
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen flex flex-col">
+  <nav class="w-full shrink-0 bg-white shadow-sm">
+        <div class="w-full px-8 py-5 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <img src="{{ asset('image/PolijeLogo.png') }}" alt="Logo" class="h-10 w-auto">
+                <div class="flex flex-col">
+                    <h1 class="font-[700] text-base text-[#0067B1] leading-none uppercase tracking-tight">Politeknik Negeri Jember</h1>
+                    <p class="text-[8px] tracking-[0.3em] font-bold text-[#0067B1] uppercase mt-1 opacity-60">Alumni Portal</p>
+                </div>
+            </div>
 
-    @include('partials.header')
+           <div class="flex items-center space-x-10">
+    <a href='/'class="text-[#0067B1] font-bold text-sm hover:opacity-70 transition-all border-b-2 border-transparent hover:border-[#0067B1] pb-1">
+       Home
+    </a>
+    
+    <a href="{{ route('login') }}" class="bg-[#0067B1] text-white px-8 py-2.5 rounded-full font-bold text-sm hover:bg-blue-800 transition shadow-lg shadow-blue-900/10">
+        Login
+    </a>
+</div>
+        </div>
+    </nav>
 
     <main class="w-full px-8 py-12">
         <div class="text-center mb-12">

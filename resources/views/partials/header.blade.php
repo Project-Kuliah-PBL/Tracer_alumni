@@ -17,6 +17,7 @@
             <a href="/" class="text-[#2563EB] font-bold text-xs hover:underline transition-all uppercase tracking-wider">
                 Home
             </a>
+            
         </div>
         
     </div>
