@@ -22,13 +22,11 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        /* Tambahan untuk memastikan konten tidak overflow di layar laptop */
         .responsive-container {
             width: 100%;
             max-width: 100%;
             overflow-x: hidden;
         }
-        /* Membuat chart lebih responsif */
         @media (max-width: 1024px) {
             .chart-container .bar-container {
                 gap: 0.5rem;
@@ -44,11 +42,10 @@
     </div>
 
     <div class="flex flex-1 overflow-hidden w-full max-w-full">
-        <!-- SIDEBAR (Sesuai gambar: dashboard, kelola akun, keluar sistem) -->
         <aside class="w-64 shrink-0 bg-white/90 backdrop-blur-sm border-r border-slate-100 flex flex-col justify-between h-full overflow-y-auto no-scrollbar">
             <div class="py-6 flex flex-col gap-3">
                 <!-- Dashboard (Active) -->
-               <a href='#' class="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-50 text-blue-600 font-bold text-xs border-r-4 border-blue-600 transition-all">
+               <a href='#' class="flex items-center gap-3 mx-3 px-4 py-3 rounded-xl bg-blue-50 text-blue-600 font-bold text-xs border-r-4 border-blue-600 transition-all">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-60 group-hover:text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                 </svg>
@@ -64,7 +61,7 @@
             </a>
             </div>
 
-            <!-- Tombol KELUAR SISTEM -->
+            <!-- Tombol Logout-->
             <div class="px-4 pb-6">
                 <form action="{{ route('logout') }}" method="POST" class="w-full">
                     @csrf
@@ -78,7 +75,7 @@
             </div>
         </aside>
 
-        <!-- MAIN CONTENT (Statistik & Grafik) muncul penuh -->
+        <!-- MAIN CONTENT -->
         <main class="flex-1 overflow-y-auto px-4 md:px-6 lg:px-8 py-4 md:py-6 no-scrollbar w-full min-w-0">
             <!-- Header Statistik -->
             <div class="mb-5 md:mb-7">
@@ -86,9 +83,9 @@
                 <p class="text-slate-500 text-xs font-medium mt-0.5">Gambaran keterserapan alumni Polije di dunia profesional.</p>
             </div>
 
-            <!-- Card Statistik: Alumni Terverifikasi & Terserap Kerja (style modern) -->
+            <!-- Card Statistik-->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
-                <!-- Card 1 -->
+                <!-- Card 1: Alumni Terverifikasi -->
                 <div class="bg-white rounded-2xl shadow-md p-4 md:p-5 border border-slate-100 transition-all hover:shadow-lg">
                     <div class="flex justify-between items-start mb-3">
                         <div class="bg-blue-50 p-2 md:p-2.5 rounded-xl">
@@ -96,13 +93,12 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0" />
                             </svg>
                         </div>
-                        <span class="bg-green-100 text-green-700 px-2 py-0.5 md:px-2.5 md:py-1 rounded-full text-[9px] md:text-[10px] font-black">+4.2%</span>
                     </div>
-                    <h3 class="text-3xl md:text-4xl font-extrabold text-slate-800 tracking-tight">12,060</h3>
+                    <h3 class="text-3xl md:text-4xl font-extrabold text-slate-800 tracking-tight">{{ number_format($totalAlumni) }}</h3>
                     <p class="text-slate-400 text-[9px] md:text-[10px] font-bold uppercase tracking-widest mt-1">Alumni Terverifikasi</p>
                 </div>
 
-                <!-- Card 2 -->
+                <!-- Card 2: Terserap Kerja -->
                 <div class="bg-white rounded-2xl shadow-md p-4 md:p-5 border border-slate-100 transition-all hover:shadow-lg">
                     <div class="flex justify-between items-start mb-3">
                         <div class="bg-indigo-50 p-2 md:p-2.5 rounded-xl">
@@ -110,49 +106,48 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
                         </div>
-                        <span class="bg-blue-100 text-blue-700 px-2 py-0.5 md:px-2.5 md:py-1 rounded-full text-[9px] md:text-[10px] font-black">88.4%</span>
+                        <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-[9px] font-black">{{ $persentaseTerserap }}%</span>
                     </div>
-                    <h3 class="text-3xl md:text-4xl font-extrabold text-slate-800">88.4%</h3>
+                    <h3 class="text-3xl md:text-4xl font-extrabold text-slate-800">{{ $persentaseTerserap }}%</h3>
                     <p class="text-slate-400 text-[9px] md:text-[10px] font-bold uppercase tracking-widest mt-1">Terserap Kerja</p>
-                    <!-- Progress bar -->
                     <div class="w-full bg-slate-100 h-1.5 rounded-full mt-3 overflow-hidden">
-                        <div class="bg-indigo-500 h-full rounded-full" style="width: 88.4%"></div>
+                        <div class="bg-indigo-500 h-full rounded-full" style="width: {{ $persentaseTerserap }}%"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- GRAFIK PERTUMBUHAN ALUMNI (Chart yang menarik & mudah dibaca) -->
+            <!-- GRAFIK PERTUMBUHAN ALUMNI-->
             <div class="bg-white rounded-2xl shadow-md border border-slate-100 p-4 md:p-6">
                 <div class="border-l-4 border-[#0067B1] pl-4 mb-4 md:mb-6">
                     <h3 class="font-extrabold text-slate-800 text-base md:text-lg">Pertumbuhan Alumni</h3>
-                    <p class="text-slate-400 text-[9px] md:text-[10px] font-bold uppercase tracking-wider">Data tahunan 2018 - 2023</p>
+                    <p class="text-slate-400 text-[9px] md:text-[10px] font-bold uppercase tracking-wider">Jumlah alumni per tahun lulus</p>
                 </div>
-                <!-- CHART dengan nilai persentase jelas dan tooltip interaktif jika hover -->
-                <div class="relative flex items-end justify-between gap-2 md:gap-3 lg:gap-5 h-52 md:h-64 mt-3 md:mt-5">
-                    <!-- Bar 2020 -->
-                    <div class="flex flex-col items-center flex-1 gap-1 md:gap-2 group relative">
-                        <div class="w-full max-w-[30px] md:max-w-[40px] bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-lg transition-all duration-300 hover:scale-105" style="height: 102px;"></div>
-                        <span class="text-[9px] md:text-[10px] font-black text-slate-500">2020</span>
-                        <div class="opacity-0 group-hover:opacity-100 absolute -top-8 bg-slate-800 text-white text-[8px] md:text-[9px] px-1.5 md:px-2 py-0.5 rounded-full whitespace-nowrap transition">6.700</div>
-                    </div>
-                    <div class="flex flex-col items-center flex-1 gap-1 md:gap-2 group relative">
-                        <div class="w-full max-w-[30px] md:max-w-[40px] bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-lg transition-all duration-300 hover:scale-105" style="height: 125px;"></div>
-                        <span class="text-[9px] md:text-[10px] font-black text-slate-500">2021</span>
-                        <div class="opacity-0 group-hover:opacity-100 absolute -top-8 bg-slate-800 text-white text-[8px] md:text-[9px] px-1.5 md:px-2 py-0.5 rounded-full whitespace-nowrap transition">8.200</div>
-                    </div>
-                    <div class="flex flex-col items-center flex-1 gap-1 md:gap-2 group relative">
-                        <div class="w-full max-w-[30px] md:max-w-[40px] bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-lg transition-all duration-300 hover:scale-105" style="height: 168px;"></div>
-                        <span class="text-[9px] md:text-[10px] font-black text-slate-500">2022</span>
-                        <div class="opacity-0 group-hover:opacity-100 absolute -top-8 bg-slate-800 text-white text-[8px] md:text-[9px] px-1.5 md:px-2 py-0.5 rounded-full whitespace-nowrap transition">11.000</div>
-                    </div>
-                    <div class="flex flex-col items-center flex-1 gap-1 md:gap-2 group relative">
-                        <div class="w-full max-w-[30px] md:max-w-[40px] bg-gradient-to-t from-blue-600 to-blue-500 rounded-t-lg shadow-lg transition-all duration-300 hover:scale-105 relative" style="height: 190px;">
-                            <div class="absolute -top-6 md:-top-7 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[8px] md:text-[9px] px-1.5 md:px-2 py-0.5 rounded-full font-bold whitespace-nowrap">2,590</div>
+
+                @if($grafik->isEmpty())
+                    <p class="text-slate-400 text-xs text-center py-10">Belum ada data tahun lulus.</p>
+                @else
+                <div class="flex items-end justify-start gap-2 h-52 md:h-64 mt-3 mb-6 px-2 overflow-x-auto">
+                    @foreach($grafik as $data)
+                    @php
+                        $tinggi = $maxJumlah > 0 ? round(($data->jumlah / $maxJumlah) * 180) : 10;
+                        $tinggi = max($tinggi, 8);
+                    @endphp
+                    <div class="flex flex-col items-center gap-2 flex-1 min-w-[32px]">
+                        {{-- Tooltip + Bar --}}
+                        <div class="relative group flex flex-col items-center justify-end mt-auto w-full" style="height: {{ $tinggi }}px;">
+                            {{-- Tooltip --}}
+                            <div class="opacity-0 group-hover:opacity-100 absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[9px] px-2 py-0.5 rounded-full font-bold whitespace-nowrap transition-all pointer-events-none z-10">
+                                {{ number_format($data->jumlah) }} alumni
+                            </div>
+                            {{-- Bar --}}
+                            <div class="w-full h-full {{ $data->jumlah > 0 ? 'bg-gradient-to-t from-blue-600 to-blue-400' : 'bg-slate-200' }} rounded-t-lg transition-all duration-300 group-hover:from-blue-700 group-hover:to-blue-500 cursor-pointer"></div>
                         </div>
-                        <span class="text-[9px] md:text-[10px] font-black text-slate-700">2023</span>
-                        <div class="opacity-0 group-hover:opacity-100 absolute -top-8 bg-slate-800 text-white text-[8px] md:text-[9px] px-1.5 md:px-2 py-0.5 rounded-full whitespace-nowrap transition">12.590</div>
+                        {{-- Label tahun --}}
+                        <span class="text-[9px] font-black text-slate-500 shrink-0">{{ $data->tahun }}</span>
                     </div>
+                    @endforeach
                 </div>
+                @endif
             </div>
         </main>
     </div>

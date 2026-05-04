@@ -66,16 +66,9 @@
                                     </span>
                                     <input type="text" name="username" value="{{ old('username') }}" placeholder="Masukkan username"
                                         required
-                                        class="w-full bg-slate-50 border-none rounded-xl py-3.5 pl-14 pr-6 text-sm font-medium focus:ring-2 focus:ring-[#0067B1]/10 transition-all outline-none @error('username') ring-2 ring-red-300 @enderror">
+                                        class="w-full bg-slate-50 border-none rounded-xl py-3.5 pl-14 pr-6 text-sm font-medium focus:ring-2 focus:ring-[#0067B1]/10 transition-all outline-none">
                                 </div>
-                                @error('username')
-                                    <p class="mt-1.5 ml-1 text-[11px] text-red-500 font-semibold flex items-center gap-1">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M12 3a9 9 0 100 18A9 9 0 0012 3z"/>
-                                        </svg>
-                                        {{ $message }}
-                                    </p>
-                                @enderror
+                               
                             </div>
 
                             {{-- Password --}}
@@ -89,16 +82,9 @@
                                     </span>
                                     <input type="password" name="password" placeholder="Masukkan password"
                                         required
-                                        class="w-full bg-slate-50 border-none rounded-xl py-3.5 pl-14 pr-6 text-sm font-medium focus:ring-2 focus:ring-[#0067B1]/10 transition-all outline-none @error('password') ring-2 ring-red-300 @enderror">
+                                        class="w-full bg-slate-50 border-none rounded-xl py-3.5 pl-14 pr-6 text-sm font-medium focus:ring-2 focus:ring-[#0067B1]/10 transition-all outline-none">
                                 </div>
-                                @error('password')
-                                    <p class="mt-1.5 ml-1 text-[11px] text-red-500 font-semibold flex items-center gap-1">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M12 3a9 9 0 100 18A9 9 0 0012 3z"/>
-                                        </svg>
-                                        {{ $message }}
-                                    </p>
-                                @enderror
+                        
                             </div>
 
                             <button type="submit"

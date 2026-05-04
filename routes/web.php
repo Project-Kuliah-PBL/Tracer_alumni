@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Admin\KelolaAkunController;
+use App\Http\Controllers\Admin\DashboardController;
 
 // Halaman Welcome
 Route::get('/', function () {
@@ -118,21 +120,12 @@ Route::middleware('auth')->group(function () {
 
     // Admin only
     Route::middleware('admin')->group(function () {
-        Route::get('/admin/dashboard', function () {
-            return response(view('Admin.dashboard'))->withHeaders([
-                'Cache-Control' => 'no-store, no-cache, must-revalidate',
-                'Pragma'        => 'no-cache',
-                'Expires'       => '0',
-            ]);
-        })->name('admin.dashboard');
+        Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
-        Route::get('/admin/kelola-akun', function () {
-            return response(view('Admin.kelolaakun'))->withHeaders([
-                'Cache-Control' => 'no-store, no-cache, must-revalidate',
-                'Pragma'        => 'no-cache',
-                'Expires'       => '0',
-            ]);
-        })->name('admin.kelola_akun');
+        Route::get('/admin/kelola-akun', [KelolaAkunController::class, 'index'])->name('admin.kelola_akun');
+        Route::post('/admin/kelola-akun', [KelolaAkunController::class, 'store'])->name('admin.kelola_akun.store');
+        Route::put('/admin/kelola-akun/{nim}', [KelolaAkunController::class, 'update'])->name('admin.kelola_akun.update');
+        Route::delete('/admin/kelola-akun/{nim}', [KelolaAkunController::class, 'destroy'])->name('admin.kelola_akun.destroy');
     });
 
     // Alumni only

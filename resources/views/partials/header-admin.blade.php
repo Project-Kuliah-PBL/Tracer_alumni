@@ -1,4 +1,4 @@
-<nav class="fixed top-0 left-0 right-0 w-full shrink-0 bg-white shadow-sm border-b border-slate-100 z-50">
+<nav class="sticky top-0 w-full shrink-0 bg-white shadow-sm border-b border-slate-100 z-50">
     <div class="w-full px-4 md:px-6 lg:px-8 py-2 md:py-3 flex items-center justify-between">
         
         <div class="flex items-center space-x-2 md:space-x-3">
