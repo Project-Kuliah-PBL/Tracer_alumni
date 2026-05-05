@@ -84,4 +84,59 @@ class MediaSosialController extends Controller
 
         return redirect()->back()->with('success', 'Media sosial berhasil dihapus.');
     }
+
+    /**
+     * Bulk update 4 platform tetap (LinkedIn, GitHub, Portfolio, Instagram).
+     * Dipanggil dari form modal social di dashboard.
+     *
+     * Payload: platforms[linkedin][id], platforms[linkedin][link], dst.
+     */
+    public function bulkUpdate(Request $request)
+    {
+        $nim = Auth::user()->username;
+
+        // Map: key form => nama_platform yang akan disimpan ke DB
+        $platformMap = [
+            'linkedin'  => 'LinkedIn',
+            'github'    => 'GitHub',
+            'portfolio' => 'Portfolio',
+            'instagram' => 'Instagram',
+        ];
+
+        $request->validate([
+            'platforms.linkedin.link'  => 'nullable|url|max:500',
+            'platforms.github.link'    => 'nullable|url|max:500',
+            'platforms.portfolio.link' => 'nullable|url|max:500',
+            'platforms.instagram.link' => 'nullable|url|max:500',
+        ], [
+            '*.url' => 'Link harus berupa URL yang valid (contoh: https://...).',
+        ]);
+
+        foreach ($platformMap as $key => $label) {
+            $data = $request->input("platforms.$key");
+            $link = trim($data['link'] ?? '');
+            $id   = !empty($data['id']) ? (int) $data['id'] : null;
+
+            if ($id) {
+                $medsos = MediaSosial::where('id', $id)->where('nim', $nim)->first();
+                if ($medsos) {
+                    if ($link === '') {
+                        // Link dikosongkan → hapus record
+                        $medsos->delete();
+                    } else {
+                        $medsos->update(['link_medsos' => $link]);
+                    }
+                }
+            } elseif ($link !== '') {
+                // Record belum ada, buat baru
+                MediaSosial::create([
+                    'nim'           => $nim,
+                    'nama_platform' => $label,
+                    'link_medsos'   => $link,
+                ]);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Media sosial berhasil diperbarui.');
+    }
 }

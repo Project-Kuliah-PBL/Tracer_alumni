@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DataAlumni;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class ProfilController extends Controller
@@ -80,5 +81,38 @@ class ProfilController extends Controller
 
         return redirect()->route('alumni.profil.edit')
             ->with('success', 'Profil berhasil diperbarui.');
+    }
+
+    /**
+     * Update password alumni dari halaman Manajemen Akun.
+     */
+    public function updatePassword(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'current_password'      => 'required',
+            'password'              => 'required|min:8|confirmed',
+            'password_confirmation' => 'required',
+        ], [
+            'current_password.required' => 'Password saat ini tidak boleh kosong.',
+            'password.required'         => 'Password baru tidak boleh kosong.',
+            'password.min'              => 'Password baru minimal 8 karakter.',
+            'password.confirmed'        => 'Konfirmasi password tidak cocok.',
+        ]);
+
+        // Cek apakah password saat ini benar
+        if (! Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors([
+                'current_password' => 'Password saat ini tidak sesuai.',
+            ])->with('error', 'Password saat ini salah.');
+        }
+
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        return redirect()->route('alumni.manajemen_akun')
+            ->with('success', 'Password berhasil diperbarui. Silakan login kembali.');
     }
 }

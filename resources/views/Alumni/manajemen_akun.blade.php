@@ -533,7 +533,7 @@
                     <p>Pastikan password Anda kuat dan unik untuk menjaga keamanan akun.</p>
                 </div>
                 <div class="card-body">
-                <form id="passwordForm" action="{{ route('alumni.manajemen_akun') }}" method="POST">
+                <form id="passwordForm" action="{{ route('alumni.manajemen_akun.update') }}" method="POST">
                 @csrf @method('PUT')
 
                     <!-- Password Saat Ini -->
@@ -550,7 +550,7 @@
                                 id="currentPassword"
                                 type="password"
                                 name="current_password"
-                                class="form-input"
+                                class="form-input {{ $errors->has('current_password') ? 'border-red-400 bg-red-50' : '' }}"
                                 placeholder="Masukkan password saat ini"
                             >
                             <button type="button" class="toggle-password" onclick="togglePassword('currentPassword', this)" aria-label="Tampilkan password">
@@ -560,6 +560,9 @@
                                 </svg>
                             </button>
                         </div>
+                        @error('current_password')
+                            <p style="font-size:.78rem;color:#dc2626;margin-top:.25rem;">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Password Baru -->
@@ -576,7 +579,7 @@
                                 id="newPassword"
                                 type="password"
                                 name="password"
-                                class="form-input"
+                                class="form-input {{ $errors->has('password') ? 'border-red-400 bg-red-50' : '' }}"
                                 placeholder="Masukkan password baru"
                                 oninput="checkStrength(this.value)"
                             >
@@ -594,6 +597,9 @@
                             </div>
                             <div class="strength-label" id="strengthLabel">SEDANG</div>
                         </div>
+                        @error('password')
+                            <p style="font-size:.78rem;color:#dc2626;margin-top:.25rem;">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Konfirmasi Password -->
@@ -610,7 +616,7 @@
                                 id="confirmPassword"
                                 type="password"
                                 name="password_confirmation"
-                                class="form-input"
+                                class="form-input {{ $errors->has('password_confirmation') ? 'border-red-400 bg-red-50' : '' }}"
                                 placeholder="Ulangi password baru"
                             >
                             <button type="button" class="toggle-password" onclick="togglePassword('confirmPassword', this)" aria-label="Tampilkan password">
@@ -620,6 +626,9 @@
                                 </svg>
                             </button>
                         </div>
+                        @error('password_confirmation')
+                            <p style="font-size:.78rem;color:#dc2626;margin-top:.25rem;">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div class="form-actions">

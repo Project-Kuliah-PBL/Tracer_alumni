@@ -73,12 +73,14 @@ Route::middleware('auth')->group(function () {
         Route::delete('/alumni/sertifikasi/{id}',    [SertifikasiController::class, 'destroy'])->name('alumni.sertifikasi.destroy');
 
         // Media Sosial
-        Route::post('/alumni/medsos',        [MediaSosialController::class, 'store'])->name('alumni.medsos.store');
-        Route::put('/alumni/medsos/{id}',    [MediaSosialController::class, 'update'])->name('alumni.medsos.update');
-        Route::delete('/alumni/medsos/{id}', [MediaSosialController::class, 'destroy'])->name('alumni.medsos.destroy');
+        Route::post('/alumni/medsos',         [MediaSosialController::class, 'store'])->name('alumni.medsos.store');
+        Route::put('/alumni/medsos/bulk',     [MediaSosialController::class, 'bulkUpdate'])->name('alumni.medsos.bulk');
+        Route::put('/alumni/medsos/{id}',     [MediaSosialController::class, 'update'])->name('alumni.medsos.update');
+        Route::delete('/alumni/medsos/{id}',  [MediaSosialController::class, 'destroy'])->name('alumni.medsos.destroy');
 
         // Manajemen Akun
-        Route::get('/alumni/manajemen-akun', [ProfilController::class, 'edit'])->name('alumni.manajemen_akun');
+        Route::get('/alumni/manajemen-akun',  [ProfilController::class, 'edit'])->name('alumni.manajemen_akun');
+        Route::put('/alumni/manajemen-akun',  [ProfilController::class, 'updatePassword'])->name('alumni.manajemen_akun.update');
     });
 
 });

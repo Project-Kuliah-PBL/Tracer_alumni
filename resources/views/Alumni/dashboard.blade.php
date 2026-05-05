@@ -71,18 +71,40 @@
                 <!-- Profile Header Card -->
                 <div class="col-span-8 bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-200">
                     <!-- Foto Sampul -->
-                    <div class="h-28 bg-[#005792] overflow-hidden">
+                    <div class="h-28 overflow-hidden relative">
                         @if($alumni->foto_sampul)
                             <img src="{{ Storage::url($alumni->foto_sampul) }}" alt="Foto Sampul" class="w-full h-full object-cover">
+                        @else
+                            {{-- Default sampul: gradien + pola gelombang SVG --}}
+                            <div class="w-full h-full bg-gradient-to-r from-[#004a80] via-[#005792] to-[#0072b8] relative overflow-hidden">
+                                <svg class="absolute inset-0 w-full h-full opacity-10" preserveAspectRatio="none" viewBox="0 0 800 112" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M0 50 Q200 0 400 50 Q600 100 800 50 L800 112 L0 112 Z" fill="white"/>
+                                    <path d="M0 70 Q200 20 400 70 Q600 120 800 70 L800 112 L0 112 Z" fill="white" opacity="0.5"/>
+                                </svg>
+                                <div class="absolute top-3 left-6 flex items-center gap-2 opacity-30">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l9-5-9-5-9 5 9 5z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 01-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+                                    <span class="text-white text-xs font-bold tracking-widest uppercase">Politeknik Negeri Jember</span>
+                                </div>
+                                {{-- Lingkaran dekoratif --}}
+                                <div class="absolute -top-6 -right-6 w-32 h-32 rounded-full bg-white opacity-5"></div>
+                                <div class="absolute -bottom-8 right-24 w-24 h-24 rounded-full bg-white opacity-5"></div>
+                            </div>
                         @endif
                     </div>
                     <div class="px-8 pb-8 relative">
                         <div class="flex justify-between items-end -mt-12 mb-4">
                             <div class="relative">
                                 @if($alumni->foto_profile)
-                                    <img src="{{ Storage::url($alumni->foto_profile) }}" alt="Foto Profil" class="w-24 h-24 rounded-full border-4 border-white shadow-sm object-cover">
+                                    <img src="{{ Storage::url($alumni->foto_profile) }}" alt="Foto Profil"
+                                        class="w-24 h-24 rounded-full border-4 border-white shadow-sm object-cover"
+                                        onerror="this.onerror=null;this.src='{{ asset('images/default-avatar.png') }}'">
                                 @else
-                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($alumni->nama) }}&background=E2E8F0&color=475569&size=128" alt="Foto Profil" class="w-24 h-24 rounded-full border-4 border-white shadow-sm object-cover">
+                                    {{-- Default avatar: inisial nama dengan warna brand --}}
+                                    <div class="w-24 h-24 rounded-full border-4 border-white shadow-sm bg-[#005792] flex items-center justify-center">
+                                        <span class="text-white text-2xl font-bold select-none">
+                                            {{ strtoupper(substr($alumni->nama, 0, 1)) }}{{ strtoupper(substr(strstr($alumni->nama, ' ') ?: '', 1, 1)) }}
+                                        </span>
+                                    </div>
                                 @endif
                             </div>
                             <button onclick="openEditModal()" class="px-6 py-1.5 border border-slate-300 rounded-full text-blue-600 font-bold text-[11px] hover:bg-slate-50 transition-all active:scale-95">
@@ -134,7 +156,13 @@
                                                 @if($alumni->foto_sampul)
                                                     <img src="{{ Storage::url($alumni->foto_sampul) }}" id="coverPreview" class="w-full h-full object-cover" alt="Cover Preview">
                                                 @else
-                                                    <div id="coverPreview" class="w-full h-full bg-gradient-to-r from-blue-500 to-blue-700"></div>
+                                                    {{-- Default sampul preview --}}
+                                                    <div id="coverPreview" class="w-full h-full bg-gradient-to-r from-[#004a80] via-[#005792] to-[#0072b8] relative overflow-hidden">
+                                                        <svg class="absolute inset-0 w-full h-full opacity-10" preserveAspectRatio="none" viewBox="0 0 800 160" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M0 70 Q200 10 400 70 Q600 130 800 70 L800 160 L0 160 Z" fill="white"/>
+                                                        </svg>
+                                                        <div class="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-white opacity-5"></div>
+                                                    </div>
                                                 @endif
                                                 <label for="foto_sampul" class="absolute inset-0 flex items-center justify-center cursor-pointer">
                                                     <span class="bg-white/90 px-4 py-2 rounded-full shadow-sm text-sm font-bold text-slate-700 flex items-center gap-2 hover:bg-white transition-all">
@@ -150,9 +178,14 @@
                                         <div class="flex items-center gap-5">
                                             <label for="foto_profile" class="relative group cursor-pointer">
                                                 @if($alumni->foto_profile)
-                                                    <img src="{{ Storage::url($alumni->foto_profile) }}" id="avatarPreview" class="w-20 h-20 rounded-2xl border-2 border-slate-100 object-cover" alt="Avatar">
+                                                    <img src="{{ Storage::url($alumni->foto_profile) }}" id="avatarPreview" class="w-20 h-20 rounded-2xl border-2 border-slate-100 object-cover" alt="Avatar"
+                                                        onerror="this.onerror=null;this.outerHTML='<div id=\'avatarPreview\' class=\'w-20 h-20 rounded-2xl border-2 border-slate-100 bg-[#005792] flex items-center justify-center\'><span class=\'text-white text-xl font-bold\'>{{ strtoupper(substr($alumni->nama,0,1)) }}</span></div>'">
                                                 @else
-                                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($alumni->nama) }}&size=128" id="avatarPreview" class="w-20 h-20 rounded-2xl border-2 border-slate-100 object-cover" alt="Avatar">
+                                                    <div id="avatarPreview" class="w-20 h-20 rounded-2xl border-2 border-slate-100 bg-[#005792] flex items-center justify-center">
+                                                        <span class="text-white text-xl font-bold select-none">
+                                                            {{ strtoupper(substr($alumni->nama, 0, 1)) }}{{ strtoupper(substr(strstr($alumni->nama, ' ') ?: '', 1, 1)) }}
+                                                        </span>
+                                                    </div>
                                                 @endif
                                                 <div class="absolute inset-0 bg-black/20 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /></svg>
@@ -359,7 +392,8 @@
                         <div class="flex gap-4">
                             <div class="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 overflow-hidden">
                                 @if($pekerjaan->logo_perusahaan)
-                                    <img src="{{ Storage::url($pekerjaan->logo_perusahaan) }}" alt="Logo" class="w-full h-full object-cover">
+                                    <img src="{{ Storage::url($pekerjaan->logo_perusahaan) }}" alt="Logo" class="w-full h-full object-cover"
+                                        onerror="this.onerror=null;this.style.display='none';this.parentElement.innerHTML='<svg xmlns=\'http://www.w3.org/2000/svg\' class=\'h-5 w-5 text-slate-400\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'currentColor\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z\' /></svg>'">
                                 @else
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                                 @endif
@@ -408,7 +442,8 @@
                         <div class="p-3 border border-slate-100 rounded-2xl">
                             @if($serti->gambar_serti)
                                 <div class="aspect-video bg-slate-50 rounded-xl mb-3 overflow-hidden">
-                                    <img src="{{ Storage::url($serti->gambar_serti) }}" alt="Sertifikat" class="w-full h-full object-cover">
+                                    <img src="{{ Storage::url($serti->gambar_serti) }}" alt="Sertifikat" class="w-full h-full object-cover"
+                                        onerror="this.onerror=null;this.parentElement.classList.add('bg-gradient-to-br','from-blue-50','to-blue-100','flex','items-center','justify-center');this.outerHTML='<svg xmlns=\'http://www.w3.org/2000/svg\' class=\'h-8 w-8 text-blue-300\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'currentColor\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z\' /></svg>'">
                                 </div>
                             @else
                                 <div class="aspect-video bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl mb-3 flex items-center justify-center">
@@ -429,6 +464,13 @@
                 </div>
 
                 <!-- Social Media Card -->
+                @php
+                    $medsosList = $alumni->mediaSosial->keyBy(fn($m) => strtolower(trim($m->nama_platform)));
+                    $linkedIn   = $medsosList->first(fn($m) => str_contains(strtolower($m->nama_platform), 'linkedin'));
+                    $github     = $medsosList->first(fn($m) => str_contains(strtolower($m->nama_platform), 'github'));
+                    $instagram  = $medsosList->first(fn($m) => str_contains(strtolower($m->nama_platform), 'instagram'));
+                    $portfolio  = $medsosList->first(fn($m) => str_contains(strtolower($m->nama_platform), 'portfolio') || str_contains(strtolower($m->nama_platform), 'website'));
+                @endphp
                 <div class="col-span-3 bg-white rounded-3xl p-6 shadow-sm border border-slate-200 flex flex-col">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-slate-800 font-bold text-sm">Social</h3>
@@ -436,32 +478,60 @@
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                         </button>
                     </div>
-                    @if($alumni->mediaSosial->count() > 0)
                     <div class="grid grid-cols-2 gap-3">
-                        @foreach($alumni->mediaSosial as $medsos)
-                        <a href="{{ $medsos->link_medsos }}" target="_blank" rel="noopener noreferrer" class="border border-slate-50 bg-slate-50 rounded-xl flex flex-col items-center justify-center p-4 hover:bg-blue-50 hover:text-blue-600 transition-all group">
+                        {{-- Portfolio --}}
+                        @if($portfolio)
+                        <a href="{{ $portfolio->link_medsos }}" target="_blank" rel="noopener noreferrer" class="border border-slate-50 bg-slate-50 rounded-xl flex flex-col items-center justify-center p-4 hover:bg-blue-50 hover:text-blue-600 transition-all group">
+                        @else
+                        <button onclick="openModal()" class="border border-slate-50 bg-slate-50 rounded-xl flex flex-col items-center justify-center p-4 hover:bg-blue-50 hover:text-blue-600 transition-all group opacity-40 hover:opacity-100">
+                        @endif
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
-                            <span class="text-[10px] font-bold text-center truncate w-full text-center">{{ $medsos->nama_platform }}</span>
-                        </a>
-                        @endforeach
+                            <span class="text-[10px] font-bold">Portfolio</span>
+                        @if($portfolio) </a> @else </button> @endif
+
+                        {{-- LinkedIn --}}
+                        @if($linkedIn)
+                        <a href="{{ $linkedIn->link_medsos }}" target="_blank" rel="noopener noreferrer" class="border border-slate-50 bg-slate-50 rounded-xl flex flex-col items-center justify-center p-4 hover:bg-blue-50 hover:text-blue-600 transition-all group">
+                        @else
+                        <button onclick="openModal()" class="border border-slate-50 bg-slate-50 rounded-xl flex flex-col items-center justify-center p-4 hover:bg-blue-50 hover:text-blue-600 transition-all group opacity-40 hover:opacity-100">
+                        @endif
+                            <svg class="h-5 w-5 mb-2 text-blue-700" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                            <span class="text-[10px] font-bold">LinkedIn</span>
+                        @if($linkedIn) </a> @else </button> @endif
+
+                        {{-- GitHub --}}
+                        @if($github)
+                        <a href="{{ $github->link_medsos }}" target="_blank" rel="noopener noreferrer" class="border border-slate-50 bg-slate-50 rounded-xl flex flex-col items-center justify-center p-4 hover:bg-blue-50 hover:text-blue-600 transition-all group">
+                        @else
+                        <button onclick="openModal()" class="border border-slate-50 bg-slate-50 rounded-xl flex flex-col items-center justify-center p-4 hover:bg-blue-50 hover:text-blue-600 transition-all group opacity-40 hover:opacity-100">
+                        @endif
+                            <svg class="h-5 w-5 mb-2 text-slate-800" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.042-1.416-4.042-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            <span class="text-[10px] font-bold">GitHub</span>
+                        @if($github) </a> @else </button> @endif
+
+                        {{-- Instagram --}}
+                        @if($instagram)
+                        <a href="{{ $instagram->link_medsos }}" target="_blank" rel="noopener noreferrer" class="border border-slate-50 bg-slate-50 rounded-xl flex flex-col items-center justify-center p-4 hover:bg-blue-50 hover:text-blue-600 transition-all group">
+                        @else
+                        <button onclick="openModal()" class="border border-slate-50 bg-slate-50 rounded-xl flex flex-col items-center justify-center p-4 hover:bg-blue-50 hover:text-blue-600 transition-all group opacity-40 hover:opacity-100">
+                        @endif
+                            <svg class="h-5 w-5 mb-2 text-pink-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849s-.011 3.585-.069 4.85c-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.584-.012-4.849-.07c-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849s.012-3.585.07-4.85c.149-3.225 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948s.014 3.667.072 4.947c.2 4.337 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072s3.667-.014 4.947-.072c4.351-.2 6.78-2.618 6.98-6.98.058-1.28.072-1.689.072-4.948s-.014-3.667-.072-4.947c-.2-4.353-2.612-6.78-6.98-6.98-1.281-.058-1.69-.072-4.949-.072zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                            <span class="text-[10px] font-bold">Instagram</span>
+                        @if($instagram) </a> @else </button> @endif
                     </div>
-                    @else
-                    <div class="flex-1 flex flex-col items-center justify-center text-center">
-                        <p class="text-xs text-slate-400">Belum ada media sosial.</p>
-                        <button onclick="openModal()" class="mt-2 text-xs text-blue-500 font-semibold">+ Tambah</button>
-                    </div>
-                    @endif
                 </div>
 
             </div>
         </main>
     </div>
 
-    <!-- Modal Edit Media Sosial -->
+    <!-- Modal Edit Media Sosial (Design Asli) -->
     <div id="modalSocial" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[99] hidden items-center justify-center p-4">
-        <div class="bg-white w-full max-w-[400px] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            <div class="px-5 py-4 flex justify-between items-center border-b border-slate-100">
-                <h3 class="text-[#005792] font-bold text-sm">Kelola Media Sosial</h3>
+        <div class="bg-white w-full max-w-[340px] rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+
+            <!-- Header -->
+            <div class="px-5 py-3 flex justify-between items-center border-b border-slate-100">
+                <h3 class="text-[#005792] font-bold text-sm">Edit Media Sosial</h3>
                 <button type="button" onclick="closeModal()" class="text-slate-400 hover:text-slate-600">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -469,39 +539,73 @@
                 </button>
             </div>
 
-            <div class="p-5 overflow-y-auto space-y-3">
-                {{-- Daftar medsos yang sudah ada --}}
-                @foreach($alumni->mediaSosial as $medsos)
-                <div class="flex items-center gap-2 bg-slate-50 rounded-lg p-2">
-                    <span class="text-xs font-bold text-slate-600 flex-1">{{ $medsos->nama_platform }}</span>
-                    <span class="text-[10px] text-slate-400 truncate max-w-[120px]">{{ $medsos->link_medsos }}</span>
-                    <form action="{{ route('alumni.medsos.destroy', $medsos->id) }}" method="POST" onsubmit="return confirm('Hapus media sosial ini?')">
-                        @csrf @method('DELETE')
-                        <button type="submit" class="text-red-400 hover:text-red-600 ml-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                        </button>
-                    </form>
-                </div>
-                @endforeach
+            <form action="{{ route('alumni.medsos.bulk') }}" method="POST" class="p-5 space-y-3">
+                @csrf
+                @method('PUT')
 
-                {{-- Form tambah baru --}}
-                <form action="{{ route('alumni.medsos.store') }}" method="POST" class="space-y-3 pt-2 border-t border-slate-100">
-                    @csrf
-                    <p class="text-[11px] font-bold text-slate-500 uppercase tracking-tight">Tambah Media Sosial</p>
-                    <div class="space-y-1">
-                        <label class="text-[11px] font-bold text-slate-600 uppercase">Nama Platform</label>
-                        <input type="text" name="nama_platform" placeholder="Contoh: LinkedIn, GitHub, Instagram" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 focus:ring-2 focus:ring-blue-500/20 outline-none text-slate-600">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-[11px] font-bold text-slate-600 uppercase">Link URL</label>
-                        <input type="url" name="link_medsos" placeholder="https://..." class="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 focus:ring-2 focus:ring-blue-500/20 outline-none text-slate-600">
-                    </div>
-                    <div class="flex justify-center gap-3 pt-1">
-                        <button type="button" onclick="closeModal()" class="flex-1 py-2 rounded-lg bg-[#d93025] text-white font-bold text-xs hover:bg-red-700 transition-all">Tutup</button>
-                        <button type="submit" class="flex-1 py-2 rounded-lg bg-[#0063a7] text-white font-bold text-xs hover:bg-[#004a7c] transition-all">Tambah</button>
-                    </div>
-                </form>
-            </div>
+                {{-- Ambil data existing per platform --}}
+                @php
+                    $msLinkedIn  = $alumni->mediaSosial->first(fn($m) => str_contains(strtolower($m->nama_platform), 'linkedin'));
+                    $msGithub    = $alumni->mediaSosial->first(fn($m) => str_contains(strtolower($m->nama_platform), 'github'));
+                    $msPortfolio = $alumni->mediaSosial->first(fn($m) => str_contains(strtolower($m->nama_platform), 'portfolio') || str_contains(strtolower($m->nama_platform), 'website'));
+                    $msInstagram = $alumni->mediaSosial->first(fn($m) => str_contains(strtolower($m->nama_platform), 'instagram'));
+                @endphp
+
+                {{-- LinkedIn --}}
+                <div class="space-y-1">
+                    <label class="flex items-center gap-2 text-[11px] font-bold text-slate-600 uppercase tracking-tight">
+                        <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                        LinkedIn URL
+                    </label>
+                    <input type="hidden" name="platforms[linkedin][id]" value="{{ $msLinkedIn->id ?? '' }}">
+                    <input type="url" name="platforms[linkedin][link]" value="{{ $msLinkedIn->link_medsos ?? '' }}" placeholder="https://linkedin.com/in/username" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 focus:ring-2 focus:ring-blue-500/20 outline-none text-slate-600">
+                </div>
+
+                {{-- GitHub --}}
+                <div class="space-y-1">
+                    <label class="flex items-center gap-2 text-[11px] font-bold text-slate-600 uppercase tracking-tight">
+                        <svg class="w-3.5 h-3.5 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                        GitHub URL
+                    </label>
+                    <input type="hidden" name="platforms[github][id]" value="{{ $msGithub->id ?? '' }}">
+                    <input type="url" name="platforms[github][link]" value="{{ $msGithub->link_medsos ?? '' }}" placeholder="https://github.com/username" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 focus:ring-2 focus:ring-blue-500/20 outline-none text-slate-600">
+                </div>
+
+                {{-- Portfolio --}}
+                <div class="space-y-1">
+                    <label class="flex items-center gap-2 text-[11px] font-bold text-slate-600 uppercase tracking-tight">
+                        <svg class="w-3.5 h-3.5 text-orange-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                        Portfolio URL
+                    </label>
+                    <input type="hidden" name="platforms[portfolio][id]" value="{{ $msPortfolio->id ?? '' }}">
+                    <input type="url" name="platforms[portfolio][link]" value="{{ $msPortfolio->link_medsos ?? '' }}" placeholder="https://yourwebsite.com" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 focus:ring-2 focus:ring-blue-500/20 outline-none text-slate-600">
+                </div>
+
+                {{-- Instagram --}}
+                <div class="space-y-1">
+                    <label class="flex items-center gap-2 text-[11px] font-bold text-slate-600 uppercase tracking-tight">
+                        <span class="p-0.5 bg-gradient-to-br from-pink-500 to-orange-400 rounded text-white">
+                            <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                        </span>
+                        Instagram URL
+                    </label>
+                    <input type="hidden" name="platforms[instagram][id]" value="{{ $msInstagram->id ?? '' }}">
+                    <input type="url" name="platforms[instagram][link]" value="{{ $msInstagram->link_medsos ?? '' }}" placeholder="https://instagram.com/username" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 focus:ring-2 focus:ring-blue-500/20 outline-none text-slate-600">
+                </div>
+
+                <!-- Info Box -->
+                <div class="bg-indigo-50/50 border border-indigo-100 rounded-lg p-3">
+                    <p class="text-[10px] text-slate-500 leading-tight">
+                        Tautan ini akan ditampilkan secara publik pada profil portal alumni Anda untuk memudahkan jaringan profesional.
+                    </p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-center gap-3 pt-2">
+                    <button type="button" onclick="closeModal()" class="flex-1 py-2 rounded-lg bg-[#d93025] text-white font-bold text-xs hover:bg-red-700 transition-all">Batal</button>
+                    <button type="submit" class="flex-1 py-2 rounded-lg bg-[#0063a7] text-white font-bold text-xs hover:bg-[#004a7c] transition-all">Simpan</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -535,7 +639,14 @@
         function previewAvatar(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
-                reader.onload = e => document.getElementById('avatarPreview').src = e.target.result;
+                reader.onload = e => {
+                    const el = document.getElementById('avatarPreview');
+                    if (el.tagName === 'IMG') {
+                        el.src = e.target.result;
+                    } else {
+                        el.outerHTML = `<img id="avatarPreview" src="${e.target.result}" class="w-20 h-20 rounded-2xl border-2 border-slate-100 object-cover" alt="Avatar">`;
+                    }
+                };
                 reader.readAsDataURL(input.files[0]);
             }
         }
@@ -544,8 +655,18 @@
                 const reader = new FileReader();
                 reader.onload = e => {
                     const el = document.getElementById('coverPreview');
-                    if (el.tagName === 'IMG') el.src = e.target.result;
-                    else { el.outerHTML = `<img id="coverPreview" src="${e.target.result}" class="w-full h-full object-cover" alt="Cover Preview">`; }
+                    if (el && el.tagName === 'IMG') {
+                        el.src = e.target.result;
+                    } else {
+                        // Ganti div default menjadi img preview
+                        const parent = el.parentNode;
+                        const img = document.createElement('img');
+                        img.id = 'coverPreview';
+                        img.src = e.target.result;
+                        img.className = 'w-full h-full object-cover';
+                        img.alt = 'Cover Preview';
+                        parent.replaceChild(img, el);
+                    }
                 };
                 reader.readAsDataURL(input.files[0]);
             }
