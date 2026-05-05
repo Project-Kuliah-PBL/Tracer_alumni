@@ -62,55 +62,13 @@
         @media (max-width: 768px) { .sidebar { display: none; } .main-container { margin-left: 0; padding: 1.5rem; } .form-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
-<body>
-
-@include('partials.header-admin', ['showDashboardBtn' => true])
-
-<div class="page-wrapper">
-    <aside class="sidebar">
-        <div class="sidebar-header-block">
-            <p class="sidebar-portal-name">Alumni Portal</p>
-            <p class="sidebar-portal-badge">Verified Member</p>
-        </div>
-        <nav class="sidebar-nav">
-            <a href="{{ route('alumni.dashboard') }}" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                    <circle cx="9" cy="7" r="4"/>
-                </svg>
-                Manajemen Profil
-            </a>
-        </nav>
-        <div class="sidebar-submenu">
-            <a href="{{ route('alumni.pendidikan.index') }}" class="sub-item active">Riwayat Pendidikan</a>
-            <a href="{{ route('alumni.pekerjaan.index') }}" class="sub-item">Pengalaman Kerja</a>
-            <a href="{{ route('alumni.sertifikasi.index') }}" class="sub-item">Pencapaian &amp; Sertifikasi</a>
-        </div>
-        <nav class="sidebar-nav" style="margin-top:.5rem;">
-            <a href="{{ route('alumni.manajemen_akun') }}" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                    <circle cx="12" cy="7" r="4"/>
-                </svg>
-                Manajemen Akun
-            </a>
-        </nav>
-        <div class="sidebar-bottom">
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="logout-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                        <polyline points="16 17 21 12 16 7"/>
-                        <line x1="21" y1="12" x2="9" y2="12"/>
-                    </svg>
-                    Log Out
-                </button>
-            </form>
-        </div>
-    </aside>
-
-    <main class="main-container">
+<body class="bg-[#F1F5F9] h-screen flex flex-col">
+    <div class="shrink-0">
+        @include('partials.header-admin')
+    </div>
+    <div class="flex flex-1 overflow-hidden w-full">
+        @include('partials.sidebar-alumni', ['activeMenu' => 'profil'])
+        <main class="flex-1 overflow-y-auto p-8">
         <div class="back-header">
             <button class="back-btn" onclick="history.back()">
                 <svg viewBox="0 0 24 24" fill="none"><path d="M19 12H5M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -206,8 +164,8 @@
                 </div>
             </form>
         </div>
-    </main>
-</div>
+        </main>
+    </div>
 
 </body>
 </html>

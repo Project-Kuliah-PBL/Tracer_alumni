@@ -17,7 +17,12 @@ class DashboardController extends Controller
             'riwayatPendidikan',
             'sertifikasi',
             'mediaSosial',
-        ])->where('nim', $nim)->firstOrFail();
+        ])->firstOrCreate(
+            ['nim' => $nim],
+            ['nama' => Auth::user()->username]
+        );
+
+        $alumni->load(['pekerjaan', 'riwayatPendidikan', 'sertifikasi', 'mediaSosial']);
 
         return response(view('Alumni.dashboard', compact('alumni')))->withHeaders([
             'Cache-Control' => 'no-store, no-cache, must-revalidate',

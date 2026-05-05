@@ -449,58 +449,37 @@
 
 <div class="page-wrapper">
 
-    <!-- ═══ SIDEBAR ═══ -->
-    <aside class="sidebar">
-        <div class="sidebar-header-block">
-            <p class="sidebar-portal-name">Alumni Portal</p>
-            <p class="sidebar-portal-badge">Verified Member</p>
+    <!-- ═══ SIDEBAR (Tailwind, sama seperti dashboard alumni) ═══ -->
+    <aside class="w-64 shrink-0 bg-white border-r border-slate-200 p-6 flex flex-col" style="position:fixed;top:var(--header-height);left:0;height:calc(100vh - var(--header-height));z-index:40;">
+        <div class="mb-8">
+            <h2 class="text-slate-800 font-bold text-sm">Alumni Portal</h2>
+            <p class="text-slate-400 text-[10px] font-medium">Verified Member</p>
         </div>
 
-        <nav class="sidebar-nav">
-            <a href="{{ route('alumni.dashboard') }}" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                    <circle cx="9" cy="7" r="4"/>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        <nav class="space-y-2 flex-1">
+            <a href="{{ route('alumni.dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-50 font-bold text-xs transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
                 Manajemen Profil
             </a>
-        </nav>
-
-        <div class="sidebar-submenu">
-            <a href="{{ route('alumni.pendidikan.index') }}" class="sub-item">
-                Riwayat Pendidikan
-            </a>
-            <a href="{{ route('alumni.pekerjaan.index') }}" class="sub-item">
-                Pengalaman Kerja
-            </a>
-            <a href="{{ route('alumni.sertifikasi.index') }}" class="sub-item">
-                Pencapaian &amp; Sertifikasi
-            </a>
-        </div>
-
-        <nav class="sidebar-nav" style="margin-top:.5rem;">
-            <a href="{{ route('alumni.manajemen_akun') }}" class="nav-item active">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                    <circle cx="12" cy="7" r="4"/>
+            <a href="{{ route('alumni.manajemen_akun') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-50 text-blue-600 font-bold text-xs border-r-4 border-blue-600 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
                 Manajemen Akun
             </a>
         </nav>
 
-        <div class="sidebar-bottom">
+        <div class="pt-6 border-t border-slate-100">
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
-            <button type="submit" class="logout-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                    <polyline points="16 17 21 12 16 7"/>
-                    <line x1="21" y1="12" x2="9" y2="12"/>
-                </svg>
-                Log Out
-            </button>
+                <button type="submit" class="flex items-center justify-start gap-3 bg-[#D32F2F] text-white w-full px-4 py-3 rounded-lg hover:bg-red-700 transition-all shadow-md shadow-red-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    <span class="font-bold text-xs uppercase tracking-wider">Log Out</span>
+                </button>
             </form>
         </div>
     </aside>
