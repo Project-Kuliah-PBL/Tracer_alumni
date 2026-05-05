@@ -107,6 +107,7 @@
                             <tr class="text-slate-400 text-[9px] font-black uppercase tracking-wider bg-slate-50/50">
                                 <th class="px-6 py-4">NIM</th>
                                 <th class="px-6 py-4">Nama Lengkap</th>
+                                <th class="px-6 py-4">Prodi</th>
                                 <th class="px-6 py-4">Tahun Lulus</th>
                                 <th class="px-6 py-4">Jenis Kelamin</th>
                                 <th class="px-6 py-4">Role</th>
@@ -118,6 +119,7 @@
                             <tr class="hover:bg-slate-50/50 transition-all">
                                 <td class="px-6 py-4 text-xs font-bold text-slate-700">{{ $item->nim }}</td>
                                 <td class="px-6 py-4 text-xs font-extrabold text-slate-800">{{ $item->nama }}</td>
+                                <td class="px-6 py-4 text-xs text-slate-500">{{ $item->prodi ?? '—' }}</td>
                                 <td class="px-6 py-4">
                                     @if($item->tahun_lulus)
                                         <span class="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full text-[10px] font-black">
@@ -142,7 +144,7 @@
                                 <td class="px-6 py-4">
                                     <div class="flex justify-center items-center gap-1">
                                         {{-- Tombol Edit --}}
-                                        <button onclick="openEdit('{{ $item->nim }}', '{{ addslashes($item->nama) }}', '{{ $item->tahun_lulus ? \Carbon\Carbon::parse($item->tahun_lulus)->format('Y') : '' }}', '{{ $item->jenis_kelamin }}')"
+                                        <button onclick="openEdit('{{ $item->nim }}', '{{ addslashes($item->nama) }}', '{{ $item->tahun_lulus ? \Carbon\Carbon::parse($item->tahun_lulus)->format('Y') : '' }}', '{{ $item->jenis_kelamin }}', '{{ addslashes($item->prodi ?? '') }}')"
                                             class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-all" title="Edit">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -160,7 +162,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-10 text-center text-slate-400 text-xs font-medium">
+                                <td colspan="7" class="px-6 py-10 text-center text-slate-400 text-xs font-medium">
                                     Belum ada data alumni.
                                 </td>
                             </tr>
@@ -228,6 +230,19 @@
                         <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Tahun Lulus</label>
                         <input type="number" name="tahun_lulus" value="{{ old('tahun_lulus') }}" placeholder="Contoh: 2023" min="2000" max="2099"
                             class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all">
+                    </div>
+
+                    <div>
+                        <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Program Studi</label>
+                        <select name="prodi" class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all bg-white">
+                            <option value="">-- Pilih Prodi --</option>
+                            @foreach([
+                                'D4 Teknik Informatika',
+                                'D4 Teknologi Rekayasa Perangkat Lunak',
+                            ] as $prodi)
+                            <option value="{{ $prodi }}" {{ old('prodi') == $prodi ? 'selected' : '' }}>{{ $prodi }}</option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div>
@@ -300,6 +315,19 @@
                     </div>
 
                     <div>
+                        <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Program Studi</label>
+                        <select name="prodi" id="editProdi" class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all bg-white">
+                            <option value="">-- Pilih Prodi --</option>
+                            @foreach([
+                                'D4 Teknik Informatika',
+                                'D4 Teknologi Rekayasa Perangkat Lunak',
+                            ] as $prodi)
+                            <option value="{{ $prodi }}">{{ $prodi }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
                         <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Jenis Kelamin</label>
                         <div class="flex gap-4 mt-1">
                             <label class="flex items-center gap-2 cursor-pointer">
@@ -352,12 +380,13 @@
             document.getElementById(id).classList.toggle('hidden');
         }
 
-        function openEdit(nim, nama, tahunLulus, jenisKelamin) {
+        function openEdit(nim, nama, tahunLulus, jenisKelamin, prodi) {
             document.getElementById('editNim').value = nim;
             document.getElementById('editNama').value = nama;
             document.getElementById('editTahunLulus').value = tahunLulus;
             document.getElementById('editJKL').checked = (jenisKelamin === 'Laki-laki');
             document.getElementById('editJKP').checked = (jenisKelamin === 'Perempuan');
+            document.getElementById('editProdi').value = prodi;
             document.getElementById('formEdit').action = '/admin/kelola-akun/' + nim;
             toggleModal('modalEdit');
         }

@@ -49,6 +49,7 @@ class KelolaAkunController extends Controller
         DataAlumni::create([
             'nim'          => $request->nim,
             'nama'         => $request->nama,
+            'prodi'        => $request->prodi,
             'tahun_lulus'  => $request->tahun_lulus ? $request->tahun_lulus . '-01-01' : null,
             'jenis_kelamin'=> $request->jenis_kelamin,
         ]);
@@ -69,6 +70,7 @@ class KelolaAkunController extends Controller
 
         DataAlumni::where('nim', $nim)->update([
             'nama'         => $request->nama,
+            'prodi'        => $request->prodi,
             'tahun_lulus'  => $request->tahun_lulus ? $request->tahun_lulus . '-01-01' : null,
             'jenis_kelamin'=> $request->jenis_kelamin,
         ]);

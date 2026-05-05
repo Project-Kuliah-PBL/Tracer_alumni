@@ -13,6 +13,7 @@ class DataAlumni extends Model
 
     protected $fillable = [
         'nim',
+        'prodi',
         'nama',
         'alamat',
         'jenis_kelamin',
