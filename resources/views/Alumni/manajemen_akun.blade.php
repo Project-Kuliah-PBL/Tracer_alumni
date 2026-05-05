@@ -457,7 +457,7 @@
         </div>
 
         <nav class="sidebar-nav">
-            <a href="{{ route('alumni.pengalaman-kerja') }}" class="nav-item">
+            <a href="{{ route('alumni.dashboard') }}" class="nav-item">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                     <circle cx="9" cy="7" r="4"/>
@@ -468,21 +468,20 @@
             </a>
         </nav>
 
-
         <div class="sidebar-submenu">
-            <a href="{{ route('alumni.pendidikan') }}" class="sub-item">
+            <a href="{{ route('alumni.pendidikan.index') }}" class="sub-item">
                 Riwayat Pendidikan
             </a>
-            <a href="{{ route('alumni.pengalaman-kerja') }}" class="sub-item">
+            <a href="{{ route('alumni.pekerjaan.index') }}" class="sub-item">
                 Pengalaman Kerja
             </a>
-            <a href="{{ route('alumni.pencapaian') }}" class="sub-item">
+            <a href="{{ route('alumni.sertifikasi.index') }}" class="sub-item">
                 Pencapaian &amp; Sertifikasi
             </a>
         </div>
 
         <nav class="sidebar-nav" style="margin-top:.5rem;">
-            <a  class="nav-item active">
+            <a href="{{ route('alumni.manajemen_akun') }}" class="nav-item active">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                     <circle cx="12" cy="7" r="4"/>
@@ -492,7 +491,9 @@
         </nav>
 
         <div class="sidebar-bottom">
-            <button class="logout-btn" onclick="handleLogout()">
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+            <button type="submit" class="logout-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                     <polyline points="16 17 21 12 16 7"/>
@@ -500,6 +501,7 @@
                 </svg>
                 Log Out
             </button>
+            </form>
         </div>
     </aside>
 
@@ -511,6 +513,17 @@
             <p class="page-subtitle">Kelola pengaturan keamanan dan preferensi akun Alumni Anda.</p>
         </div>
 
+        @if(session('success'))
+        <div style="padding:.75rem 1rem;background:#dcfce7;border:1px solid #86efac;border-radius:.75rem;color:#166534;font-size:.9rem;font-weight:500;margin-bottom:1rem;">
+            {{ session('success') }}
+        </div>
+        @endif
+        @if(session('error'))
+        <div style="padding:.75rem 1rem;background:#fee2e2;border:1px solid #fca5a5;border-radius:.75rem;color:#991b1b;font-size:.9rem;font-weight:500;margin-bottom:1rem;">
+            {{ session('error') }}
+        </div>
+        @endif
+
         <div class="content-grid">
 
             <!-- Ubah Password -->
@@ -520,6 +533,8 @@
                     <p>Pastikan password Anda kuat dan unik untuk menjaga keamanan akun.</p>
                 </div>
                 <div class="card-body">
+                <form id="passwordForm" action="{{ route('alumni.manajemen_akun') }}" method="POST">
+                @csrf @method('PUT')
 
                     <!-- Password Saat Ini -->
                     <div class="form-group">
@@ -534,6 +549,7 @@
                             <input
                                 id="currentPassword"
                                 type="password"
+                                name="current_password"
                                 class="form-input"
                                 placeholder="Masukkan password saat ini"
                             >
@@ -559,6 +575,7 @@
                             <input
                                 id="newPassword"
                                 type="password"
+                                name="password"
                                 class="form-input"
                                 placeholder="Masukkan password baru"
                                 oninput="checkStrength(this.value)"
@@ -592,6 +609,7 @@
                             <input
                                 id="confirmPassword"
                                 type="password"
+                                name="password_confirmation"
                                 class="form-input"
                                 placeholder="Ulangi password baru"
                             >
@@ -605,9 +623,10 @@
                     </div>
 
                     <div class="form-actions">
-                        <button type="button" class="btn-cancel">Batal</button>
-                        <button type="button" class="btn-save">Simpan Perubahan</button>
+                        <button type="button" class="btn-cancel" onclick="document.getElementById('passwordForm').reset();">Batal</button>
+                        <button type="submit" class="btn-save">Simpan Perubahan</button>
                     </div>
+                </form>
                 </div>
             </div>
 
@@ -695,12 +714,6 @@
         bar.style.background = lvl.color;
         label.textContent   = lvl.text;
         label.style.color   = lvl.color;
-    }
-
-    function handleLogout() {
-        if (confirm('Yakin ingin keluar?')) {
-            window.location.href = '{{ route("logout") }}';
-        }
     }
 </script>
 </body>

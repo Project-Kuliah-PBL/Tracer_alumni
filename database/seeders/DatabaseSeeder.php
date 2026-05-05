@@ -23,5 +23,9 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('alumni123'),
             'role'     => 'Alumni',
         ]);
+        $this->call([
+            DataAlumniSeeder::class,
+        ]);
     }
+    
 }

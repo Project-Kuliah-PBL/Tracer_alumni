@@ -29,4 +29,24 @@ class DataAlumni extends Model
     {
         return $this->belongsTo(User::class, 'nim', 'username');
     }
+
+    public function pekerjaan()
+    {
+        return $this->hasMany(DataPekerjaan::class, 'nim', 'nim');
+    }
+
+    public function riwayatPendidikan()
+    {
+        return $this->hasMany(RiwayatPendidikan::class, 'nim', 'nim');
+    }
+
+    public function sertifikasi()
+    {
+        return $this->hasMany(DataCertificate::class, 'nim', 'nim');
+    }
+
+    public function mediaSosial()
+    {
+        return $this->hasMany(MediaSosial::class, 'nim', 'nim');
+    }
 }

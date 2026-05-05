@@ -1,10 +1,10 @@
-{{-- resources/views/Alumni/tambah_riwayat_pendidikan.blade.php --}}
+{{-- resources/views/Alumni/tambah_pencapaian.blade.php --}}
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Riwayat Pendidikan – Alumni Portal</title>
+    <title>Tambah Sertifikasi – Alumni Portal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -45,7 +45,6 @@
         label { display: block; font-weight: 600; font-size: .875rem; color: var(--color-text); margin-bottom: .5rem; }
         .form-control { width: 100%; padding: .75rem 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-md); font-family: var(--font-body); font-size: .9rem; color: var(--color-secondary); outline: none; transition: border-color .2s, box-shadow .2s; background: #fff; }
         .form-control:focus { border-color: var(--color-primary-btn); box-shadow: 0 0 0 3px rgba(0,97,164,.1); }
-        textarea.form-control { resize: vertical; min-height: 100px; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         .form-group { margin-bottom: 1.25rem; }
         .form-hint { font-size: .8rem; color: var(--color-muted); margin-top: .35rem; }
@@ -59,6 +58,8 @@
         .back-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
         .back-btn { display: flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; border-radius: 50%; background: transparent; border: none; cursor: pointer; transition: background .2s; color: var(--color-secondary); }
         .back-btn:hover { background: #e7e8f0; }
+        .image-preview-box { width: 100%; aspect-ratio: 16/9; background: var(--color-primary-soft); border: 2px dashed #93c5fd; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; overflow: hidden; margin-top: .5rem; }
+        .image-preview-box img { width: 100%; height: 100%; object-fit: cover; }
         @media (max-width: 768px) { .sidebar { display: none; } .main-container { margin-left: 0; padding: 1.5rem; } .form-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -82,9 +83,9 @@
             </a>
         </nav>
         <div class="sidebar-submenu">
-            <a href="{{ route('alumni.pendidikan.index') }}" class="sub-item active">Riwayat Pendidikan</a>
+            <a href="{{ route('alumni.pendidikan.index') }}" class="sub-item">Riwayat Pendidikan</a>
             <a href="{{ route('alumni.pekerjaan.index') }}" class="sub-item">Pengalaman Kerja</a>
-            <a href="{{ route('alumni.sertifikasi.index') }}" class="sub-item">Pencapaian &amp; Sertifikasi</a>
+            <a href="{{ route('alumni.sertifikasi.index') }}" class="sub-item active">Pencapaian &amp; Sertifikasi</a>
         </div>
         <nav class="sidebar-nav" style="margin-top:.5rem;">
             <a href="{{ route('alumni.manajemen_akun') }}" class="nav-item">
@@ -116,12 +117,12 @@
                 <svg viewBox="0 0 24 24" fill="none"><path d="M19 12H5M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <h1 style="font-family:var(--font-heading);font-weight:700;font-size:1.5rem;color:var(--color-secondary);">
-                Tambah Riwayat Pendidikan
+                Tambah Sertifikasi
             </h1>
         </div>
 
         <div class="form-card">
-            <form action="{{ route('alumni.pendidikan.store') }}" method="POST">
+            <form action="{{ route('alumni.sertifikasi.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 @if ($errors->any())
@@ -134,65 +135,51 @@
                 </div>
                 @endif
 
+                <div class="form-group">
+                    <label>Nama Sertifikasi <span class="required">*</span></label>
+                    <input type="text" name="nama" class="form-control"
+                        value="{{ old('nama') }}"
+                        placeholder="Contoh: Google Professional Cloud Architect">
+                    @error('nama') <p class="error-msg">{{ $message }}</p> @enderror
+                </div>
+
                 <div class="form-grid">
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label>Nama Instansi / Sekolah <span class="required">*</span></label>
-                        <input type="text" name="nama_instansi" class="form-control"
-                            value="{{ old('nama_instansi') }}"
-                            placeholder="Contoh: Politeknik Negeri Jember">
-                        @error('nama_instansi') <p class="error-msg">{{ $message }}</p> @enderror
+                    <div class="form-group">
+                        <label>Diterbitkan Oleh</label>
+                        <input type="text" name="diterbitkan_oleh" class="form-control"
+                            value="{{ old('diterbitkan_oleh') }}"
+                            placeholder="Contoh: Google, Microsoft, Coursera">
+                        @error('diterbitkan_oleh') <p class="error-msg">{{ $message }}</p> @enderror
                     </div>
 
                     <div class="form-group">
-                        <label>Jenjang Pendidikan <span class="required">*</span></label>
-                        <select name="jenjang_pendidikan" class="form-control">
-                            <option value="">-- Pilih Jenjang --</option>
-                            @foreach(['SD','SMP','SMA/SMK','D1','D2','D3','D4','S1','S2','S3'] as $j)
-                            <option value="{{ $j }}" {{ old('jenjang_pendidikan') == $j ? 'selected' : '' }}>{{ $j }}</option>
-                            @endforeach
-                        </select>
-                        @error('jenjang_pendidikan') <p class="error-msg">{{ $message }}</p> @enderror
+                        <label>Tanggal Terbit</label>
+                        <input type="date" name="tanggal_terbit" class="form-control"
+                            value="{{ old('tanggal_terbit') }}">
+                        @error('tanggal_terbit') <p class="error-msg">{{ $message }}</p> @enderror
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <label>Jurusan / Program Studi</label>
-                        <input type="text" name="jurusan" class="form-control"
-                            value="{{ old('jurusan') }}"
-                            placeholder="Contoh: Teknik Informatika">
-                        @error('jurusan') <p class="error-msg">{{ $message }}</p> @enderror
-                    </div>
+                <div class="form-group">
+                    <label>ID Kredensial</label>
+                    <input type="text" name="id_kredensial" class="form-control"
+                        value="{{ old('id_kredensial') }}"
+                        placeholder="Kosongkan jika tidak ada ID kredensial">
+                    <p class="form-hint">Nomor unik sertifikasi yang diberikan oleh penerbit.</p>
+                    @error('id_kredensial') <p class="error-msg">{{ $message }}</p> @enderror
+                </div>
 
-                    <div class="form-group">
-                        <label>Tahun Masuk</label>
-                        <input type="date" name="tahun_masuk" class="form-control"
-                            value="{{ old('tahun_masuk') }}">
-                        @error('tahun_masuk') <p class="error-msg">{{ $message }}</p> @enderror
+                <div class="form-group">
+                    <label>Gambar Sertifikat</label>
+                    <input type="file" name="gambar_serti" class="form-control"
+                        accept="image/jpg,image/jpeg,image/png,image/webp"
+                        style="padding:.5rem;"
+                        onchange="previewImage(this)">
+                    <p class="form-hint">Format JPG, PNG, WEBP. Maks 2MB.</p>
+                    <div class="image-preview-box" id="imagePreviewBox" style="display:none;">
+                        <img id="imagePreview" src="" alt="Preview">
                     </div>
-
-                    <div class="form-group">
-                        <label>Tahun Keluar <span style="color:var(--color-muted);font-weight:400;">(kosongkan jika masih aktif)</span></label>
-                        <input type="date" name="tahun_keluar" class="form-control"
-                            value="{{ old('tahun_keluar') }}">
-                        @error('tahun_keluar') <p class="error-msg">{{ $message }}</p> @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label>Nilai Akhir (IPK / Rata-rata Nilai)</label>
-                        <input type="number" name="nilai_akhir" class="form-control"
-                            value="{{ old('nilai_akhir') }}"
-                            step="0.01" min="0" max="4"
-                            placeholder="Contoh: 3.75">
-                        <p class="form-hint">Skala 0.00 – 4.00 untuk kuliah, atau nilai rata-rata untuk SMA/SMK.</p>
-                        @error('nilai_akhir') <p class="error-msg">{{ $message }}</p> @enderror
-                    </div>
-
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label>Judul Skripsi / Tugas Akhir</label>
-                        <input type="text" name="judul_skripsi" class="form-control"
-                            value="{{ old('judul_skripsi') }}"
-                            placeholder="Kosongkan jika tidak ada atau belum selesai">
-                        @error('judul_skripsi') <p class="error-msg">{{ $message }}</p> @enderror
-                    </div>
+                    @error('gambar_serti') <p class="error-msg">{{ $message }}</p> @enderror
                 </div>
 
                 <div class="btn-group">
@@ -200,14 +187,30 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                         </svg>
-                        Simpan Pendidikan
+                        Simpan Sertifikasi
                     </button>
-                    <a href="{{ route('alumni.pendidikan.index') }}" class="btn-cancel">Batal</a>
+                    <a href="{{ route('alumni.sertifikasi.index') }}" class="btn-cancel">Batal</a>
                 </div>
             </form>
         </div>
     </main>
 </div>
 
+<script>
+function previewImage(input) {
+    const box = document.getElementById('imagePreviewBox');
+    const img = document.getElementById('imagePreview');
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            img.src = e.target.result;
+            box.style.display = 'flex';
+        };
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        box.style.display = 'none';
+    }
+}
+</script>
 </body>
 </html>

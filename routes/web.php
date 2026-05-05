@@ -4,6 +4,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\KelolaAkunController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Alumni\DashboardController as AlumniDashboardController;
+use App\Http\Controllers\Alumni\ProfilController;
+use App\Http\Controllers\Alumni\PekerjaanController;
+use App\Http\Controllers\Alumni\PendidikanController;
+use App\Http\Controllers\Alumni\SertifikasiController;
+use App\Http\Controllers\Alumni\MediaSosialController;
 
 // Halaman Welcome
 Route::get('/', function () {
@@ -14,100 +20,6 @@ Route::get('/', function () {
 Route::get('/cari-alumni', function () {
     return view('carialumni');
 })->name('cari.alumni');
-
-
-
-// Route untuk Riwayat Pendidikan
-Route::get('/alumni/pendidikan', function () {
-    $educations = [
-        [
-            'id' => 1,
-            'institution' => 'Universitas Indonesia',
-            'degree' => 'S1 Teknik Informatika',
-            'start_year' => '2016',
-            'end_year' => '2020',
-            'ipk' => '3.80',
-            'thesis_label' => 'Judul Skripsi : Sistem Informasi Alumni',
-        ],
-        [
-            'id'          => 2,
-            'degree'      => 'S2 Ilmu Komputer',
-            'institution' => 'Institut Teknologi Bandung',
-            'thesis_label'=> 'Judul Tesis : Implementasi Machine Learning',
-            'start_year'  => '2022',
-            'end_year'    => '2024',
-            'ipk'         => '3.90',
-        ],
-    ];
-
-    return view('Alumni.edit_riwayat_pendidikan', compact('educations'));
-})->name('alumni.pendidikan');
-
-// Route untuk Pengalaman Kerja
-Route::get('/alumni/pengalaman-kerja', function () {
-    $experiences = [
-        [
-            'id'          => 1,
-            'title'       => 'Software Engineer',
-            'company'     => 'PT Teknologi Indonesia',
-            'period'      => 'Jan 2022 - Sekarang',
-            'status'      => 'Full-time',
-            'type'        => 'tetap',
-            'description' => 'Mengembangkan aplikasi web perusahaan menggunakan Laravel dan Vue.js.',
-        ],
-        [
-            'id'          => 2,
-            'title'       => 'Web Developer Intern',
-            'company'     => 'Digital Agency',
-            'period'      => 'Jun 2021 - Des 2021',
-            'status'      => 'Internship',
-            'type'        => 'magang',
-            'description' => 'Membantu pembuatan landing page untuk klien agensi.',
-        ],
-    ];
-
-    return view('Alumni.edit_pengalaman_kerja', compact('experiences'));
-})->name('alumni.pengalaman-kerja');
-
-// Route untuk Pencapaian & Sertifikasi
-Route::get('/alumni/pencapaian', function () {
-    $certifications = [
-        [
-            'id'            => 1,
-            'title'         => 'Google Data Analytics Professional Certificate',
-            'provider'      => 'Google Career Certificates',
-            'issue_date'    => 'Okt 2023',
-            'credential_id' => 'GDA-2023-XYZ-9981',
-        ],
-        [
-            'id'            => 2,
-            'title'         => 'TOEFL ITP Score: 610',
-            'provider'      => 'ETS - Educational Testing Service',
-            'issue_date'    => 'Jan 2024',
-            'credential_id' => null,
-        ],
-        [
-            'id'            => 3,
-            'title'         => 'Project Management Professional (PMP)',
-            'provider'      => 'Project Management Institute (PMI)',
-            'issue_date'    => 'Mei 2022',
-            'credential_id' => 'PMI-2022-PMP-1102',
-        ],
-    ];
-
-    return view('Alumni.sertifikasi', compact('certifications'));
-})->name('alumni.pencapaian');
-
-
-
-// Route untuk Manajemen Akun
-Route::get('/alumni/manajemen-akun', function () {
-    // Jika nanti Anda butuh mengirim data user, bisa didefinisikan di sini
-    // Contoh: $user = [ 'nama' => 'Budi', 'email' => 'budi@email.com' ];
-
-    // Memanggil resources/views/Alumni/manajemen_akun.blade.php
-    return view('Alumni.manajemen_akun');
-})->name('alumni.manajemen_akun');
 
 
 // Auth routes
@@ -130,13 +42,43 @@ Route::middleware('auth')->group(function () {
 
     // Alumni only
     Route::middleware('alumni')->group(function () {
-        Route::get('/alumni/dashboard', function () {
-            return response(view('Alumni.dashboard'))->withHeaders([
-                'Cache-Control' => 'no-store, no-cache, must-revalidate',
-                'Pragma'        => 'no-cache',
-                'Expires'       => '0',
-            ]);
-        })->name('alumni.dashboard');
+
+        // Dashboard
+        Route::get('/alumni/dashboard', [AlumniDashboardController::class, 'index'])->name('alumni.dashboard');
+
+        // Profil
+        Route::get('/alumni/profil/edit',   [ProfilController::class, 'edit'])->name('alumni.profil.edit');
+        Route::put('/alumni/profil/update', [ProfilController::class, 'update'])->name('alumni.profil.update');
+
+        // Pengalaman Kerja
+        Route::get('/alumni/pekerjaan',              [PekerjaanController::class, 'index'])->name('alumni.pekerjaan.index');
+        Route::get('/alumni/pekerjaan/tambah',       [PekerjaanController::class, 'create'])->name('alumni.pekerjaan.create');
+        Route::post('/alumni/pekerjaan',             [PekerjaanController::class, 'store'])->name('alumni.pekerjaan.store');
+        Route::get('/alumni/pekerjaan/{id}/edit',    [PekerjaanController::class, 'edit'])->name('alumni.pekerjaan.edit');
+        Route::put('/alumni/pekerjaan/{id}',         [PekerjaanController::class, 'update'])->name('alumni.pekerjaan.update');
+        Route::delete('/alumni/pekerjaan/{id}',      [PekerjaanController::class, 'destroy'])->name('alumni.pekerjaan.destroy');
+
+        // Riwayat Pendidikan
+        Route::get('/alumni/pendidikan',             [PendidikanController::class, 'index'])->name('alumni.pendidikan.index');
+        Route::get('/alumni/pendidikan/tambah',      [PendidikanController::class, 'create'])->name('alumni.pendidikan.create');
+        Route::post('/alumni/pendidikan',            [PendidikanController::class, 'store'])->name('alumni.pendidikan.store');
+        Route::put('/alumni/pendidikan/{id}',        [PendidikanController::class, 'update'])->name('alumni.pendidikan.update');
+        Route::delete('/alumni/pendidikan/{id}',     [PendidikanController::class, 'destroy'])->name('alumni.pendidikan.destroy');
+
+        // Sertifikasi & Pencapaian
+        Route::get('/alumni/sertifikasi',            [SertifikasiController::class, 'index'])->name('alumni.sertifikasi.index');
+        Route::get('/alumni/sertifikasi/tambah',     [SertifikasiController::class, 'create'])->name('alumni.sertifikasi.create');
+        Route::post('/alumni/sertifikasi',           [SertifikasiController::class, 'store'])->name('alumni.sertifikasi.store');
+        Route::put('/alumni/sertifikasi/{id}',       [SertifikasiController::class, 'update'])->name('alumni.sertifikasi.update');
+        Route::delete('/alumni/sertifikasi/{id}',    [SertifikasiController::class, 'destroy'])->name('alumni.sertifikasi.destroy');
+
+        // Media Sosial
+        Route::post('/alumni/medsos',        [MediaSosialController::class, 'store'])->name('alumni.medsos.store');
+        Route::put('/alumni/medsos/{id}',    [MediaSosialController::class, 'update'])->name('alumni.medsos.update');
+        Route::delete('/alumni/medsos/{id}', [MediaSosialController::class, 'destroy'])->name('alumni.medsos.destroy');
+
+        // Manajemen Akun
+        Route::get('/alumni/manajemen-akun', [ProfilController::class, 'edit'])->name('alumni.manajemen_akun');
     });
 
 });

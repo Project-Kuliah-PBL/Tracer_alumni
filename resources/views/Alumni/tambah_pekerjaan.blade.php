@@ -1,13 +1,15 @@
-{{-- resources/views/Alumni/tambah_riwayat_pendidikan.blade.php --}}
+{{-- resources/views/Alumni/tambah_pekerjaan.blade.php --}}
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Riwayat Pendidikan – Alumni Portal</title>
+    <title>{{ isset($pekerjaan) ? 'Edit' : 'Tambah' }} Pengalaman Kerja – Alumni Portal</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
         :root {
             --color-primary: #003f87; --color-primary-soft: #eff6ff; --color-primary-btn: #0061a4;
@@ -19,6 +21,7 @@
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: var(--font-body); background-color: var(--color-bg); color: var(--color-secondary); line-height: 1.5; }
+
         .sidebar { position: fixed; top: var(--header-height); left: 0; width: var(--sidebar-width); height: calc(100vh - var(--header-height)); background: #fff; border-right: 1px solid var(--color-border-sidebar); z-index: 40; display: flex; flex-direction: column; padding-top: 80px; overflow-y: auto; }
         .sidebar-header-block { position: absolute; top: 0; left: 0; width: 100%; padding: 1.5rem 1.25rem 1rem; border-bottom: 1px solid var(--color-border-sidebar); }
         .sidebar-portal-name { font-family: var(--font-heading); font-weight: 700; font-size: 1rem; color: var(--color-secondary); margin-bottom: .2rem; }
@@ -39,18 +42,21 @@
         .logout-btn { display: flex; align-items: center; justify-content: center; gap: .75rem; width: 100%; padding: .75rem 1rem; background: var(--color-danger); color: #fff; border: none; border-radius: var(--radius-md); font-weight: 600; font-size: .9rem; cursor: pointer; transition: background .2s; }
         .logout-btn:hover { background: #b91c1c; }
         .logout-btn svg { width: 1.125rem; height: 1.125rem; stroke: #fff; }
+
         .page-wrapper { display: flex; min-height: 100vh; padding-top: var(--header-height); }
         .main-container { width: 100%; min-height: calc(100vh - var(--header-height)); margin-left: var(--sidebar-width); padding: 1.5rem 2.8rem 4rem 2rem; }
+
         .form-card { background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 2rem; max-width: 700px; }
+        .form-title { font-family: var(--font-heading); font-weight: 700; font-size: 1.5rem; color: var(--color-secondary); margin-bottom: .5rem; }
+        .form-subtitle { color: var(--color-muted); font-size: .95rem; margin-bottom: 2rem; }
+        .form-group { margin-bottom: 1.25rem; }
         label { display: block; font-weight: 600; font-size: .875rem; color: var(--color-text); margin-bottom: .5rem; }
         .form-control { width: 100%; padding: .75rem 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-md); font-family: var(--font-body); font-size: .9rem; color: var(--color-secondary); outline: none; transition: border-color .2s, box-shadow .2s; background: #fff; }
         .form-control:focus { border-color: var(--color-primary-btn); box-shadow: 0 0 0 3px rgba(0,97,164,.1); }
-        textarea.form-control { resize: vertical; min-height: 100px; }
+        textarea.form-control { resize: vertical; min-height: 120px; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-        .form-group { margin-bottom: 1.25rem; }
         .form-hint { font-size: .8rem; color: var(--color-muted); margin-top: .35rem; }
         .required { color: var(--color-danger); }
-        .error-msg { font-size: .8rem; color: var(--color-danger); margin-top: .35rem; }
         .btn-group { display: flex; gap: 1rem; margin-top: 2rem; }
         .btn-primary { display: inline-flex; align-items: center; gap: .5rem; padding: .75rem 1.5rem; background: var(--color-primary-btn); color: #fff; border: none; border-radius: var(--radius-md); font-weight: 600; font-size: .95rem; cursor: pointer; transition: background .2s; }
         .btn-primary:hover { background: #004f87; }
@@ -59,7 +65,16 @@
         .back-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
         .back-btn { display: flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; border-radius: 50%; background: transparent; border: none; cursor: pointer; transition: background .2s; color: var(--color-secondary); }
         .back-btn:hover { background: #e7e8f0; }
-        @media (max-width: 768px) { .sidebar { display: none; } .main-container { margin-left: 0; padding: 1.5rem; } .form-grid { grid-template-columns: 1fr; } }
+        .error-msg { font-size: .8rem; color: var(--color-danger); margin-top: .35rem; }
+
+        .logo-preview { display: flex; align-items: center; gap: 1rem; margin-top: .5rem; }
+        .logo-preview img { width: 60px; height: 60px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--color-border); }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-container { margin-left: 0; padding: 1.5rem; }
+            .form-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -82,8 +97,8 @@
             </a>
         </nav>
         <div class="sidebar-submenu">
-            <a href="{{ route('alumni.pendidikan.index') }}" class="sub-item active">Riwayat Pendidikan</a>
-            <a href="{{ route('alumni.pekerjaan.index') }}" class="sub-item">Pengalaman Kerja</a>
+            <a href="{{ route('alumni.pendidikan.index') }}" class="sub-item">Riwayat Pendidikan</a>
+            <a href="{{ route('alumni.pekerjaan.index') }}" class="sub-item active">Pengalaman Kerja</a>
             <a href="{{ route('alumni.sertifikasi.index') }}" class="sub-item">Pencapaian &amp; Sertifikasi</a>
         </div>
         <nav class="sidebar-nav" style="margin-top:.5rem;">
@@ -116,13 +131,18 @@
                 <svg viewBox="0 0 24 24" fill="none"><path d="M19 12H5M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <h1 style="font-family:var(--font-heading);font-weight:700;font-size:1.5rem;color:var(--color-secondary);">
-                Tambah Riwayat Pendidikan
+                {{ isset($pekerjaan) ? 'Edit Pengalaman Kerja' : 'Tambah Pengalaman Kerja' }}
             </h1>
         </div>
 
         <div class="form-card">
-            <form action="{{ route('alumni.pendidikan.store') }}" method="POST">
+            @if(isset($pekerjaan))
+                <form action="{{ route('alumni.pekerjaan.update', $pekerjaan->id) }}" method="POST" enctype="multipart/form-data">
+                @csrf @method('PUT')
+            @else
+                <form action="{{ route('alumni.pekerjaan.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
+            @endif
 
                 @if ($errors->any())
                 <div style="padding:.75rem 1rem;background:#fee2e2;border:1px solid #fca5a5;border-radius:var(--radius-md);margin-bottom:1.5rem;">
@@ -135,74 +155,69 @@
                 @endif
 
                 <div class="form-grid">
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label>Nama Instansi / Sekolah <span class="required">*</span></label>
-                        <input type="text" name="nama_instansi" class="form-control"
-                            value="{{ old('nama_instansi') }}"
-                            placeholder="Contoh: Politeknik Negeri Jember">
-                        @error('nama_instansi') <p class="error-msg">{{ $message }}</p> @enderror
-                    </div>
-
                     <div class="form-group">
-                        <label>Jenjang Pendidikan <span class="required">*</span></label>
-                        <select name="jenjang_pendidikan" class="form-control">
-                            <option value="">-- Pilih Jenjang --</option>
-                            @foreach(['SD','SMP','SMA/SMK','D1','D2','D3','D4','S1','S2','S3'] as $j)
-                            <option value="{{ $j }}" {{ old('jenjang_pendidikan') == $j ? 'selected' : '' }}>{{ $j }}</option>
+                        <label>Nama Perusahaan <span class="required">*</span></label>
+                        <input type="text" name="nama_perusahaan" class="form-control" value="{{ old('nama_perusahaan', $pekerjaan->nama_perusahaan ?? '') }}" placeholder="Contoh: PT Telkom Indonesia">
+                        @error('nama_perusahaan') <p class="error-msg">{{ $message }}</p> @enderror
+                    </div>
+                    <div class="form-group">
+                        <label>Status Pekerjaan <span class="required">*</span></label>
+                        <select name="status_pekerjaan" class="form-control">
+                            <option value="">-- Pilih Status --</option>
+                            @foreach(['Pekerjaan Tetap','Kontrak','Freelance','Magang','Part Time','Wirausaha'] as $status)
+                            <option value="{{ $status }}" {{ old('status_pekerjaan', $pekerjaan->status_pekerjaan ?? '') == $status ? 'selected' : '' }}>{{ $status }}</option>
                             @endforeach
                         </select>
-                        @error('jenjang_pendidikan') <p class="error-msg">{{ $message }}</p> @enderror
+                        @error('status_pekerjaan') <p class="error-msg">{{ $message }}</p> @enderror
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <label>Jurusan / Program Studi</label>
-                        <input type="text" name="jurusan" class="form-control"
-                            value="{{ old('jurusan') }}"
-                            placeholder="Contoh: Teknik Informatika">
-                        @error('jurusan') <p class="error-msg">{{ $message }}</p> @enderror
-                    </div>
+                <div class="form-group">
+                    <label>Posisi / Jobdesk</label>
+                    <input type="text" name="jobdesk" class="form-control" value="{{ old('jobdesk', $pekerjaan->jobdesk ?? '') }}" placeholder="Contoh: Software Engineer, Data Analyst">
+                    @error('jobdesk') <p class="error-msg">{{ $message }}</p> @enderror
+                </div>
 
+                <div class="form-grid">
                     <div class="form-group">
-                        <label>Tahun Masuk</label>
+                        <label>Tanggal Mulai</label>
                         <input type="date" name="tahun_masuk" class="form-control"
-                            value="{{ old('tahun_masuk') }}">
+                            value="{{ old('tahun_masuk', isset($pekerjaan) && $pekerjaan->tahun_masuk ? $pekerjaan->tahun_masuk->format('Y-m-d') : '') }}">
                         @error('tahun_masuk') <p class="error-msg">{{ $message }}</p> @enderror
                     </div>
-
                     <div class="form-group">
-                        <label>Tahun Keluar <span style="color:var(--color-muted);font-weight:400;">(kosongkan jika masih aktif)</span></label>
-                        <input type="date" name="tahun_keluar" class="form-control"
-                            value="{{ old('tahun_keluar') }}">
-                        @error('tahun_keluar') <p class="error-msg">{{ $message }}</p> @enderror
+                        <label>Tanggal Selesai <span style="color:var(--color-muted);font-weight:400;">(kosongkan jika masih aktif)</span></label>
+                        <input type="date" name="tahun_selesai" class="form-control"
+                            value="{{ old('tahun_selesai', isset($pekerjaan) && $pekerjaan->tahun_selesai ? $pekerjaan->tahun_selesai->format('Y-m-d') : '') }}">
+                        @error('tahun_selesai') <p class="error-msg">{{ $message }}</p> @enderror
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <label>Nilai Akhir (IPK / Rata-rata Nilai)</label>
-                        <input type="number" name="nilai_akhir" class="form-control"
-                            value="{{ old('nilai_akhir') }}"
-                            step="0.01" min="0" max="4"
-                            placeholder="Contoh: 3.75">
-                        <p class="form-hint">Skala 0.00 – 4.00 untuk kuliah, atau nilai rata-rata untuk SMA/SMK.</p>
-                        @error('nilai_akhir') <p class="error-msg">{{ $message }}</p> @enderror
-                    </div>
+                <div class="form-group">
+                    <label>Deskripsi Pekerjaan</label>
+                    <textarea name="deskripsi" class="form-control" placeholder="Jelaskan tanggung jawab dan pencapaian Anda di posisi ini...">{{ old('deskripsi', $pekerjaan->deskripsi ?? '') }}</textarea>
+                    @error('deskripsi') <p class="error-msg">{{ $message }}</p> @enderror
+                </div>
 
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label>Judul Skripsi / Tugas Akhir</label>
-                        <input type="text" name="judul_skripsi" class="form-control"
-                            value="{{ old('judul_skripsi') }}"
-                            placeholder="Kosongkan jika tidak ada atau belum selesai">
-                        @error('judul_skripsi') <p class="error-msg">{{ $message }}</p> @enderror
+                <div class="form-group">
+                    <label>Logo Perusahaan</label>
+                    @if(isset($pekerjaan) && $pekerjaan->logo_perusahaan)
+                    <div class="logo-preview">
+                        <img src="{{ Storage::url($pekerjaan->logo_perusahaan) }}" alt="Logo saat ini">
+                        <span style="font-size:.8rem;color:var(--color-muted);">Logo saat ini. Unggah baru untuk mengganti.</span>
                     </div>
+                    @endif
+                    <input type="file" name="logo_perusahaan" class="form-control" accept="image/jpg,image/jpeg,image/png,image/webp" style="padding:.5rem;">
+                    <p class="form-hint">Format JPG, PNG, WEBP. Maks 1MB.</p>
+                    @error('logo_perusahaan') <p class="error-msg">{{ $message }}</p> @enderror
                 </div>
 
                 <div class="btn-group">
                     <button type="submit" class="btn-primary">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                        </svg>
-                        Simpan Pendidikan
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        {{ isset($pekerjaan) ? 'Simpan Perubahan' : 'Tambah Pengalaman' }}
                     </button>
-                    <a href="{{ route('alumni.pendidikan.index') }}" class="btn-cancel">Batal</a>
+                    <a href="{{ route('alumni.pekerjaan.index') }}" class="btn-cancel">Batal</a>
                 </div>
             </form>
         </div>
