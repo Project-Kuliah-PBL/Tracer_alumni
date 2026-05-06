@@ -71,21 +71,27 @@
                                
                             </div>
 
-                            {{-- Password --}}
-                            <div>
-                                <label class="block text-[9px] font-black text-slate-400 uppercase tracking-[0.1em] mb-2.5 ml-1">Password</label>
-                                <div class="relative">
-                                    <span class="absolute inset-y-0 left-5 flex items-center text-slate-400 opacity-50">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                        </svg>
-                                    </span>
-                                    <input type="password" name="password" placeholder="Masukkan password"
-                                        required
-                                        class="w-full bg-slate-50 border-none rounded-xl py-3.5 pl-14 pr-6 text-sm font-medium focus:ring-2 focus:ring-[#0067B1]/10 transition-all outline-none">
-                                </div>
-                        
-                            </div>
+                          {{-- Password --}}
+<div class="space-y-2">
+    <div class="flex justify-between items-center px-1">
+        <label class="block text-[9px] font-black text-slate-400 uppercase tracking-[0.1em]">
+            Password
+        </label>
+        <a href="#" class="text-[9px] font-bold text-[#0067B1] hover:text-blue-700 transition-colors uppercase tracking-wider">
+            Lupa Password?
+        </a>
+    </div>
+    <div class="relative group">
+        <span class="absolute inset-y-0 left-5 flex items-center text-slate-400 opacity-50 group-focus-within:text-[#0067B1] transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+        </span>
+        <input type="password" name="password" placeholder="Masukkan password"
+            required
+            class="w-full bg-slate-50 border-none rounded-xl py-3.5 pl-14 pr-6 text-sm font-medium focus:ring-2 focus:ring-[#0067B1]/10 transition-all outline-none">
+    </div>
+</div>
 
                             <button type="submit"
                                 class="w-full bg-[#0067B1] text-white py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-900/10 hover:bg-blue-800 transition-all flex items-center justify-center mt-3">

@@ -49,26 +49,62 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                 </div>
-                <input type="text" placeholder="Cari nama, jabatan, atau perusahaan..." 
+                <input type="text" placeholder="Cari nama, jabatan, lokasi...." 
                     class="w-full bg-white border border-slate-100 py-5 pl-16 pr-8 rounded-full shadow-xl shadow-slate-200/50 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-sm font-medium">
             </div>
-
-            <div class="flex flex-wrap justify-center gap-3 mt-6">
-                <button class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-5 py-2.5 rounded-full text-xs font-bold transition-all flex items-center">
-                    <span class="mr-2 opacity-60">📅</span> Tahun Lulus
-                </button>
-                <button class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-5 py-2.5 rounded-full text-xs font-bold transition-all flex items-center">
-                    <span class="mr-2 opacity-60">🎓</span> Program Studi
-                </button>
-                <button class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-5 py-2.5 rounded-full text-xs font-bold transition-all flex items-center">
-                    <span class="mr-2 opacity-60">📍</span> Perusahaan
-                </button>
-                <button class="bg-[#0067B1] text-white px-6 py-2.5 rounded-full text-xs font-bold hover:bg-blue-800 transition-all shadow-lg shadow-blue-900/20">
-                    Terapkan Filter
-                </button>
-            </div>
+<!-- Perhatikan class "mb-20" yang ditambahkan di bawah ini -->
+<div class="flex flex-wrap justify-center gap-3 mt-6 mb-20">
+    <!-- Combo Box: Tahun Lulus -->
+    <div class="relative flex items-center">
+        <span class="absolute left-4 z-10 opacity-60 text-xs">📅</span>
+        <select class="appearance-none bg-slate-100 hover:bg-slate-200 text-slate-600 pl-10 pr-10 py-2.5 rounded-full text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer border-none">
+            <option selected disabled>Tahun Lulus</option>
+            <option value="2023">2023</option>
+            <option value="2022">2022</option>
+            <option value="2021">2021</option>
+        </select>
+        <div class="absolute right-4 pointer-events-none opacity-40">
+            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
         </div>
+    </div>
 
+    <!-- Combo Box: Program Studi -->
+    <div class="relative flex items-center">
+        <span class="absolute left-4 z-10 opacity-60 text-xs">🎓</span>
+        <select class="appearance-none bg-slate-100 hover:bg-slate-200 text-slate-600 pl-10 pr-10 py-2.5 rounded-full text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer border-none">
+            <option selected disabled>Program Studi</option>
+            <option value="TI">Teknik Informatika</option>
+            <option value="MIF">Manajemen Informatika</option>
+              <option value="MID">Manajemen Agroindustri</option>
+            <option value="TKK">Teknik Komputer</option>
+        </select>
+        <div class="absolute right-4 pointer-events-none opacity-40">
+            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+        </div>
+    </div>
+
+    <!-- Combo Box: Lokasi -->
+    <div class="relative flex items-center">
+        <span class="absolute left-4 z-10 opacity-60 text-xs">📍</span>
+        <select class="appearance-none bg-slate-100 hover:bg-slate-200 text-slate-600 pl-10 pr-10 py-2.5 rounded-full text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer border-none">
+            <option selected disabled>Lokasi</option>
+            <option value="Jember">Jember</option>
+            <option value="Sidoarjo">Sidoarjo</option>
+            <option value="Sidoarjo">Surabaya</option>
+            <option value="Sidoarjo">Nganjuk</option>
+            <option value="Sidoarjo">Bondowoso</option>
+            <option value="Banyuwangi">Banyuwangi</option>
+        </select>
+        <div class="absolute right-4 pointer-events-none opacity-40">
+            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+        </div>
+    </div>
+
+    <!-- Tombol Submit -->
+    <button class="bg-[#0067B1] text-white px-6 py-2.5 rounded-full text-xs font-bold hover:bg-blue-800 transition-all shadow-lg shadow-blue-900/20">
+        Terapkan Filter
+    </button>
+</div>
         <hr class="border-slate-200 mb-10">
 
         <div class="flex justify-between items-center mb-8">
@@ -100,8 +136,8 @@
                     </div>
                     
                     <h4 class="font-extrabold text-slate-800 text-lg mb-1">Ahmad Ridwan</h4>
-                    <p class="text-[#0067B1] font-bold text-xs mb-3">Senior Web Developer</p>
-                    
+                    <p class="text-[#0067B1] font-bold text-xs mb-3">DIREKTUR </p>
+                    <p class="text-[#0067B1] font-bold text-xs mb-3">PT INDOSAT </p>
                     <div class="flex items-center text-slate-400 text-[11px] font-bold uppercase tracking-wider mb-8">
                         <span class="mr-2">🎓</span> Angkatan 2021
                     </div>
@@ -134,3 +170,4 @@
 
 </body>
 </html>
+
