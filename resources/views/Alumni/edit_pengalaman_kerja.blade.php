@@ -84,7 +84,7 @@
         .badge { background: var(--color-badge-bg); color: var(--color-text); padding: .25rem .75rem; border-radius: 999px; font-size: .75rem; font-weight: 600; }
         .exp-desc { font-size: .95rem; color: var(--color-text); line-height: 1.6; margin-top: .5rem; }
         .action-group { display: flex; gap: .5rem; }
-        .icon-btn { width: 2.25rem; height: 2.25rem; border-radius: .5rem; border: none; background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background .2s, color .2s; }
+        .icon-btn { width: 2.25rem; height: 2.25rem; border-radius: .5rem; border: none; background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background .2s, color .2s; text-decoration: none; }
         .icon-btn.edit { color: var(--color-muted); }
         .icon-btn.edit:hover { background: var(--color-badge-bg); color: var(--color-secondary); }
         .icon-btn.del { color: var(--color-danger); }
@@ -92,6 +92,106 @@
         .icon-btn svg { width: 1.125rem; height: 1.125rem; }
         .empty-state { text-align: center; padding: 4rem 2rem; background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius-lg); }
         .empty-state p { color: var(--color-muted); margin-top: .75rem; }
+
+        /* Modal Edit Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-container {
+            background: white;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 1rem;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-title {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--color-primary);
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--color-muted);
+        }
+        .modal-body {
+            padding: 1.5rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--color-secondary);
+        }
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--color-border);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--color-primary-btn);
+            ring: 2px solid var(--color-primary-soft);
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--color-border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+        .btn-cancel {
+            padding: 0.5rem 1rem;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+        .btn-submit {
+            padding: 0.5rem 1rem;
+            background: var(--color-primary-btn);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
 
         @media (max-width: 768px) {
             .sidebar { display: none; }
@@ -107,7 +207,7 @@
         @include('partials.header-admin')
     </div>
     <div class="flex flex-1 overflow-hidden w-full">
-        @include('partials.sidebar-alumni', ['activeMenu' => 'profil'])
+        @include('partials.sidebar-alumni', ['activeMenu' => 'pekerjaan'])
         <main class="flex-1 overflow-y-auto p-8">
         <div class="content-area">
 
@@ -162,23 +262,21 @@
                                             <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                             <path d="M16 2V6M8 2V6M3 10H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                         </svg>
-                                        {{ $exp->tahun_masuk ? $exp->tahun_masuk->format('M Y') : '-' }}
+                                        {{ $exp->tahun_masuk ? \Carbon\Carbon::parse($exp->tahun_masuk)->format('M Y') : '-' }}
                                         &ndash;
-                                        {{ $exp->tahun_selesai ? $exp->tahun_selesai->format('M Y') : 'Sekarang' }}
+                                        {{ $exp->tahun_selesai ? \Carbon\Carbon::parse($exp->tahun_selesai)->format('M Y') : 'Sekarang' }}
                                     </span>
                                     <span class="badge">{{ $exp->status_pekerjaan }}</span>
                                 </div>
                             </div>
 
                             <div class="action-group">
-                                {{-- Tombol Edit --}}
-                                <a href="{{ route('alumni.pekerjaan.edit', $exp->id) }}" class="icon-btn edit" title="Edit">
+                                <button type="button" class="icon-btn edit" title="Edit" onclick="openEditModal({{ $exp->id }})">
                                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                         <path d="M18.5 2.50001C18.8978 2.10219 19.4374 1.87869 20 1.87869C20.5626 1.87869 21.1022 2.10219 21.5 2.50001C21.8978 2.89784 22.1213 3.4374 22.1213 4.00001C22.1213 4.56262 21.8978 5.10219 21.5 5.50001L12 15L8 16L9 12L18.5 2.50001Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
-                                </a>
-                                {{-- Tombol Hapus --}}
+                                </button>
                                 <form action="{{ route('alumni.pekerjaan.destroy', $exp->id) }}" method="POST" onsubmit="return confirm('Hapus pengalaman kerja ini?')">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="icon-btn del" title="Hapus">
@@ -212,5 +310,119 @@
         </main>
     </div>
 
+    {{-- Modal Edit --}}
+    <div id="editModal" class="modal-overlay" onclick="closeEditModal(event)">
+        <div class="modal-container" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 class="modal-title">Edit Pengalaman Kerja</h2>
+                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <form id="editForm" action="" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Nama Perusahaan <span class="text-red-500">*</span></label>
+                        <input type="text" name="nama_perusahaan" id="edit_nama_perusahaan" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Posisi / Jobdesk</label>
+                        <input type="text" name="jobdesk" id="edit_jobdesk" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status Pekerjaan <span class="text-red-500">*</span></label>
+                        <select name="status_pekerjaan" id="edit_status_pekerjaan" class="form-select" required>
+                            <option value="Full-time">Full-time</option>
+                            <option value="Part-time">Part-time</option>
+                            <option value="Internship">Internship (Magang)</option>
+                            <option value="Freelance">Freelance</option>
+                            <option value="Kontrak">Kontrak</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Tanggal Mulai</label>
+                            <input type="date" name="tahun_masuk" id="edit_tahun_masuk" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tanggal Selesai</label>
+                            <input type="date" name="tahun_selesai" id="edit_tahun_selesai" class="form-input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="edit_masih_bekerja" onchange="toggleSelesaiEdit()">
+                            Saya masih bekerja di sini
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Deskripsi</label>
+                        <textarea name="deskripsi" id="edit_deskripsi" class="form-textarea" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Logo Perusahaan (Opsional, maks. 1MB)</label>
+                        <input type="file" name="logo_perusahaan" accept="image/*" class="form-input">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeEditModal()">Batal</button>
+                    <button type="submit" class="btn-submit">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Data pekerjaan dari server (dikirim via JavaScript)
+        let pekerjaanData = @json($experiences);
+
+        function openEditModal(id) {
+            // Cari data pekerjaan berdasarkan ID
+            const pekerjaan = pekerjaanData.find(p => p.id === id);
+            if (!pekerjaan) return;
+
+            // Set action form
+            document.getElementById('editForm').action = `/alumni/pekerjaan/${id}`;
+            
+            // Isi data ke form
+            document.getElementById('edit_nama_perusahaan').value = pekerjaan.nama_perusahaan || '';
+            document.getElementById('edit_jobdesk').value = pekerjaan.jobdesk || '';
+            document.getElementById('edit_status_pekerjaan').value = pekerjaan.status_pekerjaan || 'Full-time';
+            document.getElementById('edit_tahun_masuk').value = pekerjaan.tahun_masuk || '';
+            document.getElementById('edit_tahun_selesai').value = pekerjaan.tahun_selesai || '';
+            document.getElementById('edit_deskripsi').value = pekerjaan.deskripsi || '';
+            
+            // Set checkbox "masih bekerja"
+            const masihBekerja = !pekerjaan.tahun_selesai;
+            document.getElementById('edit_masih_bekerja').checked = masihBekerja;
+            document.getElementById('edit_tahun_selesai').disabled = masihBekerja;
+            
+            // Tampilkan modal
+            document.getElementById('editModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeEditModal(event) {
+            if (event && event.target !== event.currentTarget && event.target !== document.getElementById('editModal')) return;
+            document.getElementById('editModal').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        function toggleSelesaiEdit() {
+            const masihBekerja = document.getElementById('edit_masih_bekerja').checked;
+            const selesaiInput = document.getElementById('edit_tahun_selesai');
+            selesaiInput.disabled = masihBekerja;
+            if (masihBekerja) {
+                selesaiInput.value = '';
+            }
+        }
+
+        // Tutup modal dengan tombol ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeEditModal();
+            }
+        });
+    </script>
 </body>
 </html>

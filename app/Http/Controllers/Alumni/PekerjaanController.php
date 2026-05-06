@@ -22,11 +22,7 @@ class PekerjaanController extends Controller
             ->orderBy('tahun_masuk', 'desc')
             ->get();
 
-        return response(view('Alumni.edit_pengalaman_kerja', compact('alumni', 'experiences')))->withHeaders([
-            'Cache-Control' => 'no-store, no-cache, must-revalidate',
-            'Pragma'        => 'no-cache',
-            'Expires'       => '0',
-        ]);
+        return view('Alumni.edit_pengalaman_kerja', compact('alumni', 'experiences'));
     }
 
     /**
@@ -37,11 +33,7 @@ class PekerjaanController extends Controller
         $nim   = Auth::user()->username;
         $alumni = DataAlumni::where('nim', $nim)->firstOrFail();
 
-        return response(view('Alumni.tambah_pekerjaan', compact('alumni')))->withHeaders([
-            'Cache-Control' => 'no-store, no-cache, must-revalidate',
-            'Pragma'        => 'no-cache',
-            'Expires'       => '0',
-        ]);
+        return view('Alumni.tambah_pekerjaan', compact('alumni'));
     }
 
     /**
@@ -86,23 +78,27 @@ class PekerjaanController extends Controller
     /**
      * Tampilkan form edit pengalaman kerja.
      */
-    public function edit(int $id)
+    public function edit($id)
     {
-        $nim        = Auth::user()->username;
-        $alumni     = DataAlumni::where('nim', $nim)->firstOrFail();
-        $pekerjaan  = DataPekerjaan::where('id', $id)->where('nim', $nim)->firstOrFail();
+        $nim    = Auth::user()->username;
+        $alumni = DataAlumni::where('nim', $nim)->firstOrFail();
+        
+        // Ambil data pekerjaan yang akan diedit
+        $pekerjaan = DataPekerjaan::where('id', $id)->where('nim', $nim)->firstOrFail();
+        
+        // Ambil semua data pekerjaan untuk ditampilkan di list
+        $experiences = DataPekerjaan::where('nim', $nim)
+            ->orderBy('tahun_masuk', 'desc')
+            ->get();
 
-        return response(view('Alumni.edit_pengalaman_kerja', compact('alumni', 'pekerjaan')))->withHeaders([
-            'Cache-Control' => 'no-store, no-cache, must-revalidate',
-            'Pragma'        => 'no-cache',
-            'Expires'       => '0',
-        ]);
+        // Kirim kedua variabel ke view
+        return view('Alumni.edit_pengalaman_kerja', compact('alumni', 'experiences', 'pekerjaan'));
     }
 
     /**
      * Perbarui data pengalaman kerja.
      */
-    public function update(Request $request, int $id)
+    public function update(Request $request, $id)
     {
         $nim = Auth::user()->username;
 
@@ -144,7 +140,7 @@ class PekerjaanController extends Controller
     /**
      * Hapus data pengalaman kerja.
      */
-    public function destroy(int $id)
+    public function destroy($id)
     {
         $nim       = Auth::user()->username;
         $pekerjaan = DataPekerjaan::where('id', $id)->where('nim', $nim)->firstOrFail();
