@@ -18,12 +18,19 @@ class DataAlumni extends Model
         'alamat',
         'jenis_kelamin',
         'email',
+        'show_email',     // visibilitas email di halaman publik
         'no_telepon',
+        'show_telepon',   // visibilitas no HP di halaman publik
         'lama_tunggu_kerja',
         'tahun_lulus',
         'jabatan_sekarang',
         'foto_profile',
         'foto_sampul',
+    ];
+
+    protected $casts = [
+        'show_email'   => 'boolean',
+        'show_telepon' => 'boolean',
     ];
 
     public function user()

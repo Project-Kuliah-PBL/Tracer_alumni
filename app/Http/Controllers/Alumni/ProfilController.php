@@ -59,6 +59,14 @@ class ProfilController extends Controller
             'no_telepon', 'lama_tunggu_kerja', 'jabatan_sekarang',
         ]);
 
+        // Simpan preferensi visibilitas kontak HANYA jika request dari modal kontak.
+        // Form lain (edit profil, foto, dll) tidak mengirim '_update_kontak',
+        // sehingga nilai show_email/show_telepon yang sudah ada di DB tidak ikut di-reset.
+        if ($request->has('_update_kontak')) {
+            $data['show_email']   = $request->has('show_email');
+            $data['show_telepon'] = $request->has('show_telepon');
+        }
+
         // Upload foto profil
         if ($request->hasFile('foto_profile')) {
             if ($alumni->foto_profile) {
@@ -79,8 +87,8 @@ class ProfilController extends Controller
 
         $alumni->update($data);
 
-        return redirect()->route('alumni.profil.edit')
-            ->with('success', 'Profil berhasil diperbarui.');
+        return redirect()->route('alumni.dashboard')
+            ->with('success_popup', 'Profil berhasil diperbarui.');
     }
 
     /**

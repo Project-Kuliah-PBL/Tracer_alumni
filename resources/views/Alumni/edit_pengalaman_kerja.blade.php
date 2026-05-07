@@ -277,7 +277,7 @@
                                         <path d="M18.5 2.50001C18.8978 2.10219 19.4374 1.87869 20 1.87869C20.5626 1.87869 21.1022 2.10219 21.5 2.50001C21.8978 2.89784 22.1213 3.4374 22.1213 4.00001C22.1213 4.56262 21.8978 5.10219 21.5 5.50001L12 15L8 16L9 12L18.5 2.50001Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
                                 </button>
-                                <form action="{{ route('alumni.pekerjaan.destroy', $exp->id) }}" method="POST" onsubmit="return confirm('Hapus pengalaman kerja ini?')">
+                                <form action="{{ route('alumni.pekerjaan.destroy', $exp->id) }}" method="POST" onsubmit="return false" data-delete-form>
                                     @csrf @method('DELETE')
                                     <button type="submit" class="icon-btn del" title="Hapus">
                                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -332,11 +332,13 @@
                     <div class="form-group">
                         <label class="form-label">Status Pekerjaan <span class="text-red-500">*</span></label>
                         <select name="status_pekerjaan" id="edit_status_pekerjaan" class="form-select" required>
-                            <option value="Full-time">Full-time</option>
-                            <option value="Part-time">Part-time</option>
-                            <option value="Internship">Internship (Magang)</option>
-                            <option value="Freelance">Freelance</option>
+                            <option value="">-- Pilih Status --</option>
+                            <option value="Pekerjaan Tetap">Pekerjaan Tetap</option>
                             <option value="Kontrak">Kontrak</option>
+                            <option value="Freelance">Freelance</option>
+                            <option value="Magang">Magang</option>
+                            <option value="Part Time">Part Time</option>
+                            <option value="Wirausaha">Wirausaha</option>
                         </select>
                     </div>
                     <div class="form-row">
@@ -361,7 +363,14 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Logo Perusahaan (Opsional, maks. 1MB)</label>
-                        <input type="file" name="logo_perusahaan" accept="image/*" class="form-input">
+                        <!-- Preview logo yang sudah tersimpan -->
+                        <div id="edit_logo_preview_wrap" class="hidden mb-2 flex items-center gap-3">
+                            <img id="edit_logo_preview_img" src="" alt="Logo saat ini"
+                                 class="w-12 h-12 rounded-lg object-cover border border-slate-200">
+                            <span class="text-xs text-slate-400">Logo saat ini. Upload baru untuk mengganti.</span>
+                        </div>
+                        <input type="file" name="logo_perusahaan" id="edit_logo_input" accept="image/*" class="form-input"
+                               onchange="previewNewLogo(this)">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -376,6 +385,13 @@
         // Data pekerjaan dari server (dikirim via JavaScript)
         let pekerjaanData = @json($experiences);
 
+        // Helper: ubah ISO datetime / Carbon string ke format YYYY-MM-DD untuk input[type=date]
+        function toDateInput(val) {
+            if (!val) return '';
+            // Ambil 10 karakter pertama: "2021-01-15T00:00:00.000000Z" → "2021-01-15"
+            return String(val).substring(0, 10);
+        }
+
         function openEditModal(id) {
             // Cari data pekerjaan berdasarkan ID
             const pekerjaan = pekerjaanData.find(p => p.id === id);
@@ -383,29 +399,59 @@
 
             // Set action form
             document.getElementById('editForm').action = `/alumni/pekerjaan/${id}`;
-            
+
             // Isi data ke form
             document.getElementById('edit_nama_perusahaan').value = pekerjaan.nama_perusahaan || '';
-            document.getElementById('edit_jobdesk').value = pekerjaan.jobdesk || '';
-            document.getElementById('edit_status_pekerjaan').value = pekerjaan.status_pekerjaan || 'Full-time';
-            document.getElementById('edit_tahun_masuk').value = pekerjaan.tahun_masuk || '';
-            document.getElementById('edit_tahun_selesai').value = pekerjaan.tahun_selesai || '';
-            document.getElementById('edit_deskripsi').value = pekerjaan.deskripsi || '';
-            
-            // Set checkbox "masih bekerja"
+            document.getElementById('edit_jobdesk').value         = pekerjaan.jobdesk || '';
+            document.getElementById('edit_deskripsi').value       = pekerjaan.deskripsi || '';
+
+            // Status pekerjaan — value di DB dan value di <option> sudah sinkron
+            const selectStatus = document.getElementById('edit_status_pekerjaan');
+            selectStatus.value = pekerjaan.status_pekerjaan || '';
+
+            // Tanggal — wajib format YYYY-MM-DD untuk input[type=date]
+            document.getElementById('edit_tahun_masuk').value   = toDateInput(pekerjaan.tahun_masuk);
+            document.getElementById('edit_tahun_selesai').value = toDateInput(pekerjaan.tahun_selesai);
+
+            // Checkbox "masih bekerja"
             const masihBekerja = !pekerjaan.tahun_selesai;
-            document.getElementById('edit_masih_bekerja').checked = masihBekerja;
-            document.getElementById('edit_tahun_selesai').disabled = masihBekerja;
-            
+            document.getElementById('edit_masih_bekerja').checked      = masihBekerja;
+            document.getElementById('edit_tahun_selesai').disabled     = masihBekerja;
+
+            // Preview logo perusahaan yang sudah ada
+            const logoPreviewWrap = document.getElementById('edit_logo_preview_wrap');
+            const logoPreviewImg  = document.getElementById('edit_logo_preview_img');
+            if (pekerjaan.logo_perusahaan) {
+                logoPreviewImg.src = `/storage/${pekerjaan.logo_perusahaan}`;
+                logoPreviewWrap.classList.remove('hidden');
+            } else {
+                logoPreviewWrap.classList.add('hidden');
+            }
+
             // Tampilkan modal
             document.getElementById('editModal').style.display = 'flex';
             document.body.style.overflow = 'hidden';
+        }
+
+        function previewNewLogo(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const img  = document.getElementById('edit_logo_preview_img');
+                    const wrap = document.getElementById('edit_logo_preview_wrap');
+                    img.src = e.target.result;
+                    wrap.classList.remove('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
         }
 
         function closeEditModal(event) {
             if (event && event.target !== event.currentTarget && event.target !== document.getElementById('editModal')) return;
             document.getElementById('editModal').style.display = 'none';
             document.body.style.overflow = '';
+            // Reset file input agar tidak carry-over ke edit berikutnya
+            document.getElementById('edit_logo_input').value = '';
         }
 
         function toggleSelesaiEdit() {
@@ -424,5 +470,50 @@
             }
         });
     </script>
+
+<!-- Modal Konfirmasi Hapus -->
+<div id="modalHapus" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[999] hidden items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden">
+        <div class="p-6">
+            <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+            </div>
+            <h3 class="text-center font-bold text-slate-800 text-base mb-1">Hapus Pengalaman Kerja?</h3>
+            <p class="text-center text-slate-500 text-sm">Data yang dihapus tidak dapat dikembalikan.</p>
+        </div>
+        <div class="flex border-t border-slate-100">
+            <button onclick="closeModalHapus()" class="flex-1 py-3.5 text-slate-600 font-semibold text-sm hover:bg-slate-50 transition-colors">Batal</button>
+            <button onclick="submitDeleteForm()" class="flex-1 py-3.5 text-red-600 font-bold text-sm hover:bg-red-50 transition-colors border-l border-slate-100">Hapus</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let _deleteFormTarget = null;
+    function confirmHapus(form) {
+        _deleteFormTarget = form;
+        const modal = document.getElementById('modalHapus');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+    function closeModalHapus() {
+        const modal = document.getElementById('modalHapus');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        _deleteFormTarget = null;
+    }
+    function submitDeleteForm() {
+        if (_deleteFormTarget) _deleteFormTarget.submit();
+    }
+    document.querySelectorAll('[data-delete-form]').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            confirmHapus(this);
+        });
+    });
+</script>
+
 </body>
 </html>

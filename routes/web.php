@@ -21,18 +21,11 @@ Route::get('/cari-alumni', function () {
     return view('carialumni');
 })->name('cari.alumni');
 
- Route::get('/biodata-alumni', function () {
-    // Kita buat objek dummy supaya variabel $alumni tidak "Undefined"
-    $alumni = (object) [
-        'nama' => 'irine',
-        'email' => 'irine@student.polije.ac.id',
-        'no_telepon' => '0812-3456-7890',
-        'alamat' => 'Sidoarjo, Jawa Timur',
-        'jabatan_sekarang' => 'Full-stack Developer | Alumni Polije PSDKU Sidoarjo',
-        'foto_profile' => null // Set null untuk mencoba fitur inisial nama otomatis
-    ];
+Route::get('/biodata-alumni/{nim}', function ($nim) {
+    $alumni = \App\Models\DataAlumni::with([
+        'pekerjaan', 'riwayatPendidikan', 'sertifikasi', 'mediaSosial'
+    ])->findOrFail($nim);
 
-    // Mengirimkan data dummy tersebut ke file biodataalumni.blade.php
     return view('biodataalumni', compact('alumni'));
 })->name('alumni.biodata');
 

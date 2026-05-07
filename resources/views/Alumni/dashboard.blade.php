@@ -27,7 +27,8 @@
 
             {{-- Flash Messages --}}
             @if(session('success'))
-                <div class="mb-4 px-4 py-3 bg-green-50 border border-green-200 text-green-700 rounded-xl text-sm font-semibold">
+                <div class="mb-4 px-4 py-3 bg-green-50 border border-green-200 text-green-700 rounded-xl text-sm font-semibold flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
                     {{ session('success') }}
                 </div>
             @endif
@@ -301,16 +302,10 @@
         <hr class="border-slate-100">
         
         <form action="{{ route('alumni.profil.update') }}" method="POST" class="p-8 space-y-6">
-            @csrf
-            @method('PUT')
-            <input type="hidden" name="nama" value="{{ $alumni->nama }}">
-
-       <form action="{{ route('alumni.profil.update') }}" method="POST" class="p-8 space-y-6">
     @csrf
     @method('PUT')
+    <input type="hidden" name="_update_kontak" value="1">
     <input type="hidden" name="nama" value="{{ $alumni->nama }}">
-
-    <!-- Input Email -->
     <div class="space-y-3">
         <div class="flex justify-between items-center">
             <label class="block text-sm font-semibold text-slate-600 ml-1">Email</label>
@@ -318,7 +313,7 @@
            <!-- Checklist Visibilitas -->
 <label class="flex items-center gap-2 cursor-pointer group">
     <!-- Input asli disembunyikan -->
-    <input type="checkbox" name="show_email" value="1" class="peer hidden" {{ old('show_email', $alumni->show_email) ? 'checked' : '' }}>
+    <input type="checkbox" name="show_email" value="1" class="peer hidden" {{ old('show_email', $alumni->show_email ?? false) ? 'checked' : '' }}>
     
     <!-- Box Custom -->
     <div class="w-5 h-5 border-2 border-slate-200 rounded-md flex items-center justify-center peer-checked:bg-[#0067B1] peer-checked:border-[#0067B1] transition-colors">
@@ -349,7 +344,7 @@
           <!-- Checklist Visibilitas -->
 <label class="flex items-center gap-2 cursor-pointer group">
     <!-- Input asli disembunyikan -->
-    <input type="checkbox" name="show_email" value="1" class="peer hidden" {{ old('show_email', $alumni->show_email) ? 'checked' : '' }}>
+    <input type="checkbox" name="show_telepon" value="1" class="peer hidden" {{ old('show_telepon', $alumni->show_telepon ?? false) ? 'checked' : '' }}>
     
     <!-- Box Custom -->
     <div class="w-5 h-5 border-2 border-slate-200 rounded-md flex items-center justify-center peer-checked:bg-[#0067B1] peer-checked:border-[#0067B1] transition-colors">
@@ -433,8 +428,9 @@
                             </a>
                         </div>
                     </div>
-                    <div class="space-y-6">
-                        @forelse($alumni->pekerjaan->take(3) as $pekerjaan)
+                    @php $totalPekerjaan = $alumni->pekerjaan->count(); @endphp
+                    <div id="pekerjaanList" class="space-y-6 overflow-hidden transition-all duration-300" style="{{ $totalPekerjaan > 3 ? 'max-height: 280px;' : '' }}">
+                        @forelse($alumni->pekerjaan as $pekerjaan)
                         <div class="flex gap-4">
                             <div class="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 overflow-hidden">
                                 @if($pekerjaan->logo_perusahaan)
@@ -467,6 +463,17 @@
                         <p class="text-xs text-slate-400 text-center py-4">Belum ada pengalaman kerja. <a href="{{ route('alumni.pekerjaan.create') }}" class="text-blue-500">Tambah</a></p>
                         @endforelse
                     </div>
+                    @if($totalPekerjaan > 3)
+                    <div class="mt-4 text-center">
+                        <button onclick="togglePekerjaan(this)" data-expanded="false"
+                            class="inline-flex items-center gap-1.5 text-[11px] font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-full transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" id="pekerjaanChevron" class="h-3.5 w-3.5 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                            </svg>
+                            Lihat {{ $totalPekerjaan - 3 }} pekerjaan lainnya
+                        </button>
+                    </div>
+                    @endif
                 </div>
 
                 <!-- Pencapaian & Sertifikasi -->
@@ -618,7 +625,7 @@
                 $msPortfolio = $alumni->mediaSosial->first(fn($m) => str_contains(strtolower($m->nama_platform), 'portfolio') || str_contains(strtolower($m->nama_platform), 'website'));
                 $msInstagram = $alumni->mediaSosial->first(fn($m) => str_contains(strtolower($m->nama_platform), 'instagram'));
                 $msTiktok    = $alumni->mediaSosial->first(fn($m) => str_contains(strtolower($m->nama_platform), 'tiktok'));
-                $msX         = $alumni->mediaSosial->first(fn($m) => str_contains(strtolower($m->nama_platform), 'twitter') || str_contains(strtolower($m->nama_platform), ' x '));
+                $msX         = $alumni->mediaSosial->first(fn($m) => str_contains(strtolower($m->nama_platform), 'twitter') || strtolower(trim($m->nama_platform)) === 'x');
             @endphp
 
             <div class="grid grid-cols-1 gap-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
@@ -711,6 +718,26 @@
 </style>
 
     <script>
+        // Toggle Show More Pekerjaan
+        function togglePekerjaan(btn) {
+            const list = document.getElementById('pekerjaanList');
+            const chevron = document.getElementById('pekerjaanChevron');
+            const expanded = btn.dataset.expanded === 'true';
+            if (expanded) {
+                list.style.maxHeight = '280px';
+                list.style.overflow = 'hidden';
+                btn.dataset.expanded = 'false';
+                chevron.style.transform = 'rotate(0deg)';
+                const totalHidden = btn.textContent.trim().match(/\d+/);
+                btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" id="pekerjaanChevron" class="h-3.5 w-3.5 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" /></svg> Lihat ${totalHidden ? totalHidden[0] : 'lebih banyak'} pekerjaan lainnya`;
+            } else {
+                list.style.maxHeight = list.scrollHeight + 'px';
+                list.style.overflow = 'visible';
+                btn.dataset.expanded = 'true';
+                btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" id="pekerjaanChevron" class="h-3.5 w-3.5 transition-transform duration-300 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7" /></svg> Sembunyikan`;
+            }
+        }
+
         // Edit Profil Modal
         function openEditModal() {
             document.getElementById('editProfileModal').classList.remove('hidden');
@@ -773,5 +800,44 @@
             }
         }
     </script>
+
+{{-- Toast Popup Notifikasi Berhasil --}}
+@if(session('success_popup'))
+<div id="toastSuccess" class="fixed top-6 right-6 z-[9999] flex items-center gap-3 bg-white border border-green-200 shadow-xl rounded-2xl px-5 py-4 min-w-[280px] max-w-sm animate-slide-in">
+    <div class="w-9 h-9 bg-green-100 rounded-full flex items-center justify-center shrink-0">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+        </svg>
+    </div>
+    <div class="flex-1">
+        <p class="text-sm font-bold text-slate-800">Berhasil!</p>
+        <p class="text-xs text-slate-500 mt-0.5">{{ session('success_popup') }}</p>
+    </div>
+    <button onclick="document.getElementById('toastSuccess').remove()" class="text-slate-300 hover:text-slate-500 transition-colors ml-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    </button>
+</div>
+<style>
+@keyframes slideIn {
+    from { transform: translateX(120%); opacity: 0; }
+    to   { transform: translateX(0);    opacity: 1; }
+}
+.animate-slide-in { animation: slideIn 0.4s cubic-bezier(0.16,1,0.3,1) forwards; }
+</style>
+<script>
+    // Auto-dismiss setelah 4 detik
+    setTimeout(() => {
+        const toast = document.getElementById('toastSuccess');
+        if (toast) {
+            toast.style.transition = 'opacity 0.4s, transform 0.4s';
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(120%)';
+            setTimeout(() => toast.remove(), 400);
+        }
+    }, 4000);
+</script>
+@endif
 </body>
 </html>

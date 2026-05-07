@@ -70,7 +70,7 @@ class MediaSosialController extends Controller
         $medsos = MediaSosial::where('id', $id)->where('nim', $nim)->firstOrFail();
         $medsos->update($request->only(['nama_platform', 'link_medsos']));
 
-        return redirect()->back()->with('success', 'Media sosial berhasil diperbarui.');
+        return redirect()->route('alumni.dashboard')->with('success_popup', 'Media sosial berhasil diperbarui.');
     }
 
     /**
@@ -101,6 +101,8 @@ class MediaSosialController extends Controller
             'github'    => 'GitHub',
             'portfolio' => 'Portfolio',
             'instagram' => 'Instagram',
+            'tiktok'    => 'TikTok',
+            'x'         => 'X',
         ];
 
         $request->validate([
@@ -108,6 +110,8 @@ class MediaSosialController extends Controller
             'platforms.github.link'    => 'nullable|url|max:500',
             'platforms.portfolio.link' => 'nullable|url|max:500',
             'platforms.instagram.link' => 'nullable|url|max:500',
+            'platforms.tiktok.link'    => 'nullable|url|max:500',
+            'platforms.x.link'         => 'nullable|url|max:500',
         ], [
             '*.url' => 'Link harus berupa URL yang valid (contoh: https://...).',
         ]);
@@ -137,6 +141,6 @@ class MediaSosialController extends Controller
             }
         }
 
-        return redirect()->back()->with('success', 'Media sosial berhasil diperbarui.');
+        return redirect()->route('alumni.dashboard')->with('success_popup', 'Media sosial berhasil diperbarui.');
     }
 }
