@@ -47,6 +47,17 @@ Route::middleware('auth')->group(function () {
         Route::delete('/admin/kelola-akun/{nim}', [KelolaAkunController::class, 'destroy'])->name('admin.kelola_akun.destroy');
     });
 
+Route::get('/admin/kelola-prodi', function () {
+    return view('admin.kelolaprodi');
+})->name('admin.kelolaprodi');
+
+Route::get('/admin/edit-biodata', function () {
+    return view('admin.editbiodata');
+})->name('admin.editbiodata');
+Route::get('/admin/biodata-alumni', function () {
+    return view('admin.biodata'); 
+})->name('admin.biodata');
+
     // Alumni only
     Route::middleware('alumni')->group(function () {
 
