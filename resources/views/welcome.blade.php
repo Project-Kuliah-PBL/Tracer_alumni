@@ -26,7 +26,7 @@
             </div>
 
            <div class="flex items-center space-x-10">
-    <a href="{{ route('cari.alumni') }}" class="text-[#0067B1] font-bold text-sm hover:opacity-70 transition-all border-b-2 border-transparent hover:border-[#0067B1] pb-1">
+    <a href="{{ route('alumni.search') }}" class="text-[#0067B1] font-bold text-sm hover:opacity-70 transition-all border-b-2 border-transparent hover:border-[#0067B1] pb-1">
         Cari Alumni
     </a>
     

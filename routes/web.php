@@ -10,96 +10,105 @@ use App\Http\Controllers\Alumni\PekerjaanController;
 use App\Http\Controllers\Alumni\PendidikanController;
 use App\Http\Controllers\Alumni\SertifikasiController;
 use App\Http\Controllers\Alumni\MediaSosialController;
+use App\Http\Controllers\Alumni\AlumniController;
+
+// ─────────────────────────────────────────────
+// PUBLIC ROUTES (tidak butuh login)
+// ─────────────────────────────────────────────
 
 // Halaman Welcome
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Cari Alumni - bisa diakses siapa saja (publik)
-Route::get('/cari-alumni', function () {
-    return view('carialumni');
-})->name('cari.alumni');
+// Cari Alumni – dapat diakses siapa saja (publik)
+Route::get('/cari-alumni', [AlumniController::class, 'index'])->name('alumni.search');
 
-Route::get('/biodata-alumni/{nim}', function ($nim) {
-    $alumni = \App\Models\DataAlumni::with([
-        'pekerjaan', 'riwayatPendidikan', 'sertifikasi', 'mediaSosial'
-    ])->findOrFail($nim);
+// Biodata / Detail Alumni – dapat diakses siapa saja (publik)
+// Menggunakan nim sebagai parameter agar konsisten dengan model DataAlumni
+Route::get('/cari-alumni/{nim}', [AlumniController::class, 'show'])->name('alumni.show');
 
-    return view('biodataalumni', compact('alumni'));
-})->name('alumni.biodata');
+// ─────────────────────────────────────────────
+// AUTH ROUTES
+// ─────────────────────────────────────────────
 
-// Auth routes
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Route yang butuh login
+// ─────────────────────────────────────────────
+// PROTECTED ROUTES (butuh login)
+// ─────────────────────────────────────────────
+
 Route::middleware('auth')->group(function () {
 
-    // Admin only
+    // ── Admin Only ────────────────────────────
     Route::middleware('admin')->group(function () {
-        Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
-        Route::get('/admin/kelola-akun', [KelolaAkunController::class, 'index'])->name('admin.kelola_akun');
-        Route::post('/admin/kelola-akun', [KelolaAkunController::class, 'store'])->name('admin.kelola_akun.store');
-        Route::put('/admin/kelola-akun/{nim}', [KelolaAkunController::class, 'update'])->name('admin.kelola_akun.update');
+        Route::get('/admin/dashboard', [DashboardController::class, 'index'])
+            ->name('admin.dashboard');
+
+        // Kelola Akun
+        Route::get('/admin/kelola-akun',          [KelolaAkunController::class, 'index'])  ->name('admin.kelola_akun');
+        Route::post('/admin/kelola-akun',         [KelolaAkunController::class, 'store'])  ->name('admin.kelola_akun.store');
+        Route::put('/admin/kelola-akun/{nim}',    [KelolaAkunController::class, 'update']) ->name('admin.kelola_akun.update');
         Route::delete('/admin/kelola-akun/{nim}', [KelolaAkunController::class, 'destroy'])->name('admin.kelola_akun.destroy');
+
+        // Kelola Prodi
+        Route::get('/admin/kelola-prodi', function () {
+            return view('admin.kelolaprodi');
+        })->name('admin.kelolaprodi');
+
+        // Edit & Biodata Alumni (admin view)
+        Route::get('/admin/edit-biodata', function () {
+            return view('admin.editbiodata');
+        })->name('admin.editbiodata');
+
+        Route::get('/admin/biodata-alumni', function () {
+            return view('admin.biodata');
+        })->name('admin.biodata');
     });
 
-Route::get('/admin/kelola-prodi', function () {
-    return view('admin.kelolaprodi');
-})->name('admin.kelolaprodi');
+    // ── Alumni Only ───────────────────────────
+    Route::middleware('alumni')->prefix('alumni')->name('alumni.')->group(function () {
 
-Route::get('/admin/edit-biodata', function () {
-    return view('admin.editbiodata');
-})->name('admin.editbiodata');
-Route::get('/admin/biodata-alumni', function () {
-    return view('admin.biodata'); 
-})->name('admin.biodata');
-
-    // Alumni only
-    Route::middleware('alumni')->group(function () {
-
-       
         // Dashboard
-        Route::get('/alumni/dashboard', [AlumniDashboardController::class, 'index'])->name('alumni.dashboard');
+        Route::get('/dashboard', [AlumniDashboardController::class, 'index'])->name('dashboard');
 
         // Profil
-        Route::get('/alumni/profil/edit',   [ProfilController::class, 'edit'])->name('alumni.profil.edit');
-        Route::put('/alumni/profil/update', [ProfilController::class, 'update'])->name('alumni.profil.update');
+        Route::get('/profil/edit',   [ProfilController::class, 'edit'])  ->name('profil.edit');
+        Route::put('/profil/update', [ProfilController::class, 'update'])->name('profil.update');
 
         // Pengalaman Kerja
-        Route::get('/alumni/pekerjaan',              [PekerjaanController::class, 'index'])->name('alumni.pekerjaan.index');
-        Route::get('/alumni/pekerjaan/tambah',       [PekerjaanController::class, 'create'])->name('alumni.pekerjaan.create');
-        Route::post('/alumni/pekerjaan',             [PekerjaanController::class, 'store'])->name('alumni.pekerjaan.store');
-        Route::get('/alumni/pekerjaan/{id}/edit',    [PekerjaanController::class, 'edit'])->name('alumni.pekerjaan.edit');
-        Route::put('/alumni/pekerjaan/{id}',         [PekerjaanController::class, 'update'])->name('alumni.pekerjaan.update');
-        Route::delete('/alumni/pekerjaan/{id}',      [PekerjaanController::class, 'destroy'])->name('alumni.pekerjaan.destroy');
+        Route::get('/pekerjaan',           [PekerjaanController::class, 'index'])  ->name('pekerjaan.index');
+        Route::get('/pekerjaan/tambah',    [PekerjaanController::class, 'create']) ->name('pekerjaan.create');
+        Route::post('/pekerjaan',          [PekerjaanController::class, 'store'])  ->name('pekerjaan.store');
+        Route::get('/pekerjaan/{id}/edit', [PekerjaanController::class, 'edit'])   ->name('pekerjaan.edit');
+        Route::put('/pekerjaan/{id}',      [PekerjaanController::class, 'update']) ->name('pekerjaan.update');
+        Route::delete('/pekerjaan/{id}',   [PekerjaanController::class, 'destroy'])->name('pekerjaan.destroy');
 
         // Riwayat Pendidikan
-        Route::get('/alumni/pendidikan',             [PendidikanController::class, 'index'])->name('alumni.pendidikan.index');
-        Route::get('/alumni/pendidikan/tambah',      [PendidikanController::class, 'create'])->name('alumni.pendidikan.create');
-        Route::post('/alumni/pendidikan',            [PendidikanController::class, 'store'])->name('alumni.pendidikan.store');
-        Route::put('/alumni/pendidikan/{id}',        [PendidikanController::class, 'update'])->name('alumni.pendidikan.update');
-        Route::delete('/alumni/pendidikan/{id}',     [PendidikanController::class, 'destroy'])->name('alumni.pendidikan.destroy');
+        Route::get('/pendidikan',          [PendidikanController::class, 'index'])  ->name('pendidikan.index');
+        Route::get('/pendidikan/tambah',   [PendidikanController::class, 'create']) ->name('pendidikan.create');
+        Route::post('/pendidikan',         [PendidikanController::class, 'store'])  ->name('pendidikan.store');
+        Route::put('/pendidikan/{id}',     [PendidikanController::class, 'update']) ->name('pendidikan.update');
+        Route::delete('/pendidikan/{id}',  [PendidikanController::class, 'destroy'])->name('pendidikan.destroy');
 
         // Sertifikasi & Pencapaian
-        Route::get('/alumni/sertifikasi',            [SertifikasiController::class, 'index'])->name('alumni.sertifikasi.index');
-        Route::get('/alumni/sertifikasi/tambah',     [SertifikasiController::class, 'create'])->name('alumni.sertifikasi.create');
-        Route::post('/alumni/sertifikasi',           [SertifikasiController::class, 'store'])->name('alumni.sertifikasi.store');
-        Route::put('/alumni/sertifikasi/{id}',       [SertifikasiController::class, 'update'])->name('alumni.sertifikasi.update');
-        Route::delete('/alumni/sertifikasi/{id}',    [SertifikasiController::class, 'destroy'])->name('alumni.sertifikasi.destroy');
+        Route::get('/sertifikasi',         [SertifikasiController::class, 'index'])  ->name('sertifikasi.index');
+        Route::get('/sertifikasi/tambah',  [SertifikasiController::class, 'create']) ->name('sertifikasi.create');
+        Route::post('/sertifikasi',        [SertifikasiController::class, 'store'])  ->name('sertifikasi.store');
+        Route::put('/sertifikasi/{id}',    [SertifikasiController::class, 'update']) ->name('sertifikasi.update');
+        Route::delete('/sertifikasi/{id}', [SertifikasiController::class, 'destroy'])->name('sertifikasi.destroy');
 
         // Media Sosial
-        Route::post('/alumni/medsos',         [MediaSosialController::class, 'store'])->name('alumni.medsos.store');
-        Route::put('/alumni/medsos/bulk',     [MediaSosialController::class, 'bulkUpdate'])->name('alumni.medsos.bulk');
-        Route::put('/alumni/medsos/{id}',     [MediaSosialController::class, 'update'])->name('alumni.medsos.update');
-        Route::delete('/alumni/medsos/{id}',  [MediaSosialController::class, 'destroy'])->name('alumni.medsos.destroy');
+        Route::post('/medsos',        [MediaSosialController::class, 'store'])     ->name('medsos.store');
+        Route::put('/medsos/bulk',    [MediaSosialController::class, 'bulkUpdate'])->name('medsos.bulk');
+        Route::put('/medsos/{id}',    [MediaSosialController::class, 'update'])    ->name('medsos.update');
+        Route::delete('/medsos/{id}', [MediaSosialController::class, 'destroy'])   ->name('medsos.destroy');
 
         // Manajemen Akun
-        Route::get('/alumni/manajemen-akun',  [ProfilController::class, 'edit'])->name('alumni.manajemen_akun');
-        Route::put('/alumni/manajemen-akun',  [ProfilController::class, 'updatePassword'])->name('alumni.manajemen_akun.update');
+        Route::get('/manajemen-akun', [ProfilController::class, 'edit'])          ->name('manajemen_akun');
+        Route::put('/manajemen-akun', [ProfilController::class, 'updatePassword'])->name('manajemen_akun.update');
     });
-
 });

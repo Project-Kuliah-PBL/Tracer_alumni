@@ -449,38 +449,57 @@
 
 <div class="page-wrapper">
 
-    <!-- ═══ SIDEBAR (Tailwind, sama seperti dashboard alumni) ═══ -->
-    <aside class="w-64 shrink-0 bg-white border-r border-slate-200 p-6 flex flex-col" style="position:fixed;top:var(--header-height);left:0;height:calc(100vh - var(--header-height));z-index:40;">
-        <div class="mb-8">
-            <h2 class="text-slate-800 font-bold text-sm">Alumni Portal</h2>
-            <p class="text-slate-400 text-[10px] font-medium">Verified Member</p>
+    <!-- ═══ SIDEBAR ═══ -->
+    <aside class="sidebar">
+        <div class="sidebar-header-block">
+            <p class="sidebar-portal-name">Alumni Portal</p>
+            <p class="sidebar-portal-badge">Verified Member</p>
         </div>
 
-        <nav class="space-y-2 flex-1">
-            <a href="{{ route('alumni.dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-50 font-bold text-xs transition-all">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        <nav class="sidebar-nav">
+            <a href="{{ route('alumni.pengalaman-kerja') }}" class="nav-item">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                 </svg>
                 Manajemen Profil
             </a>
-            <a href="{{ route('alumni.manajemen_akun') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-50 text-blue-600 font-bold text-xs border-r-4 border-blue-600 transition-all">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+        </nav>
+
+
+        <div class="sidebar-submenu">
+            <a href="{{ route('alumni.pendidikan') }}" class="sub-item">
+                Riwayat Pendidikan
+            </a>
+            <a href="{{ route('alumni.pengalaman-kerja') }}" class="sub-item">
+                Pengalaman Kerja
+            </a>
+            <a href="{{ route('alumni.pencapaian') }}" class="sub-item">
+                Pencapaian &amp; Sertifikasi
+            </a>
+        </div>
+
+        <nav class="sidebar-nav" style="margin-top:.5rem;">
+            <a  class="nav-item active">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
                 </svg>
                 Manajemen Akun
             </a>
         </nav>
 
-        <div class="pt-6 border-t border-slate-100">
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="flex items-center justify-start gap-3 bg-[#D32F2F] text-white w-full px-4 py-3 rounded-lg hover:bg-red-700 transition-all shadow-md shadow-red-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                    <span class="font-bold text-xs uppercase tracking-wider">Log Out</span>
-                </button>
-            </form>
+        <div class="sidebar-bottom">
+            <button class="logout-btn" onclick="handleLogout()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Log Out
+            </button>
         </div>
     </aside>
 
@@ -492,17 +511,6 @@
             <p class="page-subtitle">Kelola pengaturan keamanan dan preferensi akun Alumni Anda.</p>
         </div>
 
-        @if(session('success'))
-        <div style="padding:.75rem 1rem;background:#dcfce7;border:1px solid #86efac;border-radius:.75rem;color:#166534;font-size:.9rem;font-weight:500;margin-bottom:1rem;">
-            {{ session('success') }}
-        </div>
-        @endif
-        @if(session('error'))
-        <div style="padding:.75rem 1rem;background:#fee2e2;border:1px solid #fca5a5;border-radius:.75rem;color:#991b1b;font-size:.9rem;font-weight:500;margin-bottom:1rem;">
-            {{ session('error') }}
-        </div>
-        @endif
-
         <div class="content-grid">
 
             <!-- Ubah Password -->
@@ -512,8 +520,6 @@
                     <p>Pastikan password Anda kuat dan unik untuk menjaga keamanan akun.</p>
                 </div>
                 <div class="card-body">
-                <form id="passwordForm" action="{{ route('alumni.manajemen_akun.update') }}" method="POST">
-                @csrf @method('PUT')
 
                     <!-- Password Saat Ini -->
                     <div class="form-group">
@@ -528,8 +534,7 @@
                             <input
                                 id="currentPassword"
                                 type="password"
-                                name="current_password"
-                                class="form-input {{ $errors->has('current_password') ? 'border-red-400 bg-red-50' : '' }}"
+                                class="form-input"
                                 placeholder="Masukkan password saat ini"
                             >
                             <button type="button" class="toggle-password" onclick="togglePassword('currentPassword', this)" aria-label="Tampilkan password">
@@ -539,9 +544,6 @@
                                 </svg>
                             </button>
                         </div>
-                        @error('current_password')
-                            <p style="font-size:.78rem;color:#dc2626;margin-top:.25rem;">{{ $message }}</p>
-                        @enderror
                     </div>
 
                     <!-- Password Baru -->
@@ -557,8 +559,7 @@
                             <input
                                 id="newPassword"
                                 type="password"
-                                name="password"
-                                class="form-input {{ $errors->has('password') ? 'border-red-400 bg-red-50' : '' }}"
+                                class="form-input"
                                 placeholder="Masukkan password baru"
                                 oninput="checkStrength(this.value)"
                             >
@@ -576,9 +577,6 @@
                             </div>
                             <div class="strength-label" id="strengthLabel">SEDANG</div>
                         </div>
-                        @error('password')
-                            <p style="font-size:.78rem;color:#dc2626;margin-top:.25rem;">{{ $message }}</p>
-                        @enderror
                     </div>
 
                     <!-- Konfirmasi Password -->
@@ -594,8 +592,7 @@
                             <input
                                 id="confirmPassword"
                                 type="password"
-                                name="password_confirmation"
-                                class="form-input {{ $errors->has('password_confirmation') ? 'border-red-400 bg-red-50' : '' }}"
+                                class="form-input"
                                 placeholder="Ulangi password baru"
                             >
                             <button type="button" class="toggle-password" onclick="togglePassword('confirmPassword', this)" aria-label="Tampilkan password">
@@ -605,16 +602,12 @@
                                 </svg>
                             </button>
                         </div>
-                        @error('password_confirmation')
-                            <p style="font-size:.78rem;color:#dc2626;margin-top:.25rem;">{{ $message }}</p>
-                        @enderror
                     </div>
 
                     <div class="form-actions">
-                        <button type="button" class="btn-cancel" onclick="document.getElementById('passwordForm').reset();">Batal</button>
-                        <button type="submit" class="btn-save">Simpan Perubahan</button>
+                        <button type="button" class="btn-cancel">Batal</button>
+                        <button type="button" class="btn-save">Simpan Perubahan</button>
                     </div>
-                </form>
                 </div>
             </div>
 
@@ -702,6 +695,12 @@
         bar.style.background = lvl.color;
         label.textContent   = lvl.text;
         label.style.color   = lvl.color;
+    }
+
+    function handleLogout() {
+        if (confirm('Yakin ingin keluar?')) {
+            window.location.href = '{{ route("logout") }}';
+        }
     }
 </script>
 </body>
