@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\DataAlumni;
+use App\Models\Prodi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -20,7 +21,9 @@ class KelolaAkunController extends Controller
                   ->orWhere('nama', 'like', "%{$search}%");
         })->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
 
-        return response(view('Admin.kelolaakun', compact('alumni', 'search')))->withHeaders([
+        $prodis = Prodi::orderBy('nama')->pluck('nama');
+
+        return response(view('Admin.kelolaakun', compact('alumni', 'search', 'prodis')))->withHeaders([
             'Cache-Control' => 'no-store, no-cache, must-revalidate',
             'Pragma'        => 'no-cache',
             'Expires'       => '0',

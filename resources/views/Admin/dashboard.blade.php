@@ -66,7 +66,7 @@
                     <span class="font-bold text-xs">Kelola Prodi</span>
                 </a>
 
-                <a href="/admin/biodata-alumni" class="flex items-center space-x-3 text-slate-500 hover:bg-slate-50 px-5 py-3 rounded-full transition-all group mx-2">
+                <a href="/admin/edit-biodata" class="flex items-center space-x-3 text-slate-500 hover:bg-slate-50 px-5 py-3 rounded-full transition-all group mx-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2M12 7v10m-7 4h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
@@ -130,117 +130,124 @@
                 </div>
             </div>
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- 1. GRAFIK MASA TUNGGU (KATEGORI TAHUN) -->
+
+    {{-- Grafik 2: Masa Tunggu Kerja --}}
     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 md:p-6 flex flex-col">
-        <div class="border-l-4 border-[#0067B1] pl-4 mb-6">
+        <div class="border-l-4 border-emerald-500 pl-4 mb-4">
             <h3 class="font-extrabold text-slate-800 text-base md:text-lg">Masa Tunggu Kerja</h3>
-            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Berdasarkan Kategori Tahun</p>
+            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Berdasarkan kategori tahun</p>
         </div>
-
-        @php
-            $masaTunggu = $masaTunggu ?? collect([
-                (object)['label' => '< 1 Tahun', 'jumlah' => $kurangSatuTahun ?? 0],
-                (object)['label' => '1 - 2 Tahun', 'jumlah' => $satuDuaTahun ?? 0],
-                (object)['label' => '> 2 Tahun', 'jumlah' => $lebihDuaTahun ?? 0],
-            ]);
-            $maxMasaTunggu = $masaTunggu->max('jumlah') ?: 1;
-        @endphp
-
-        <div class="flex-1 flex items-end justify-around gap-4 h-64 px-4">
-            @foreach($masaTunggu as $data)
-                @php
-                    $tinggiFix = $data->jumlah > 0 ? max(($data->jumlah / $maxMasaTunggu) * 100, 15) : 5;
-                @endphp
-                <div class="flex flex-col items-center gap-4 w-full max-w-[80px]">
-                    <div class="relative group w-full flex flex-col items-center justify-end h-48">
-                        <!-- Tooltip -->
-                        <div class="opacity-0 group-hover:opacity-100 absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-3 py-1.5 rounded-lg font-bold whitespace-nowrap transition-all duration-200 z-20 shadow-xl">
-                            {{ $data->jumlah }} Alumni
-                            <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-800 rotate-45"></div>
-                        </div>
-                        <!-- Bar -->
-                        <div class="w-full rounded-t-xl transition-all duration-500 ease-out {{ $data->jumlah > 0 ? 'bg-gradient-to-t from-[#0067B1] to-[#0085E5]' : 'bg-slate-100' }} group-hover:brightness-110 shadow-sm group-hover:shadow-md cursor-pointer" 
-                             style="height: {{ $tinggiFix }}%;"></div>
-                    </div>
-                    <div class="text-center">
-                        <span class="block text-[11px] font-black text-slate-700 leading-none">{{ $data->label }}</span>
-                    </div>
-                </div>
-            @endforeach
+        <div class="relative h-56">
+            <canvas id="chartMasaTunggu"></canvas>
         </div>
     </div>
-<!-- GRAFIK TREN TAHUNAN -->
-<div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 md:p-6 flex flex-col">
-    
-    <div class="border-l-4 border-blue-400 pl-4 mb-6">
-        <h3 class="font-extrabold text-slate-800 text-base md:text-lg">
-            Masa Kerja Rata-Rata
-        </h3>
-        <p class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">
-            Durasi Kerja rata-rata (Tahun)
-        </p>
-    </div>
 
-    @php
-        // LABEL TAHUN
-        $tahunLabels = ['2019', '2020', '2021', '2022', '2023', '2024'];
-
-        // DATA CONTOH (GANTI SESUAI KEBUTUHAN)
-        $dataTahunan = $dataTahunan ?? [12, 25, 40, 30, 20, 35];
-
-        $maxData = max($dataTahunan) ?: 1;
-    @endphp
-
-    <div class="overflow-x-auto custom-scrollbar">
-        <div class="flex items-end justify-between gap-2 h-64 min-w-[500px] px-2 pb-2">
-
-            @foreach($tahunLabels as $index => $label)
-                @php
-                    $jumlah = $dataTahunan[$index] ?? 0;
-                    $tinggiFix = $jumlah > 0 ? max(($jumlah / $maxData) * 100, 10) : 5;
-                @endphp
-
-                <div class="flex flex-col items-center gap-3 flex-1">
-
-                    <div class="relative group w-full flex flex-col items-center justify-end h-44">
-
-                        <!-- Tooltip -->
-                        <div class="opacity-0 group-hover:opacity-100 absolute -top-9 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[9px] px-2 py-1 rounded-md font-bold whitespace-nowrap transition-all z-20 shadow-lg">
-                            {{ $jumlah }}
-                        </div>
-
-                        <!-- Bar -->
-                        <div class="w-full rounded-t-md transition-all duration-500 
-                            {{ $jumlah > 0 ? 'bg-blue-400' : 'bg-slate-50' }} 
-                            group-hover:bg-[#0067B1] cursor-pointer"
-                            style="height: {{ $tinggiFix }}%;">
-                        </div>
-
-                    </div>
-
-                    <!-- LABEL TAHUN -->
-                    <span class="text-[10px] font-bold text-slate-500">
-                        {{ $label }}
-                    </span>
-
-                </div>
-            @endforeach
-
+    {{-- Grafik 3: Masa Kerja Rata-Rata per Angkatan --}}
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 md:p-6 flex flex-col">
+        <div class="border-l-4 border-violet-500 pl-4 mb-4">
+            <h3 class="font-extrabold text-slate-800 text-base md:text-lg">Masa Kerja Rata-Rata</h3>
+            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Rata-rata durasi kerja per angkatan (tahun)</p>
         </div>
+        @if(empty($masaKerjaLabels))
+            <p class="text-slate-400 text-xs text-center py-10">Belum ada data pekerjaan.</p>
+        @else
+        <div class="relative h-56">
+            <canvas id="chartMasaKerja"></canvas>
+        </div>
+        @endif
     </div>
+
 </div>
 
-<style>
-    /* Agar scrollbar tren bulanan terlihat lebih halus */
-    .custom-scrollbar::-webkit-scrollbar { height: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-</style>
+{{-- Chart.js --}}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    const fontFamily = "'Plus Jakarta Sans', sans-serif";
+    Chart.defaults.font.family = fontFamily;
 
-    <script>
-        console.log("Dashboard Alumni Polije - Konten penuh, chart terlihat, statistik muncul - Responsif untuk layar laptop");
-    </script>
+    // ── 2. Masa Tunggu Kerja ───────────────────────────────────────
+    new Chart(document.getElementById('chartMasaTunggu'), {
+        type: 'bar',
+        data: {
+            labels: {!! json_encode($masaTunggu->pluck('label')) !!},
+            datasets: [{
+                label: 'Jumlah Alumni',
+                data: {!! json_encode($masaTunggu->pluck('jumlah')) !!},
+                backgroundColor: [
+                    'rgba(16, 185, 129, 0.85)',
+                    'rgba(59, 130, 246, 0.85)',
+                    'rgba(239, 68, 68, 0.85)',
+                ],
+                borderRadius: 6,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => ` ${ctx.parsed.y} alumni`
+                    }
+                }
+            },
+            scales: {
+                x: { grid: { display: false }, ticks: { font: { size: 11, weight: '700' } } },
+                y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 }, stepSize: 1 } }
+            }
+        }
+    });
+
+    // ── 3. Masa Kerja Rata-Rata per Angkatan ──────────────────────
+    @if(!empty($masaKerjaLabels))
+    new Chart(document.getElementById('chartMasaKerja'), {
+        type: 'line',
+        data: {
+            labels: {!! json_encode($masaKerjaLabels) !!},
+            datasets: [{
+                label: 'Rata-rata (tahun)',
+                data: {!! json_encode($masaKerjaData) !!},
+                borderColor: 'rgba(139, 92, 246, 0.9)',
+                backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                borderWidth: 2.5,
+                pointBackgroundColor: 'rgba(139, 92, 246, 1)',
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                fill: true,
+                tension: 0.4,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => ` ${ctx.parsed.y} tahun`
+                    }
+                }
+            },
+            scales: {
+                x: { grid: { display: false }, ticks: { font: { size: 11, weight: '700' } } },
+                y: {
+                    beginAtZero: true,
+                    grid: { color: '#f1f5f9' },
+                    ticks: {
+                        font: { size: 11 },
+                        callback: val => val + ' thn'
+                    }
+                }
+            }
+        }
+    });
+    @endif
+</script>
+
+        </main>
+    </div>
 
 </body>
 </html>

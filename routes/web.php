@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\KelolaAkunController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ProdiController;
+use App\Http\Controllers\Admin\BiodataController;
 use App\Http\Controllers\Alumni\DashboardController as AlumniDashboardController;
 use App\Http\Controllers\Alumni\ProfilController;
 use App\Http\Controllers\Alumni\PekerjaanController;
@@ -55,18 +57,18 @@ Route::middleware('auth')->group(function () {
         Route::delete('/admin/kelola-akun/{nim}', [KelolaAkunController::class, 'destroy'])->name('admin.kelola_akun.destroy');
 
         // Kelola Prodi
-        Route::get('/admin/kelola-prodi', function () {
-            return view('admin.kelolaprodi');
-        })->name('admin.kelolaprodi');
+        Route::get('/admin/kelola-prodi',          [ProdiController::class, 'index'])  ->name('admin.prodi');
+        Route::post('/admin/kelola-prodi',         [ProdiController::class, 'store'])  ->name('admin.prodi.store');
+        Route::put('/admin/kelola-prodi/{prodi}',  [ProdiController::class, 'update']) ->name('admin.prodi.update');
+        Route::delete('/admin/kelola-prodi/{prodi}',[ProdiController::class, 'destroy'])->name('admin.prodi.destroy');
 
-        // Edit & Biodata Alumni (admin view)
-        Route::get('/admin/edit-biodata', function () {
-            return view('admin.editbiodata');
-        })->name('admin.editbiodata');
-
-        Route::get('/admin/biodata-alumni', function () {
-            return view('admin.biodata');
-        })->name('admin.biodata');
+        // Edit Biodata Alumni
+        Route::get('/admin/edit-biodata', [BiodataController::class, 'index'])->name('admin.editbiodata');
+        Route::get('/admin/biodata/{nim}', [BiodataController::class, 'show'])->name('admin.biodata');
+        Route::post('/admin/biodata/{nim}/pekerjaan', [BiodataController::class, 'storePekerjaan'])->name('admin.biodata.pekerjaan.store');
+        Route::delete('/admin/biodata/{nim}/pekerjaan/{id}', [BiodataController::class, 'destroyPekerjaan'])->name('admin.biodata.pekerjaan.destroy');
+        Route::post('/admin/biodata/{nim}/pendidikan', [BiodataController::class, 'storePendidikan'])->name('admin.biodata.pendidikan.store');
+        Route::delete('/admin/biodata/{nim}/pendidikan/{id}', [BiodataController::class, 'destroyPendidikan'])->name('admin.biodata.pendidikan.destroy');
     });
 
     // ── Alumni Only ───────────────────────────

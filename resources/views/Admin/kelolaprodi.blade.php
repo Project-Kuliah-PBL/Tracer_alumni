@@ -1,38 +1,29 @@
 <!DOCTYPE html>
-<html lang="id" x-data="{ 
-    openModal: false, 
-    openEditModal: false,
-    prodiEdit: { nama: '', dept: '', akr: '' }
-}">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola Program Studi - Portal Alumni Polije</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; overflow: hidden; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .glass-card { background: white; border: 1px solid #f1f5f9; border-radius: 24px; }
-        .sidebar-item-active { background-color: #eff6ff; color: #2563eb; border-right: 4px solid #2563eb; }
-        [x-cloak] { display: none !important; }
     </style>
 </head>
-<body class="h-screen w-full flex flex-col overflow-hidden">
+<body class="bg-slate-50 h-screen flex flex-col">
 
-    <div class="shrink-0 w-full z-20 shadow-sm">
+    <div class="shrink-0 w-full">
         @include('partials.header-admin')
     </div>
 
     <div class="flex flex-1 overflow-hidden w-full">
-     <aside class="w-64 shrink-0 bg-white/90 backdrop-blur-sm border-r border-slate-100 flex flex-col justify-between h-full overflow-y-auto no-scrollbar">
+
+        {{-- Sidebar --}}
+        <aside class="w-64 shrink-0 bg-white/90 backdrop-blur-sm border-r border-slate-100 flex flex-col justify-between h-full overflow-y-auto no-scrollbar">
             <div class="py-6 flex flex-col gap-3">
-                
-                <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 text-slate-500 hover:bg-slate-50 px-5 py-3 rounded-full transition-all group mx-2"> 
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 text-slate-500 hover:bg-slate-50 px-5 py-3 rounded-full transition-all group mx-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                     </svg>
@@ -46,205 +37,231 @@
                     <span class="font-bold text-xs">Kelola Akun</span>
                 </a>
 
-                <a href="/admin/kelola-prodi" class="flex items-center gap-3 mx-3 px-4 py-3 rounded-xl bg-blue-50 text-blue-600 font-bold text-xs border-r-4 border-blue-600 transition-all">  
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18" />
+                <a href="{{ route('admin.prodi') }}" class="flex items-center gap-3 mx-3 px-4 py-3 rounded-xl bg-blue-50 text-blue-600 font-bold text-xs border-r-4 border-blue-600 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
                     </svg>
                     <span class="font-bold text-xs">Kelola Prodi</span>
                 </a>
 
-                <a href="/admin/biodata-alumni" class="flex items-center space-x-3 text-slate-500 hover:bg-slate-50 px-5 py-3 rounded-full transition-all group mx-2">
+                 <a href="/admin/edit-biodata" class="flex items-center space-x-3 text-slate-500 hover:bg-slate-50 px-5 py-3 rounded-full transition-all group mx-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2M12 7v10m-7 4h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                     <span class="font-bold text-xs">Edit Biodata Alumni</span>
                 </a>
-
             </div>
 
             <div class="px-4 pb-6">
-                <form action="{{ route('logout') }}" method="POST" class="w-full">
+                <form action="{{ route('logout') }}" method="POST">
                     @csrf
-                    <button type="submit" class="flex items-center justify-center gap-3 bg-[#D32F2F] text-white w-full py-3 rounded-xl hover:bg-red-700 transition-all shadow-md group cursor-pointer">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0 transition-transform group-hover:scale-105" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <button type="submit" class="flex items-center justify-center gap-3 bg-[#D32F2F] text-white w-full py-3 rounded-xl hover:bg-red-700 transition-all shadow-md cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                         </svg>
-                        <span class="font-bold text-sm tracking-wide">LogOut</span>
+                        <span class="font-bold text-sm">LogOut</span>
                     </button>
                 </form>
             </div>
         </aside>
 
-        <main class="flex-1 p-8 overflow-y-auto no-scrollbar bg-[#f8fafc]">
-            <div class="flex justify-between items-center mb-10">
+        {{-- Main --}}
+        <main class="flex-1 px-8 py-8 overflow-y-auto no-scrollbar">
+
+            @if(session('success'))
+            <div class="mb-4 bg-green-50 border border-green-100 text-green-700 text-xs font-semibold rounded-xl px-4 py-3">
+                {{ session('success') }}
+            </div>
+            @endif
+
+            <div class="flex justify-between items-start mb-6">
                 <div>
-                    <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Kelola Program Studi</h1>
-                    <p class="text-slate-500 text-sm mt-1">Sistem Kelola Program Studi Politeknik Negeri Jember.</p>
+                    <h2 class="text-3xl font-[800] text-slate-800 mb-1 tracking-tight">Kelola Program Studi</h2>
+                    <p class="text-slate-500 text-xs font-medium opacity-80">Atur daftar prodi yang tersedia pada form tambah akun alumni.</p>
                 </div>
-                <button @click="openModal = true" class="bg-[#0284c7] hover:bg-sky-700 text-white px-6 py-3 rounded-2xl font-bold text-sm flex items-center gap-3 shadow-xl shadow-sky-100 transition-all active:scale-95">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4" />
+                <button onclick="toggleModal('modalTambah')" class="bg-[#0067B1] text-white px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-2 hover:bg-blue-800 transition-all shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
-                    Tambah Prodi Baru
+                    Tambah Prodi
                 </button>
             </div>
 
-            <div class="glass-card p-6 shadow-sm">
-                <div class="mb-8">
-                    <div class="relative w-full max-w-md">
-                        <span class="absolute inset-y-0 left-4 flex items-center text-slate-400">
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                        </span>
-                        <input type="text" placeholder="Cari nama program studi..." class="block w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:ring-2 focus:ring-sky-500 focus:bg-white transition-all outline-none">
-                    </div>
-                </div>
+            {{-- Card total --}}
+            <div class="bg-white p-5 rounded-[25px] shadow-sm border border-slate-100 w-fit mb-6 pr-12 relative overflow-hidden">
+                <div class="absolute left-0 top-0 w-1 h-full bg-blue-600"></div>
+                <p class="text-slate-400 text-[9px] font-bold uppercase tracking-widest mb-0.5">Total Prodi</p>
+                <h3 class="text-2xl font-[800] text-slate-800">{{ $prodis->count() }}</h3>
+            </div>
 
-                <div class="overflow-hidden border border-slate-50 rounded-2xl">
-                    <table class="w-full text-left">
+            {{-- Tabel --}}
+            <div class="bg-white rounded-[30px] shadow-sm border border-slate-100 overflow-hidden mb-8">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-slate-50/50 text-slate-400 text-[10px] uppercase tracking-[0.15em] font-black border-b border-slate-100">
-                                <th class="px-6 py-5">Nama Program Studi</th>
-                                <th class="px-6 py-5">Jurusan</th>
-                                <th class="px-6 py-5 text-center">Akreditasi</th>
-                                <th class="px-6 py-5 text-right">Aksi</th>
+                            <tr class="text-slate-400 text-[9px] font-black uppercase tracking-wider bg-slate-50/50">
+                                <th class="px-6 py-4">No</th>
+                                <th class="px-6 py-4">Nama Program Studi</th>
+                                <th class="px-6 py-4 text-center">Akreditasi</th>
+                                <th class="px-6 py-4 text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
-                            @php
-                                $prodiData = [
-                                    ['nama' => 'Teknik Informatika', 'dept' => 'Teknologi Informasi', 'akr' => 'Unggul', 'color' => 'green'],
-                                    ['nama' => 'Manajemen Informatika', 'dept' => 'Teknologi Informasi', 'akr' => 'A', 'color' => 'blue'],
-                                    ['nama' => 'Teknik Mesin', 'dept' => 'Teknik', 'akr' => 'B', 'color' => 'indigo'],
-                                ];
-                            @endphp
-
-                            @foreach($prodiData as $item)
-                            <tr class="hover:bg-slate-50/80 transition-all group">
-                                <td class="px-6 py-5 font-bold text-slate-700 text-sm">{{ $item['nama'] }}</td>
-                                <td class="px-6 py-5 text-slate-500 font-medium text-xs">{{ $item['dept'] }}</td>
-                                <td class="px-6 py-5 text-center">
-                                    @php
-                                        $style = match($item['color']) {
-                                            'green' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
-                                            'blue' => 'bg-sky-50 text-sky-600 border-sky-100',
-                                            'indigo' => 'bg-indigo-50 text-indigo-600 border-indigo-100',
-                                            default => 'bg-slate-50 border-slate-100 text-slate-500'
-                                        };
-                                    @endphp
-                                    <span class="px-4 py-1.5 border rounded-full text-[10px] font-black uppercase tracking-wider {{ $style }}">
-                                        {{ $item['akr'] }}
-                                    </span>
+                            @forelse($prodis as $i => $prodi)
+                            <tr class="hover:bg-slate-50/50 transition-all">
+                                <td class="px-6 py-4 text-xs text-slate-400">{{ $i + 1 }}</td>
+                                <td class="px-6 py-4 text-xs font-bold text-slate-800">{{ $prodi->nama }}</td>
+                                <td class="px-6 py-4 text-center">
+                                    @if($prodi->akreditasi)
+                                        @php
+                                            $color = match($prodi->akreditasi) {
+                                                'Unggul' => 'bg-emerald-50 text-emerald-600 border border-emerald-100',
+                                                'A'      => 'bg-blue-50 text-blue-600 border border-blue-100',
+                                                'B'      => 'bg-indigo-50 text-indigo-600 border border-indigo-100',
+                                                'C'      => 'bg-orange-50 text-orange-500 border border-orange-100',
+                                                default  => 'bg-slate-50 text-slate-500 border border-slate-100',
+                                            };
+                                        @endphp
+                                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider {{ $color }}">
+                                            {{ $prodi->akreditasi }}
+                                        </span>
+                                    @else
+                                        <span class="text-slate-300 text-[10px]">—</span>
+                                    @endif
                                 </td>
-                             <td class="px-6 py-5 text-right">
-    <div class="flex justify-end items-center gap-2">
-        {{-- Tombol Edit --}}
-        {{-- Perhatikan: Menggunakan $item['nama'] (kurung siku) bukan $item->nama --}}
-        <button @click="openEditModal = true; prodiEdit = { nama: '{{ $item['nama'] }}', dept: '{{ $item['dept'] }}', akr: '{{ $item['akr'] }}' }"
-            class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-all" title="Edit">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-        </button>
-
-        {{-- Tombol Hapus --}}
-        <button class="p-1.5 text-red-400 hover:bg-red-50 rounded-lg transition-all" title="Hapus">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-        </button>
-    </div>
-</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex justify-center items-center gap-1">
+                                        <button onclick="openEdit({{ $prodi->id }}, '{{ addslashes($prodi->nama) }}', '{{ $prodi->akreditasi }}')"
+                                            class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-all" title="Edit">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </button>
+                                        <form action="{{ route('admin.prodi.destroy', $prodi) }}" method="POST"
+                                            onsubmit="return confirm('Hapus prodi {{ addslashes($prodi->nama) }}?')">
+                                            @csrf @method('DELETE')
+                                            <button type="submit" class="p-1.5 text-red-400 hover:bg-red-50 rounded-lg transition-all" title="Hapus">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
                             </tr>
-                            @endforeach
+                            @empty
+                            <tr>
+                                <td colspan="4" class="px-6 py-10 text-center text-slate-400 text-xs font-medium">
+                                    Belum ada prodi. Klik "Tambah Prodi" untuk menambahkan.
+                                </td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
             </div>
+
         </main>
     </div>
 
-    <div x-show="openModal" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
-        <div @click.away="openModal = false" class="bg-white w-full max-w-lg rounded-[32px] shadow-2xl overflow-hidden" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
-            <div class="px-8 pt-8 pb-4 flex justify-between items-center">
-                <h2 class="text-xl font-extrabold text-slate-800">Tambah Prodi Baru</h2>
-                <button @click="openModal = false" class="p-2 bg-slate-50 text-slate-400 rounded-full hover:bg-red-50 hover:text-red-500 transition-all">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    {{-- Modal Tambah --}}
+    <div id="modalTambah" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+            <div class="p-5 pb-0 flex justify-between items-start">
+                <div>
+                    <h2 class="text-[#0067B1] text-lg font-bold tracking-tight">Tambah Program Studi</h2>
+                    <p class="text-gray-500 text-[11px] mt-0.5">Masukkan nama program studi baru.</p>
+                </div>
+                <button onclick="toggleModal('modalTambah')" class="text-gray-400 hover:text-gray-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                 </button>
             </div>
-            <form action="#" method="POST" class="px-8 pb-8 space-y-5">
+            <hr class="mt-3 border-gray-100">
+            <form action="{{ route('admin.prodi.store') }}" method="POST">
                 @csrf
-                <div>
-                    <label class="block text-[11px] font-black uppercase tracking-widest text-slate-400 mb-2 ml-1">Nama Program Studi</label>
-                    <input type="text" placeholder="Contoh: Teknik Informatika" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:ring-2 focus:ring-sky-500 focus:bg-white outline-none transition-all">
+                <div class="p-5">
+                    @if($errors->any())
+                    <div class="mb-3 bg-red-50 border border-red-100 text-red-600 text-xs font-semibold rounded-xl px-4 py-3">
+                        {{ $errors->first() }}
+                    </div>
+                    @endif
+                    <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Nama Prodi</label>
+                    <input type="text" name="nama" value="{{ old('nama') }}" placeholder="Contoh: D4 Teknik Informatika" required
+                        class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all">
+
+                    <div class="mt-3">
+                        <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Akreditasi</label>
+                        <select name="akreditasi" class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all bg-white">
+                            <option value="">-- Pilih Akreditasi --</option>
+                            @foreach(['Unggul', 'A', 'B', 'C'] as $akr)
+                            <option value="{{ $akr }}" {{ old('akreditasi') == $akr ? 'selected' : '' }}>{{ $akr }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-[11px] font-black uppercase tracking-widest text-slate-400 mb-2 ml-1"> Jurusan</label>
-                    <select class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:ring-2 focus:ring-sky-500 focus:bg-white outline-none transition-all font-semibold">
-                        <option value="">Pilih Departemen</option>
-                        <option>Teknologi Informasi</option>
-                        <option>Teknik</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-[11px] font-black uppercase tracking-widest text-slate-400 mb-2 ml-1">Akreditasi</label>
-                    <select class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:ring-2 focus:ring-sky-500 focus:bg-white outline-none transition-all font-semibold">
-                        <option>Unggul</option>
-                        <option>A</option>
-                        <option>B</option>
-                    </select>
-                </div>
-                <div class="pt-4 flex gap-3">
-                    <button type="button" @click="openModal = false" class="flex-1 py-3.5 rounded-2xl font-bold text-slate-500 bg-slate-50 hover:bg-slate-100 transition-all text-sm">Batal</button>
-                    <button type="submit" class="flex-1 py-3.5 rounded-2xl font-bold text-white bg-[#0284c7] hover:bg-sky-700 shadow-lg shadow-sky-100 transition-all text-sm">Simpan Prodi</button>
+                <div class="bg-gray-50/80 p-4 flex justify-end gap-2 border-t border-gray-100">
+                    <button type="button" onclick="toggleModal('modalTambah')" class="px-4 py-1.5 border border-gray-300 rounded-lg text-gray-600 text-xs font-bold hover:bg-white transition-all">Batal</button>
+                    <button type="submit" class="px-4 py-1.5 bg-[#0067B1] text-white rounded-lg text-xs font-bold hover:bg-blue-800 shadow-md transition-all">Simpan</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div x-show="openEditModal" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
-        <div @click.away="openEditModal = false" class="bg-white w-full max-w-lg rounded-[32px] shadow-2xl overflow-hidden" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
-            <div class="px-8 pt-8 pb-4 flex justify-between items-center">
-                <div>
-                    <h2 class="text-xl font-extrabold text-slate-800">Update Program Studi</h2>
-                    <p class="text-xs text-slate-400 mt-1">Simpan perubahan data akademik.</p>
-                </div>
-                <button @click="openEditModal = false" class="p-2 bg-slate-50 text-slate-400 rounded-full hover:bg-red-50 hover:text-red-500 transition-all">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    {{-- Modal Edit --}}
+    <div id="modalEdit" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+            <div class="p-5 pb-0 flex justify-between items-start">
+                <h2 class="text-[#0067B1] text-lg font-bold tracking-tight">Edit Program Studi</h2>
+                <button onclick="toggleModal('modalEdit')" class="text-gray-400 hover:text-gray-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                 </button>
             </div>
-            <form action="#" method="POST" class="px-8 pb-8 space-y-5">
-                @csrf
-                @method('PUT')
-                <div>
-                    <label class="block text-[11px] font-black uppercase tracking-widest text-slate-400 mb-2 ml-1">Nama Program Studi</label>
-                    <input type="text" x-model="prodiEdit.nama" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:ring-2 focus:ring-sky-500 focus:bg-white outline-none transition-all font-semibold text-slate-700">
+            <hr class="mt-3 border-gray-100">
+            <form id="formEdit" method="POST">
+                @csrf @method('PUT')
+                <div class="p-5">
+                    <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Nama Prodi</label>
+                    <input type="text" name="nama" id="editNama" required
+                        class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all">
+
+                    <div class="mt-3">
+                        <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Akreditasi</label>
+                        <select name="akreditasi" id="editAkreditasi" class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all bg-white">
+                            <option value="">-- Pilih Akreditasi --</option>
+                            @foreach(['Unggul', 'A', 'B', 'C'] as $akr)
+                            <option value="{{ $akr }}">{{ $akr }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-[11px] font-black uppercase tracking-widest text-slate-400 mb-2 ml-1">Departemen / Jurusan</label>
-                    <select x-model="prodiEdit.dept" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:ring-2 focus:ring-sky-500 focus:bg-white outline-none transition-all font-semibold text-slate-700">
-                        <option>Teknologi Informasi</option>
-                        <option>Teknik</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-[11px] font-black uppercase tracking-widest text-slate-400 mb-2 ml-1">Akreditasi</label>
-                    <select x-model="prodiEdit.akr" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:ring-2 focus:ring-sky-500 focus:bg-white outline-none transition-all font-semibold text-slate-700">
-                        <option>Unggul</option>
-                        <option>A</option>
-                        <option>B</option>
-                    </select>
-                </div>
-                <div class="pt-4 flex gap-3">
-                    <button type="button" @click="openEditModal = false" class="flex-1 py-3.5 rounded-2xl font-bold text-slate-500 bg-slate-50 hover:bg-slate-100 transition-all text-sm">Batal</button>
-                    <button type="submit" class="flex-1 py-3.5 rounded-2xl font-bold text-white bg-sky-600 hover:bg-sky-700 shadow-lg shadow-sky-100 transition-all text-sm flex items-center justify-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                        Simpan Perubahan
-                    </button>
+                <div class="bg-gray-50/80 p-4 flex justify-end gap-2 border-t border-gray-100">
+                    <button type="button" onclick="toggleModal('modalEdit')" class="px-4 py-1.5 border border-gray-300 rounded-lg text-gray-600 text-xs font-bold hover:bg-white transition-all">Batal</button>
+                    <button type="submit" class="px-4 py-1.5 bg-[#0067B1] text-white rounded-lg text-xs font-bold hover:bg-blue-800 shadow-md transition-all">Simpan</button>
                 </div>
             </form>
         </div>
     </div>
+
+    <script>
+        function toggleModal(id) {
+            document.getElementById(id).classList.toggle('hidden');
+        }
+
+        function openEdit(id, nama, akreditasi) {
+            document.getElementById('editNama').value = nama;
+            document.getElementById('editAkreditasi').value = akreditasi;
+            document.getElementById('formEdit').action = '/admin/kelola-prodi/' + id;
+            toggleModal('modalEdit');
+        }
+
+        @if($errors->any())
+            document.getElementById('modalTambah').classList.remove('hidden');
+        @endif
+    </script>
+
 </body>
 </html>

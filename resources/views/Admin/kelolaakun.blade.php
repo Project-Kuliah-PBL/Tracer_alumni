@@ -46,7 +46,7 @@
                     <span class="font-bold text-xs">Kelola Prodi</span>
                 </a>
 
-                <a href="/admin/biodata-alumni" class="flex items-center space-x-3 text-slate-500 hover:bg-slate-50 px-5 py-3 rounded-full transition-all group mx-2">
+               <a href="/admin/edit-biodata" class="flex items-center space-x-3 text-slate-500 hover:bg-slate-50 px-5 py-3 rounded-full transition-all group mx-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2M12 7v10m-7 4h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
@@ -235,11 +235,7 @@
                         <input type="text" name="nama" value="{{ old('nama') }}" placeholder="Nama lengkap alumni" required
                             class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all">
                     </div>
-                    <div>
-                        <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Nama Lengkap</label>
-                        <input type="text" name="nama" value="{{ old('nama') }}" placeholder="Prodi" required
-                            class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all">
-                    </div>
+                    
 
                     <div>
                         <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Password <span class="normal-case text-gray-300">(default: NIM)</span></label>
@@ -257,10 +253,7 @@
                         <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Program Studi</label>
                         <select name="prodi" class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all bg-white">
                             <option value="">-- Pilih Prodi --</option>
-                            @foreach([
-                                'D4 Teknik Informatika',
-                                'D4 Teknologi Rekayasa Perangkat Lunak',
-                            ] as $prodi)
+                            @foreach($prodis as $prodi)
                             <option value="{{ $prodi }}" {{ old('prodi') == $prodi ? 'selected' : '' }}>{{ $prodi }}</option>
                             @endforeach
                         </select>
@@ -339,10 +332,7 @@
                         <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Program Studi</label>
                         <select name="prodi" id="editProdi" class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all bg-white">
                             <option value="">-- Pilih Prodi --</option>
-                            @foreach([
-                                'D4 Teknik Informatika',
-                                'D4 Teknologi Rekayasa Perangkat Lunak',
-                            ] as $prodi)
+                            @foreach($prodis as $prodi)
                             <option value="{{ $prodi }}">{{ $prodi }}</option>
                             @endforeach
                         </select>

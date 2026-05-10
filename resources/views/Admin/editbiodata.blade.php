@@ -80,12 +80,12 @@
 
             <div class="bg-white rounded-[24px] p-6 shadow-sm border border-slate-100">
                 <div class="flex flex-col md:flex-row justify-between gap-4 mb-6">
-                    <div class="relative w-full max-w-sm">
+                    <form method="GET" action="{{ route('admin.editbiodata') }}" class="relative w-full max-w-sm">
                         <span class="absolute inset-y-0 left-4 flex items-center text-slate-400">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                         </span>
-                        <input type="text" x-model="search" placeholder="Cari alumni..." class="block w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 outline-none transition-all">
-                    </div>
+                        <input type="text" name="search" value="{{ $search }}" placeholder="Cari nama atau NIM..." class="block w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                    </form>
                 </div>
 
                 <div class="overflow-hidden rounded-xl border border-slate-100">
@@ -99,27 +99,41 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
+                            @forelse($alumni as $item)
                             <tr class="hover:bg-slate-50/50 transition-all group text-xs">
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
-                                        <div class="h-9 w-9 rounded-full bg-blue-100 flex items-center justify-center font-bold text-blue-600">AR</div>
+                                        <div class="h-9 w-9 rounded-full bg-blue-100 flex items-center justify-center font-bold text-blue-600 text-xs shrink-0">
+                                            {{ strtoupper(substr($item->nama, 0, 2)) }}
+                                        </div>
                                         <div>
-                                            <p class="font-bold text-slate-700">Ahmad Ridwan</p>
-                                            <p class="text-[10px] text-slate-400 uppercase font-medium">E31192033</p>
+                                            <p class="font-bold text-slate-700">{{ $item->nama }}</p>
+                                            <p class="text-[10px] text-slate-400 uppercase font-medium">{{ $item->nim }}</p>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 text-center text-slate-500 font-semibold">2023</td>
-                                <td class="px-6 py-4 text-center text-slate-500 font-semibold">Teknik Informatika</td>
+                                <td class="px-6 py-4 text-center text-slate-500 font-semibold">
+                                    {{ $item->tahun_lulus ? \Carbon\Carbon::parse($item->tahun_lulus)->format('Y') : '—' }}
+                                </td>
+                                <td class="px-6 py-4 text-center text-slate-500 font-semibold">{{ $item->prodi ?? '—' }}</td>
                                 <td class="px-6 py-4 text-center">
-                                    <a href="{{ route('admin.biodata') }}" 
-                                       class="inline-block px-6 py-1.5 bg-blue-50 text-blue-600 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition-all shadow-sm">
+                                    <a href="{{ route('admin.biodata', $item->nim) }}"
+                                       class="inline-block px-6 py-1.5 bg-blue-50 text-blue-600 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition-all shadow-sm text-xs">
                                         Edit
                                     </a>
                                 </td>
                             </tr>
+                            @empty
+                            <tr>
+                                <td colspan="4" class="px-6 py-10 text-center text-slate-400 text-xs">Belum ada data alumni.</td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
+                </div>
+
+                <div class="mt-4">
+                    {{ $alumni->links() }}
                 </div>
             </div>
         </main>

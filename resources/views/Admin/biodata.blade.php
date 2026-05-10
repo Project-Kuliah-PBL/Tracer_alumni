@@ -73,15 +73,21 @@
             <div class="mb-8 flex justify-between items-end">
                 <div>
                     <nav class="flex items-center gap-2 text-slate-400 text-[10px] uppercase font-black tracking-widest mb-2">
-                        <span class="text-slate-600">Profil Alumni</span>
+                        <a href="{{ route('admin.editbiodata') }}" class="hover:text-blue-600 transition-colors">Edit Biodata</a>
+                        <span>›</span>
+                        <span class="text-slate-600">{{ $alumni->nama }}</span>
                     </nav>
                     <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Detail Biodata</h1>
+                    <p class="text-slate-500 text-sm mt-1">NIM: {{ $alumni->nim }} · {{ $alumni->prodi ?? '—' }}</p>
                 </div>
-                <div class="flex gap-3">
-                    <a href="{{ route('admin.editbiodata') }}" class="px-8 py-3.5 bg-white border border-slate-200 text-slate-500 rounded-2xl font-bold text-xs hover:bg-slate-50 transition-all shadow-sm">Batalkan</a>
-                    <button type="button" class="px-8 py-3.5 bg-[#074799] text-white rounded-2xl font-bold text-xs shadow-lg hover:bg-blue-900 transition-all">Simpan Perubahan</button>
-                </div>
+                <a href="{{ route('admin.editbiodata') }}" class="px-8 py-3.5 bg-white border border-slate-200 text-slate-500 rounded-2xl font-bold text-xs hover:bg-slate-50 transition-all shadow-sm">Kembali</a>
             </div>
+
+            @if(session('success'))
+            <div class="mb-6 px-4 py-3 bg-green-50 border border-green-100 text-green-700 rounded-xl text-xs font-semibold">
+                {{ session('success') }}
+            </div>
+            @endif
 
             <div class="bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden mb-8">
                 <div class="px-8 py-5 border-b border-slate-50 flex justify-between items-center bg-slate-50/20">
@@ -95,6 +101,7 @@
                 </div>
 
                 <div class="p-8 space-y-10">
+                    @forelse($alumni->pekerjaan as $pek)
                     <div class="flex gap-6 items-start group">
                         <div class="h-14 w-14 bg-slate-100 rounded-2xl flex items-center justify-center shrink-0 border border-slate-50">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-[#074799]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -104,18 +111,32 @@
                         <div class="flex-1 min-w-0">
                             <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-1">
                                 <div>
-                                    <h4 class="text-xl font-bold text-slate-900 tracking-tight">Senior Software Engineer</h4>
+                                    <h4 class="text-xl font-bold text-slate-900 tracking-tight">{{ $pek->jobdesk ?? 'Posisi tidak diisi' }}</h4>
                                     <div class="flex items-center gap-2 mt-1">
-                                        <span class="text-[#074799] font-bold text-sm">Gojek Indonesia</span>
+                                        <span class="text-[#074799] font-bold text-sm">{{ $pek->nama_perusahaan }}</span>
                                         <span class="text-slate-300">•</span>
-                                        <span class="text-slate-500 text-sm">Jan 2021 - Sekarang</span>
+                                        <span class="text-slate-500 text-sm">
+                                            {{ $pek->tahun_masuk ? \Carbon\Carbon::parse($pek->tahun_masuk)->format('M Y') : '—' }}
+                                            –
+                                            {{ $pek->tahun_selesai ? \Carbon\Carbon::parse($pek->tahun_selesai)->format('M Y') : 'Sekarang' }}
+                                        </span>
                                     </div>
+                                    <span class="inline-block mt-1 text-[10px] font-bold bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">{{ $pek->status_pekerjaan }}</span>
                                 </div>
-                                <div class="text-slate-400 text-[10px] font-black uppercase tracking-widest mt-2 md:mt-0">📍 Jakarta (Hybrid)</div>
+                                <form action="{{ route('admin.biodata.pekerjaan.destroy', [$alumni->nim, $pek->id]) }}" method="POST"
+                                    onsubmit="return confirm('Hapus pekerjaan ini?')">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="text-red-400 hover:text-red-600 text-xs font-bold mt-2 md:mt-0">Hapus</button>
+                                </form>
                             </div>
-                            <p class="mt-4 text-slate-600 text-sm leading-relaxed max-w-3xl">Memimpin pengembangan arsitektur sistem pembayaran skala besar.</p>
+                            @if($pek->deskripsi)
+                            <p class="mt-4 text-slate-600 text-sm leading-relaxed max-w-3xl">{{ $pek->deskripsi }}</p>
+                            @endif
                         </div>
                     </div>
+                    @empty
+                    <p class="text-slate-400 text-sm text-center py-4">Belum ada data pekerjaan.</p>
+                    @endforelse
                 </div>
             </div>
                         
@@ -131,6 +152,7 @@
                 </div>
 
                 <div class="p-8 space-y-10">
+                    @forelse($alumni->riwayatPendidikan as $edu)
                     <div class="flex gap-6 items-start">
                         <div class="h-14 w-14 bg-slate-100 rounded-2xl flex items-center justify-center shrink-0 border border-slate-50">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-[#074799]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -139,14 +161,35 @@
                             </svg>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <h4 class="text-xl font-bold text-slate-800 tracking-tight">Magister Ilmu Komputer</h4>
-                            <p class="text-[#074799] font-bold text-base mt-0.5">Universitas Indonesia</p>
-                            <div class="mt-4 inline-flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-full border border-slate-200">
-                                <span class="text-slate-500 text-[10px] font-bold uppercase">IPK:</span>
-                                <span class="text-slate-800 text-xs font-black">3.92/4.00</span>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="text-xl font-bold text-slate-800 tracking-tight">{{ $edu->jenjang_pendidikan }} - {{ $edu->jurusan ?? '—' }}</h4>
+                                    <p class="text-[#074799] font-bold text-base mt-0.5">{{ $edu->nama_instansi }}</p>
+                                    <p class="text-slate-500 text-sm mt-1">
+                                        {{ $edu->tahun_masuk ? \Carbon\Carbon::parse($edu->tahun_masuk)->format('Y') : '—' }}
+                                        – {{ $edu->tahun_keluar ? \Carbon\Carbon::parse($edu->tahun_keluar)->format('Y') : 'Sekarang' }}
+                                    </p>
+                                    @if($edu->nilai_akhir)
+                                    <div class="mt-3 inline-flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-full border border-slate-200">
+                                        <span class="text-slate-500 text-[10px] font-bold uppercase">IPK:</span>
+                                        <span class="text-slate-800 text-xs font-black">{{ number_format($edu->nilai_akhir, 2) }}/4.00</span>
+                                    </div>
+                                    @endif
+                                    @if($edu->judul_skripsi)
+                                    <p class="text-slate-500 text-xs mt-2 italic">📄 {{ $edu->judul_skripsi }}</p>
+                                    @endif
+                                </div>
+                                <form action="{{ route('admin.biodata.pendidikan.destroy', [$alumni->nim, $edu->id]) }}" method="POST"
+                                    onsubmit="return confirm('Hapus riwayat pendidikan ini?')">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="text-red-400 hover:text-red-600 text-xs font-bold">Hapus</button>
+                                </form>
                             </div>
                         </div>
                     </div>
+                    @empty
+                    <p class="text-slate-400 text-sm text-center py-4">Belum ada riwayat pendidikan.</p>
+                    @endforelse
                 </div>
             </div>
         </main>
@@ -168,15 +211,17 @@
             </button>
         </div>
 
+        <form action="{{ route('admin.biodata.pekerjaan.store', $alumni->nim) }}" method="POST">
+        @csrf
         <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto custom-scroll">
             <div>
                 <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Jabatan / Posisi</label>
-                <input type="text" placeholder="Contoh: Senior Software Engineer" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-[#074799] outline-none transition-all">
+                <input type="text" name="jobdesk" placeholder="Contoh: Senior Software Engineer" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-[#074799] outline-none transition-all">
             </div>
 
             <div>
                 <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Nama Perusahaan</label>
-                <input type="text" placeholder="Contoh: Gojek Indonesia" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:border-[#074799] outline-none">
+                <input type="text" name="nama_perusahaan" placeholder="Contoh: Gojek Indonesia" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:border-[#074799] outline-none">
             </div>
 
             <div class="grid grid-cols-2 gap-4">
@@ -186,7 +231,7 @@
                 </div>
                 <div>
                     <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Status Kerja</label>
-                    <select class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799] appearance-none">
+                    <select name="status_pekerjaan" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799] appearance-none">
                         <option>Pekerjaan Tetap</option>
                         <option>Kontrak</option>
                         <option>Freelance</option>
@@ -199,13 +244,13 @@
                 <div>
                     <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Tahun Mulai</label>
                     <div class="relative">
-                        <input type="month" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
+                        <input type="date" name="tahun_masuk" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
                     </div>
                 </div>
                 <div>
                     <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Tahun Selesai</label>
                     <div class="relative">
-                        <input type="month" 
+                        <input type="date" name="tahun_selesai"
                                :disabled="isCurrent"
                                :class="isCurrent ? 'bg-slate-100 text-slate-400' : 'bg-slate-50'"
                                class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
@@ -219,14 +264,15 @@
 
             <div>
                 <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Deskripsi Pekerjaan (Opsional)</label>
-                <textarea rows="3" placeholder="Ceritakan tanggung jawab dan pencapaian Anda..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799] resize-none"></textarea>
+                <textarea name="deskripsi" rows="3" placeholder="Ceritakan tanggung jawab dan pencapaian Anda..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799] resize-none"></textarea>
             </div>
         </div>
 
         <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
             <button @click="openModal = false" class="px-6 py-2.5 bg-white border border-slate-200 text-slate-500 rounded-xl font-bold text-xs hover:bg-slate-100 transition-all shadow-sm">Batal</button>
-            <button @click="openModal = false" class="px-6 py-2.5 bg-[#074799] text-white rounded-xl font-bold text-xs hover:bg-blue-900 transition-all shadow-md">Simpan Pekerjaan</button>
+            <button type="submit" class="px-6 py-2.5 bg-[#074799] text-white rounded-xl font-bold text-xs hover:bg-blue-900 transition-all shadow-md">Simpan Pekerjaan</button>
         </div>
+        </form>
     </div>
 </div>
     <div x-show="openEduModal" 
@@ -246,20 +292,33 @@
                 </button>
             </div>
 
+            <form action="{{ route('admin.biodata.pendidikan.store', $alumni->nim) }}" method="POST">
+            @csrf
             <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto custom-scroll">
                 <div>
                     <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Nama Institusi / Universitas</label>
-                    <input type="text" placeholder="Contoh: Politeknik Negeri Jember" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-[#074799] outline-none transition-all placeholder:text-slate-300">
+                    <input type="text" name="nama_instansi" placeholder="Contoh: Politeknik Negeri Jember" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-[#074799] outline-none transition-all placeholder:text-slate-300">
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Jenjang</label>
-                        <input type="text" placeholder="S1, D4, Magister" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
+                        <select name="jenjang_pendidikan" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799] appearance-none">
+                            <option>SD</option>
+                            <option>SMP</option>
+                            <option>SMA/SMK</option>
+                            <option>D1</option>
+                            <option>D2</option>
+                            <option>D3</option>
+                            <option>D4</option>
+                            <option>S1</option>
+                            <option>S2</option>
+                            <option>S3</option>
+                        </select>
                     </div>
                     <div>
                         <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Jurusan / Prodi</label>
-                        <input type="text" placeholder="Teknik Informatika" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
+                        <input type="text" name="jurusan" placeholder="Teknik Informatika" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
                     </div>
                 </div>
 
@@ -267,14 +326,14 @@
                     <div>
                         <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Tahun Mulai</label>
                         <div class="relative">
-                            <input type="text" placeholder="YYYY" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
+                            <input type="date" name="tahun_masuk" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
                             <svg class="w-4 h-4 absolute right-4 top-3.5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                         </div>
                     </div>
                     <div>
                         <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Tahun Lulus</label>
                         <div class="relative">
-                            <input type="text" placeholder="YYYY" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
+                            <input type="date" name="tahun_keluar" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
                             <svg class="w-4 h-4 absolute right-4 top-3.5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                         </div>
                     </div>
@@ -282,19 +341,20 @@
 
                 <div>
                     <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Nilai Akhir / IPK</label>
-                    <input type="text" placeholder="Contoh: 3.85 / 4.00" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-[#074799] outline-none">
+                    <input type="number" name="nilai_akhir" step="0.01" min="0" max="4" placeholder="Contoh: 3.85 / 4.00" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-[#074799] outline-none">
                 </div>
 
                 <div>
                     <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Judul Skripsi / Tugas Akhir (Opsional)</label>
-                    <textarea rows="3" placeholder="Masukkan judul skripsi Anda..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799] resize-none"></textarea>
+                    <textarea name="judul_skripsi" rows="3" placeholder="Masukkan judul skripsi Anda..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799] resize-none"></textarea>
                 </div>
             </div>
 
             <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
                 <button @click="openEduModal = false" class="px-6 py-2.5 bg-white border border-slate-200 text-slate-500 rounded-xl font-bold text-xs hover:bg-slate-100 transition-all shadow-sm">Batal</button>
-                <button @click="openEduModal = false" class="px-6 py-2.5 bg-[#074799] text-white rounded-xl font-bold text-xs hover:bg-blue-900 transition-all shadow-md">Simpan Pendidikan</button>
+                <button type="submit" class="px-6 py-2.5 bg-[#074799] text-white rounded-xl font-bold text-xs hover:bg-blue-900 transition-all shadow-md">Simpan Pendidikan</button>
             </div>
+            </form>
         </div>
     </div>
 
