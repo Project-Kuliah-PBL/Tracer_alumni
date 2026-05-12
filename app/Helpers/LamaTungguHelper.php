@@ -16,7 +16,7 @@ class LamaTungguHelper
     public static function hitung(string $nim): void
     {
         $alumni = DataAlumni::where('nim', $nim)->first();
-        if (!$alumni || !$alumni->tahun_lulus) return;
+        if (!$alumni) return;
 
         // Ambil pekerjaan dengan tahun_masuk paling awal
         $pekerjaanPertama = DataPekerjaan::where('nim', $nim)
@@ -26,11 +26,22 @@ class LamaTungguHelper
 
         if (!$pekerjaanPertama) return;
 
-        $lulus = Carbon::parse($alumni->tahun_lulus)->startOfDay();
         $masuk = Carbon::parse($pekerjaanPertama->tahun_masuk)->startOfDay();
 
-        // Hanya hitung jika masuk kerja setelah atau sama dengan lulus
-        if ($masuk->lt($lulus)) return;
+        // Gunakan tahun_lulus jika ada, fallback ke tahun_masuk pekerjaan - tidak bisa hitung
+        if (!$alumni->tahun_lulus) {
+            // Tidak bisa hitung tanpa tanggal lulus
+            return;
+        }
+
+        $lulus = Carbon::parse($alumni->tahun_lulus)->startOfDay();
+
+        // Jika masuk kerja sebelum lulus, set 0 (langsung kerja)
+        if ($masuk->lt($lulus)) {
+            $alumni->lama_tunggu_kerja = 'Kurang dari 1 Bulan';
+            $alumni->save();
+            return;
+        }
 
         $bulan = (int) $lulus->diffInMonths($masuk);
 

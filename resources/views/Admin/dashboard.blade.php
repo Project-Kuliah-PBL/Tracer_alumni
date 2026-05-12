@@ -144,9 +144,44 @@
 
     {{-- Grafik 3: Masa Kerja Rata-Rata per Angkatan --}}
     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 md:p-6 flex flex-col">
-        <div class="border-l-4 border-violet-500 pl-4 mb-4">
-            <h3 class="font-extrabold text-slate-800 text-base md:text-lg">Masa Kerja Rata-Rata</h3>
-            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Rata-rata durasi kerja per angkatan (tahun)</p>
+        <div class="flex items-start justify-between mb-4 gap-4 flex-wrap">
+            <div class="border-l-4 border-blue-600 pl-4">
+                <h3 class="font-extrabold text-slate-800 text-base md:text-lg">Masa Kerja Rata-Rata</h3>
+                <p class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Rata-rata durasi kerja per angkatan (tahun)</p>
+            </div>
+            @if(!empty($masaKerjaLabels))
+            {{-- Custom dropdown multi-select --}}
+            <div class="relative" id="dropdownWrapper">
+                {{-- Trigger button --}}
+                <button onclick="toggleDropdown()" type="button"
+                    class="flex items-center gap-2 text-xs font-bold text-slate-600 border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:border-[#0067B1] transition-all min-w-[160px] justify-between">
+                    <span id="dropdownLabel">3 Angkatan Terakhir</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+
+                {{-- Dropdown panel --}}
+                <div id="dropdownPanel"
+                    class="hidden absolute right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg z-50 p-2 min-w-[180px]">
+                    <div class="space-y-1">
+                        @foreach($masaKerjaLabels as $label)
+                        <label class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-50 cursor-pointer">
+                            <input type="checkbox" class="filter-angkatan accent-[#0067B1] w-3.5 h-3.5"
+                                value="{{ $label }}" onchange="updateMasaKerjaChart()">
+                            <span class="text-xs font-semibold text-slate-700">{{ $label }}</span>
+                        </label>
+                        @endforeach
+                    </div>
+                    <div class="border-t border-slate-100 mt-2 pt-2">
+                        <button onclick="resetFilter()" type="button"
+                            class="w-full text-[10px] font-bold text-slate-400 hover:text-blue-600 transition-all text-center py-1">
+                            Reset ke 3 Terakhir
+                        </button>
+                    </div>
+                </div>
+            </div>
+            @endif
         </div>
         @if(empty($masaKerjaLabels))
             <p class="text-slate-400 text-xs text-center py-10">Belum ada data pekerjaan.</p>
@@ -189,30 +224,53 @@
                 legend: { display: false },
                 tooltip: {
                     callbacks: {
-                        label: ctx => ` ${ctx.parsed.y} alumni`
+                        label: ctx => ` ${ctx.parsed.y} Alumni`
                     }
                 }
             },
             scales: {
                 x: { grid: { display: false }, ticks: { font: { size: 11, weight: '700' } } },
-                y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 }, stepSize: 1 } }
+                y: {
+                    beginAtZero: true,
+                    grid: { color: '#f1f5f9' },
+                    ticks: {
+                        font: { size: 11 },
+                        stepSize: 1,
+                        callback: val => val + ' Alumni'
+                    }
+                }
             }
         }
     });
 
     // ── 3. Masa Kerja Rata-Rata per Angkatan ──────────────────────
     @if(!empty($masaKerjaLabels))
-    new Chart(document.getElementById('chartMasaKerja'), {
+    const allMasaKerjaLabels = {!! json_encode($masaKerjaLabels) !!};
+    const allMasaKerjaData   = {!! json_encode($masaKerjaData) !!};
+
+    // Default: tampilkan 3 angkatan terakhir
+    function getDefaultLabels() {
+        return allMasaKerjaLabels.slice(-3);
+    }
+
+    function getFilteredData(labels) {
+        return labels.map(label => {
+            const idx = allMasaKerjaLabels.indexOf(label);
+            return idx !== -1 ? allMasaKerjaData[idx] : 0;
+        });
+    }
+
+    const masaKerjaChart = new Chart(document.getElementById('chartMasaKerja'), {
         type: 'line',
         data: {
-            labels: {!! json_encode($masaKerjaLabels) !!},
+            labels: getDefaultLabels(),
             datasets: [{
                 label: 'Rata-rata (tahun)',
-                data: {!! json_encode($masaKerjaData) !!},
-                borderColor: 'rgba(139, 92, 246, 0.9)',
-                backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                data: getFilteredData(getDefaultLabels()),
+                borderColor: 'rgba(0, 103, 177, 0.9)',
+                backgroundColor: 'rgba(0, 103, 177, 0.1)',
                 borderWidth: 2.5,
-                pointBackgroundColor: 'rgba(139, 92, 246, 1)',
+                pointBackgroundColor: 'rgba(0, 103, 177, 1)',
                 pointRadius: 5,
                 pointHoverRadius: 7,
                 fill: true,
@@ -226,7 +284,7 @@
                 legend: { display: false },
                 tooltip: {
                     callbacks: {
-                        label: ctx => ` ${ctx.parsed.y} tahun`
+                        label: ctx => ` ${ctx.parsed.y} Tahun`
                     }
                 }
             },
@@ -237,12 +295,54 @@
                     grid: { color: '#f1f5f9' },
                     ticks: {
                         font: { size: 11 },
-                        callback: val => val + ' thn'
+                        callback: val => val + ' Thn'
                     }
                 }
             }
         }
     });
+
+    function toggleDropdown() {
+        document.getElementById('dropdownPanel').classList.toggle('hidden');
+    }
+
+    // Tutup dropdown jika klik di luar
+    document.addEventListener('click', function(e) {
+        const wrapper = document.getElementById('dropdownWrapper');
+        if (wrapper && !wrapper.contains(e.target)) {
+            document.getElementById('dropdownPanel').classList.add('hidden');
+        }
+    });
+
+    function updateMasaKerjaChart() {
+        const checked = [...document.querySelectorAll('.filter-angkatan:checked')]
+            .map(cb => cb.value);
+
+        // Update label tombol
+        const label = document.getElementById('dropdownLabel');
+        if (checked.length === 0) {
+            label.textContent = '3 Angkatan Terakhir';
+        } else if (checked.length === 1) {
+            label.textContent = checked[0];
+        } else {
+            label.textContent = checked.length + ' Angkatan';
+        }
+
+        // Jika tidak ada yang dicentang, tampilkan 3 terakhir
+        const activeLabels = checked.length > 0
+            ? allMasaKerjaLabels.filter(l => checked.includes(l))
+            : getDefaultLabels();
+
+        masaKerjaChart.data.labels = activeLabels;
+        masaKerjaChart.data.datasets[0].data = getFilteredData(activeLabels);
+        masaKerjaChart.update();
+    }
+
+    function resetFilter() {
+        document.querySelectorAll('.filter-angkatan').forEach(cb => cb.checked = false);
+        updateMasaKerjaChart();
+        document.getElementById('dropdownPanel').classList.add('hidden');
+    }
     @endif
 </script>
 

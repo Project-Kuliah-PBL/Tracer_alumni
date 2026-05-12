@@ -6,12 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\DataAlumni;
 use App\Models\DataPekerjaan;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
     public function index()
     {
         // ── Card statistik ──────────────────────────────────────────
+
         $totalAlumni = DataAlumni::count();
 
         $terserapKerja = DataAlumni::whereNotNull('jabatan_sekarang')
@@ -22,33 +24,38 @@ class DashboardController extends Controller
             ? round(($terserapKerja / $totalAlumni) * 100, 1)
             : 0;
 
-        // ── Grafik pertumbuhan alumni per tahun lulus ────────────────
-        $grafikRaw = DataAlumni::whereNotNull('tahun_lulus')
-            ->select(DB::raw('YEAR(tahun_lulus) as tahun'), DB::raw('COUNT(*) as jumlah'))
-            ->groupBy('tahun')
-            ->orderBy('tahun', 'asc')
+        // ── Grafik pertumbuhan alumni per angkatan ─────────────────
+
+        $grafikRaw = DataAlumni::whereNotNull('angkatan')
+            ->select(
+                'angkatan as tahun',
+                DB::raw('COUNT(*) as jumlah')
+            )
+            ->groupBy('angkatan')
+            ->orderBy('angkatan', 'asc')
             ->get()
             ->keyBy('tahun');
 
-        $tahunSekarang = now()->year;
         $grafik = collect();
 
         if ($grafikRaw->isNotEmpty()) {
-            $tahunMin = $grafikRaw->keys()->min();
-        } else {
-            $tahunMin = $tahunSekarang;
+
+            $tahunMin = (int) $grafikRaw->keys()->min();
+            $tahunMax = (int) $grafikRaw->keys()->max();
+
+            for ($tahun = $tahunMin; $tahun <= $tahunMax; $tahun++) {
+
+                $grafik->push((object)[
+                    'tahun'  => $tahun,
+                    'jumlah' => $grafikRaw->has($tahun)
+                        ? $grafikRaw[$tahun]->jumlah
+                        : 0,
+                ]);
+            }
         }
 
-        for ($tahun = $tahunMin; $tahun <= $tahunSekarang; $tahun++) {
-            $grafik->push((object)[
-                'tahun'  => $tahun,
-                'jumlah' => $grafikRaw->has($tahun) ? $grafikRaw[$tahun]->jumlah : 0,
-            ]);
-        }
+        // ── Grafik masa tunggu kerja ───────────────────────────────
 
-        // ── Grafik masa tunggu kerja (kategorisasi dari lama_tunggu_kerja) ──
-        // lama_tunggu_kerja disimpan sebagai string, contoh: "3 Bulan", "1 Tahun", "18 Bulan"
-        // Konversi ke bulan lalu kategorikan
         $alumniDenganTunggu = DataAlumni::whereNotNull('lama_tunggu_kerja')
             ->where('lama_tunggu_kerja', '!=', '')
             ->get(['lama_tunggu_kerja']);
@@ -58,65 +65,111 @@ class DashboardController extends Controller
         $lebihDuaTahun   = 0;
 
         foreach ($alumniDenganTunggu as $a) {
-            $bulan = $this->parseLamaTungguKeBulan($a->lama_tunggu_kerja);
-            if ($bulan === null) continue;
+
+            $bulan = $this->parseLamaTungguKeBulan(
+                $a->lama_tunggu_kerja
+            );
+
+            if ($bulan === null) {
+                continue;
+            }
 
             if ($bulan < 12) {
+
                 $kurangSatuTahun++;
+
             } elseif ($bulan <= 24) {
+
                 $satuDuaTahun++;
+
             } else {
+
                 $lebihDuaTahun++;
             }
         }
 
         $masaTunggu = collect([
-            (object)['label' => '< 1 Tahun',   'jumlah' => $kurangSatuTahun],
-            (object)['label' => '1 - 2 Tahun', 'jumlah' => $satuDuaTahun],
-            (object)['label' => '> 2 Tahun',   'jumlah' => $lebihDuaTahun],
+            (object)[
+                'label'  => '< 1 Tahun',
+                'jumlah' => $kurangSatuTahun
+            ],
+            (object)[
+                'label'  => '1 - 2 Tahun',
+                'jumlah' => $satuDuaTahun
+            ],
+            (object)[
+                'label'  => '> 2 Tahun',
+                'jumlah' => $lebihDuaTahun
+            ],
         ]);
 
-        // ── Grafik masa kerja rata-rata per angkatan ─────────────────
-        // Ambil semua pekerjaan yang punya tahun_masuk
-        // Hitung durasi kerja tiap pekerjaan (dalam tahun)
-        // Rata-rata per angkatan (tahun_lulus alumni)
-        $pekerjaanData = DataPekerjaan::whereNotNull('tahun_masuk')
-            ->join('data_alumni', 'data_pekerjaan.nim', '=', 'data_alumni.nim')
-            ->whereNotNull('data_alumni.tahun_lulus')
+        // ── Grafik masa kerja rata-rata per angkatan ──────────────
+
+        $pekerjaanData = DataPekerjaan::join(
+                'data_alumni',
+                'data_pekerjaan.nim',
+                '=',
+                'data_alumni.nim'
+            )
+            ->whereNotNull('data_alumni.angkatan')
+            ->whereNotNull('data_pekerjaan.tahun_masuk')
             ->select(
-                DB::raw('YEAR(data_alumni.tahun_lulus) as angkatan'),
+                'data_alumni.angkatan',
                 'data_pekerjaan.tahun_masuk',
                 'data_pekerjaan.tahun_selesai'
             )
             ->get();
 
-        // Hitung durasi per pekerjaan lalu rata-rata per angkatan
         $durasiPerAngkatan = [];
-        foreach ($pekerjaanData as $p) {
-            $mulai   = \Carbon\Carbon::parse($p->tahun_masuk);
-            $selesai = $p->tahun_selesai ? \Carbon\Carbon::parse($p->tahun_selesai) : now();
-            $durasi  = $mulai->diffInMonths($selesai) / 12; // dalam tahun
 
-            $angkatan = $p->angkatan;
+        foreach ($pekerjaanData as $p) {
+
+            $mulai = Carbon::parse($p->tahun_masuk);
+
+            $selesai = $p->tahun_selesai
+                ? Carbon::parse($p->tahun_selesai)
+                : now();
+
+            // Lama kerja dalam bulan
+            $durasi = $mulai->diffInMonths($selesai);
+
+            $angkatan = (int) $p->angkatan;
+
             if (!isset($durasiPerAngkatan[$angkatan])) {
                 $durasiPerAngkatan[$angkatan] = [];
             }
+
             $durasiPerAngkatan[$angkatan][] = $durasi;
         }
 
-        // Rata-rata per angkatan, isi 0 untuk angkatan tanpa data
         $masaKerjaLabels = [];
         $masaKerjaData   = [];
 
         if (!empty($durasiPerAngkatan)) {
+
+            ksort($durasiPerAngkatan);
+
             $angkatanMin = min(array_keys($durasiPerAngkatan));
             $angkatanMax = max(array_keys($durasiPerAngkatan));
 
-            for ($y = $angkatanMin; $y <= $angkatanMax; $y++) {
-                $masaKerjaLabels[] = (string) $y;
-                if (isset($durasiPerAngkatan[$y]) && count($durasiPerAngkatan[$y]) > 0) {
-                    $masaKerjaData[] = round(array_sum($durasiPerAngkatan[$y]) / count($durasiPerAngkatan[$y]), 2);
+            for ($tahun = $angkatanMin; $tahun <= $angkatanMax; $tahun++) {
+
+                $masaKerjaLabels[] = 'Angkatan ' . $tahun;
+
+                if (
+                    isset($durasiPerAngkatan[$tahun]) &&
+                    count($durasiPerAngkatan[$tahun]) > 0
+                ) {
+
+                    $rataRata = array_sum(
+                        $durasiPerAngkatan[$tahun]
+                    ) / count($durasiPerAngkatan[$tahun]);
+
+                    // Convert bulan → tahun
+                    $masaKerjaData[] = round($rataRata / 12, 1);
+
                 } else {
+
                     $masaKerjaData[] = 0;
                 }
             }
@@ -138,23 +191,50 @@ class DashboardController extends Controller
     }
 
     /**
-     * Parse string lama tunggu kerja ke satuan bulan.
-     * Contoh: "3 Bulan" → 3, "1 Tahun" → 12, "18 Bulan" → 18, "1.5 Tahun" → 18
+     * Parse lama tunggu kerja ke bulan.
+     * Contoh:
+     * "3 Bulan" => 3
+     * "1 Tahun" => 12
+     * "1 Tahun 6 Bulan" => 18
      */
+
     private function parseLamaTungguKeBulan(string $str): ?int
     {
         $str = strtolower(trim($str));
 
-        // Coba cocokkan angka + satuan
-        if (preg_match('/(\d+\.?\d*)\s*(bulan|month)/i', $str, $m)) {
-            return (int) round((float) $m[1]);
+        $total = 0;
+        $found = false;
+
+        // Tahun
+        if (preg_match('/(\d+)\s*(tahun|year)/i', $str, $m)) {
+
+            $total += (int)$m[1] * 12;
+
+            $found = true;
         }
-        if (preg_match('/(\d+\.?\d*)\s*(tahun|year)/i', $str, $m)) {
-            return (int) round((float) $m[1] * 12);
+
+        // Bulan
+        if (preg_match('/(\d+)\s*(bulan|month)/i', $str, $m)) {
+
+            $total += (int)$m[1];
+
+            $found = true;
         }
-        // Hanya angka (asumsikan bulan)
+
+        if ($found) {
+            return $total;
+        }
+
+        // Hanya angka
         if (preg_match('/^(\d+)$/', $str, $m)) {
-            return (int) $m[1];
+
+            return (int)$m[1];
+        }
+
+        // Kurang dari 1 bulan
+        if (str_contains($str, 'kurang')) {
+
+            return 0;
         }
 
         return null;

@@ -8,7 +8,6 @@ use App\Models\DataAlumni;
 use App\Models\Prodi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
 
 class KelolaAkunController extends Controller
 {
@@ -33,28 +32,34 @@ class KelolaAkunController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nim'      => 'required|string|unique:users,username|unique:data_alumni,nim',
-            'nama'     => 'required|string|max:255',
-            'password' => 'nullable|string|min:6',
+            'nim'            => 'required|string|unique:users,username|unique:data_alumni,nim',
+            'nama'           => 'required|string|max:255',
+            'angkatan'       => 'nullable|string|max:10',
+            'password'       => 'nullable|string|min:6',
         ], [
-            'nim.required'  => 'NIM tidak boleh kosong.',
-            'nim.unique'    => 'NIM sudah terdaftar.',
-            'nama.required' => 'Nama tidak boleh kosong.',
-            'password.min'  => 'Password minimal 6 karakter.',
+            'nim.required'   => 'NIM tidak boleh kosong.',
+            'nim.unique'     => 'NIM sudah terdaftar.',
+            'nama.required'  => 'Nama tidak boleh kosong.',
+            'password.min'   => 'Password minimal 6 karakter.',
         ]);
 
         User::create([
             'username' => $request->nim,
-            'password' => Hash::make($request->filled('password') ? $request->password : $request->nim),
-            'role'     => 'Alumni',
+            'password' => Hash::make(
+                $request->filled('password')
+                    ? $request->password
+                    : $request->nim
+            ),
+            'role' => 'Alumni',
         ]);
 
         DataAlumni::create([
-            'nim'          => $request->nim,
-            'nama'         => $request->nama,
-            'prodi'        => $request->prodi,
-            'tahun_lulus'  => $request->tahun_lulus ?: null,
-            'jenis_kelamin'=> $request->jenis_kelamin,
+            'nim'            => $request->nim,
+            'nama'           => $request->nama,
+            'prodi'          => $request->prodi,
+            'angkatan'       => $request->angkatan,
+            'tahun_lulus'    => $request->tahun_lulus ?: null,
+            'jenis_kelamin'  => $request->jenis_kelamin,
         ]);
 
         return redirect()->route('admin.kelola_akun')
@@ -64,21 +69,22 @@ class KelolaAkunController extends Controller
     public function update(Request $request, string $nim)
     {
         $request->validate([
-            'nama'     => 'required|string|max:255',
-            'password' => 'nullable|string|min:6',
+            'nama'           => 'required|string|max:255',
+            'angkatan'       => 'nullable|string|max:10',
+            'password'       => 'nullable|string|min:6',
         ], [
-            'nama.required' => 'Nama tidak boleh kosong.',
-            'password.min'  => 'Password minimal 6 karakter.',
+            'nama.required'  => 'Nama tidak boleh kosong.',
+            'password.min'   => 'Password minimal 6 karakter.',
         ]);
 
         DataAlumni::where('nim', $nim)->update([
-            'nama'         => $request->nama,
-            'prodi'        => $request->prodi,
-            'tahun_lulus'  => $request->tahun_lulus ?: null,
-            'jenis_kelamin'=> $request->jenis_kelamin,
+            'nama'           => $request->nama,
+            'prodi'          => $request->prodi,
+            'angkatan'       => $request->angkatan,
+            'tahun_lulus'    => $request->tahun_lulus ?: null,
+            'jenis_kelamin'  => $request->jenis_kelamin,
         ]);
 
-        // Update password jika diisi
         if ($request->filled('password')) {
             User::where('username', $nim)->update([
                 'password' => Hash::make($request->password),
