@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DataAlumni;
 use App\Models\DataPekerjaan;
 use App\Models\RiwayatPendidikan;
+use App\Helpers\LamaTungguHelper;
 use Illuminate\Http\Request;
 
 class BiodataController extends Controller
@@ -38,6 +39,8 @@ class BiodataController extends Controller
             'jobdesk'          => 'required|string|max:255',
             'nama_perusahaan'  => 'required|string|max:255',
             'status_pekerjaan' => 'required|string',
+            'divisi'           => 'nullable|string|max:255',
+            'lokasi'           => 'nullable|string|max:255',
             'tahun_masuk'      => 'nullable|date',
             'tahun_selesai'    => 'nullable|date',
             'deskripsi'        => 'nullable|string',
@@ -48,10 +51,14 @@ class BiodataController extends Controller
             'jobdesk'          => $request->jobdesk,
             'nama_perusahaan'  => $request->nama_perusahaan,
             'status_pekerjaan' => $request->status_pekerjaan,
+            'divisi'           => $request->divisi,
+            'lokasi'           => $request->lokasi,
             'tahun_masuk'      => $request->tahun_masuk,
             'tahun_selesai'    => $request->tahun_selesai,
             'deskripsi'        => $request->deskripsi,
         ]);
+
+        LamaTungguHelper::hitung($nim);
 
         return redirect()->route('admin.biodata', $nim)->with('success', 'Pekerjaan berhasil ditambahkan.');
     }
@@ -60,6 +67,8 @@ class BiodataController extends Controller
     public function destroyPekerjaan(string $nim, int $id)
     {
         DataPekerjaan::where('id', $id)->where('nim', $nim)->delete();
+
+        LamaTungguHelper::hitung($nim);
 
         return redirect()->route('admin.biodata', $nim)->with('success', 'Pekerjaan berhasil dihapus.');
     }

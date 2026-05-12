@@ -102,7 +102,7 @@
                             <tr class="text-slate-400 text-[9px] font-black uppercase tracking-wider bg-slate-50/50">
                                 <th class="px-6 py-4">No</th>
                                 <th class="px-6 py-4">Nama Program Studi</th>
-                                <th class="px-6 py-4 text-center">Akreditasi</th>
+                                <th class="px-6 py-4 text-center">Kode NIM</th>
                                 <th class="px-6 py-4 text-center">Aksi</th>
                             </tr>
                         </thead>
@@ -112,18 +112,9 @@
                                 <td class="px-6 py-4 text-xs text-slate-400">{{ $i + 1 }}</td>
                                 <td class="px-6 py-4 text-xs font-bold text-slate-800">{{ $prodi->nama }}</td>
                                 <td class="px-6 py-4 text-center">
-                                    @if($prodi->akreditasi)
-                                        @php
-                                            $color = match($prodi->akreditasi) {
-                                                'Unggul' => 'bg-emerald-50 text-emerald-600 border border-emerald-100',
-                                                'A'      => 'bg-blue-50 text-blue-600 border border-blue-100',
-                                                'B'      => 'bg-indigo-50 text-indigo-600 border border-indigo-100',
-                                                'C'      => 'bg-orange-50 text-orange-500 border border-orange-100',
-                                                default  => 'bg-slate-50 text-slate-500 border border-slate-100',
-                                            };
-                                        @endphp
-                                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider {{ $color }}">
-                                            {{ $prodi->akreditasi }}
+                                    @if($prodi->kode_nim)
+                                        <span class="bg-blue-50 text-blue-700 border border-blue-100 px-3 py-1 rounded-full text-[10px] font-black tracking-wider">
+                                            {{ $prodi->kode_nim }}
                                         </span>
                                     @else
                                         <span class="text-slate-300 text-[10px]">—</span>
@@ -131,7 +122,7 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex justify-center items-center gap-1">
-                                        <button onclick="openEdit({{ $prodi->id }}, '{{ addslashes($prodi->nama) }}', '{{ $prodi->akreditasi }}')"
+                                        <button onclick="openEdit({{ $prodi->id }}, '{{ addslashes($prodi->nama) }}', '{{ $prodi->kode_nim }}')"
                                             class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-all" title="Edit">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -192,13 +183,12 @@
                         class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all">
 
                     <div class="mt-3">
-                        <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Akreditasi</label>
-                        <select name="akreditasi" class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all bg-white">
-                            <option value="">-- Pilih Akreditasi --</option>
-                            @foreach(['Unggul', 'A', 'B', 'C'] as $akr)
-                            <option value="{{ $akr }}" {{ old('akreditasi') == $akr ? 'selected' : '' }}>{{ $akr }}</option>
-                            @endforeach
-                        </select>
+                        <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Kode NIM</label>
+                        <input type="text" name="kode_nim" value="{{ old('kode_nim') }}"
+                            placeholder="Contoh: E, F, G (huruf awal NIM)"
+                            maxlength="20"
+                            class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all uppercase">
+                        <p class="text-[10px] text-gray-400 mt-1 ml-1">Kode ini digunakan untuk mencocokkan prodi saat import Excel.</p>
                     </div>
                 </div>
                 <div class="bg-gray-50/80 p-4 flex justify-end gap-2 border-t border-gray-100">
@@ -229,13 +219,12 @@
                         class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all">
 
                     <div class="mt-3">
-                        <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Akreditasi</label>
-                        <select name="akreditasi" id="editAkreditasi" class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all bg-white">
-                            <option value="">-- Pilih Akreditasi --</option>
-                            @foreach(['Unggul', 'A', 'B', 'C'] as $akr)
-                            <option value="{{ $akr }}">{{ $akr }}</option>
-                            @endforeach
-                        </select>
+                        <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Kode NIM</label>
+                        <input type="text" name="kode_nim" id="editKodeNim"
+                            placeholder="Contoh: E, F, G"
+                            maxlength="20"
+                            class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all uppercase">
+                        <p class="text-[10px] text-gray-400 mt-1 ml-1">Kode ini digunakan untuk mencocokkan prodi saat import Excel.</p>
                     </div>
                 </div>
                 <div class="bg-gray-50/80 p-4 flex justify-end gap-2 border-t border-gray-100">
@@ -251,9 +240,9 @@
             document.getElementById(id).classList.toggle('hidden');
         }
 
-        function openEdit(id, nama, akreditasi) {
+        function openEdit(id, nama, kodeNim) {
             document.getElementById('editNama').value = nama;
-            document.getElementById('editAkreditasi').value = akreditasi;
+            document.getElementById('editKodeNim').value = kodeNim;
             document.getElementById('formEdit').action = '/admin/kelola-prodi/' + id;
             toggleModal('modalEdit');
         }

@@ -18,16 +18,16 @@ class ProdiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama'        => 'required|string|max:255|unique:prodi,nama',
-            'akreditasi'  => 'nullable|string|max:50',
+            'nama'     => 'required|string|max:255|unique:prodi,nama',
+            'kode_nim' => 'nullable|string|max:20',
         ], [
             'nama.required' => 'Nama prodi tidak boleh kosong.',
             'nama.unique'   => 'Prodi sudah terdaftar.',
         ]);
 
         Prodi::create([
-            'nama'       => $request->nama,
-            'akreditasi' => $request->akreditasi,
+            'nama'     => $request->nama,
+            'kode_nim' => $request->kode_nim ? strtoupper(trim($request->kode_nim)) : null,
         ]);
 
         return redirect()->route('admin.prodi')->with('success', "Prodi \"{$request->nama}\" berhasil ditambahkan.");
@@ -36,16 +36,16 @@ class ProdiController extends Controller
     public function update(Request $request, Prodi $prodi)
     {
         $request->validate([
-            'nama'       => 'required|string|max:255|unique:prodi,nama,' . $prodi->id,
-            'akreditasi' => 'nullable|string|max:50',
+            'nama'     => 'required|string|max:255|unique:prodi,nama,' . $prodi->id,
+            'kode_nim' => 'nullable|string|max:20',
         ], [
             'nama.required' => 'Nama prodi tidak boleh kosong.',
             'nama.unique'   => 'Prodi sudah terdaftar.',
         ]);
 
         $prodi->update([
-            'nama'       => $request->nama,
-            'akreditasi' => $request->akreditasi,
+            'nama'     => $request->nama,
+            'kode_nim' => $request->kode_nim ? strtoupper(trim($request->kode_nim)) : null,
         ]);
 
         return redirect()->route('admin.prodi')->with('success', "Prodi berhasil diperbarui.");

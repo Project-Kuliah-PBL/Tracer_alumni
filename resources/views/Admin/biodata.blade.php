@@ -47,7 +47,7 @@
                     <span class="font-bold text-xs">Kelola Prodi</span>
                 </a>
 
-                <a href="/admin/edit-biodata-alumni" class="flex items-center gap-3 mx-3 px-4 py-3 rounded-xl bg-blue-50 text-blue-600 font-bold text-xs border-r-4 border-blue-600 transition-all"> 
+                <a href="/admin/edit-biodata" class="flex items-center gap-3 mx-3 px-4 py-3 rounded-xl bg-blue-50 text-blue-600 font-bold text-xs border-r-4 border-blue-600 transition-all"> 
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2M12 7v10m-7 4h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
@@ -226,18 +226,26 @@
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Lokasi</label>
-                    <input type="text" placeholder="Contoh: Jakarta (Hybrid)" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
+                    <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Divisi / Departemen</label>
+                    <input type="text" name="divisi" placeholder="Contoh: IT Development" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
                 </div>
                 <div>
-                    <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Status Kerja</label>
-                    <select name="status_pekerjaan" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799] appearance-none">
-                        <option>Pekerjaan Tetap</option>
-                        <option>Kontrak</option>
-                        <option>Freelance</option>
-                        <option>Magang (Internship)</option>
-                    </select>
+                    <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Lokasi</label>
+                    <input type="text" name="lokasi" placeholder="Contoh: Jakarta (Hybrid)" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
                 </div>
+            </div>
+
+            <div>
+                <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Status Kerja <span class="text-red-400">*</span></label>
+                <select name="status_pekerjaan" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
+                    <option value="">-- Pilih Status --</option>
+                    <option>Pekerjaan Tetap</option>
+                    <option>Kontrak</option>
+                    <option>Freelance</option>
+                    <option>Magang (Internship)</option>
+                    <option>Part Time</option>
+                    <option>Wirausaha</option>
+                </select>
             </div>
 
             <div class="grid grid-cols-2 gap-4" x-data="{ isCurrent: false }">

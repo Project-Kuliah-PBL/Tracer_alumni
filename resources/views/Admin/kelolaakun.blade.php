@@ -84,12 +84,20 @@
                     <h2 class="text-3xl font-[800] text-slate-800 mb-1 tracking-tight">Manajemen Akun</h2>
                     <p class="text-slate-500 text-xs font-medium opacity-80">Kelola data akses alumni Politeknik Negeri Jember.</p>
                 </div>
-                <button onclick="toggleModal('modalTambah')" class="bg-[#0067B1] text-white px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-2 hover:bg-blue-800 transition-all shadow-md">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                    </svg>
-                    Tambah Akun
-                </button>
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleModal('modalImport')" class="bg-emerald-600 text-white px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-2 hover:bg-emerald-700 transition-all shadow-md">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                        </svg>
+                        Import Excel
+                    </button>
+                    <button onclick="toggleModal('modalTambah')" class="bg-[#0067B1] text-white px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-2 hover:bg-blue-800 transition-all shadow-md">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                        </svg>
+                        Tambah Akun
+                    </button>
+                </div>
             </div>
 
             {{-- Card Total --}}
@@ -139,7 +147,7 @@
                                 <td class="px-6 py-4">
                                     @if($item->tahun_lulus)
                                         <span class="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full text-[10px] font-black">
-                                            {{ \Carbon\Carbon::parse($item->tahun_lulus)->format('Y') }}
+                                            {{ \Carbon\Carbon::parse($item->tahun_lulus)->format('d M Y') }}
                                         </span>
                                     @else
                                         <span class="text-slate-300 text-[10px]">—</span>
@@ -160,7 +168,7 @@
                                 <td class="px-6 py-4">
                                     <div class="flex justify-center items-center gap-1">
                                         {{-- Tombol Edit --}}
-                                        <button onclick="openEdit('{{ $item->nim }}', '{{ addslashes($item->nama) }}', '{{ $item->tahun_lulus ? \Carbon\Carbon::parse($item->tahun_lulus)->format('Y') : '' }}', '{{ $item->jenis_kelamin }}', '{{ addslashes($item->prodi ?? '') }}')"
+                                        <button onclick="openEdit('{{ $item->nim }}', '{{ addslashes($item->nama) }}', '{{ $item->tahun_lulus ? \Carbon\Carbon::parse($item->tahun_lulus)->format('Y-m-d') : '' }}', '{{ $item->jenis_kelamin }}', '{{ addslashes($item->prodi ?? '') }}')"
                                             class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-all" title="Edit">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -196,6 +204,70 @@
             </div>
 
         </main>
+    </div>
+
+    {{-- ===== MODAL IMPORT ===== --}}
+    <div id="modalImport" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div class="p-5 pb-0 flex justify-between items-start">
+                <div>
+                    <h2 class="text-emerald-600 text-lg font-bold tracking-tight">Import Data Alumni</h2>
+                    <p class="text-gray-500 text-[11px] mt-0.5">Upload file Excel (.xlsx/.xls/.csv) dari Google Form atau format lain.</p>
+                </div>
+                <button onclick="toggleModal('modalImport')" class="text-gray-400 hover:text-gray-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <hr class="mt-3 border-gray-100">
+
+            <form action="{{ route('admin.kelola_akun.import') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="p-5 space-y-4">
+
+                    {{-- Info --}}
+                    <div class="bg-blue-50 border border-blue-100 rounded-xl p-3 text-xs text-blue-700 space-y-1">
+                        <p class="font-bold">Kolom yang dikenali otomatis:</p>
+                        <ul class="list-disc list-inside space-y-0.5 text-blue-600">
+                            <li><strong>Nama - NIM</strong> atau kolom <strong>Nama</strong> + <strong>NIM</strong> terpisah</li>
+                            <li><strong>Tahun Yudisium / Tahun Lulus / Wisuda</strong> → tanggal lulus (d/m/Y)</li>
+                            <li><strong>Alamat Tempat Tinggal Tetap / Alamat / Domisili</strong></li>
+                            <li><strong>No. HP / Telepon / Nomor HP</strong></li>
+                            <li><strong>Email / Surel</strong></li>
+                            <li><strong>Jenis Kelamin / Gender</strong> (L/P/Laki-laki/Perempuan)</li>
+                            <li><strong>Prodi / Program Studi / Jurusan</strong></li>
+                            <li><strong>Status</strong> → "Sudah Bekerja" / "Belum Bekerja"</li>
+                            <li><strong>Nama Perusahaan / Company / Instansi</strong></li>
+                            <li><strong>Status Pekerjaan</strong> (Kontrak/Tetap/Magang/dll)</li>
+                            <li><strong>Divisi Pekerjaan / Divisi / Department</strong></li>
+                            <li><strong>Job Description / Deskripsi</strong></li>
+                            <li><strong>Tanggal Masuk / Mulai Kerja</strong> → untuk hitung lama tunggu</li>
+                        </ul>
+                        <div class="mt-2 pt-2 border-t border-blue-100 space-y-0.5">
+                            <p class="font-bold text-blue-700">Otomatis:</p>
+                            <p>• Angkatan dibaca dari NIM (E4121xxxx → 2021)</p>
+                            <p>• Prodi dicocokkan dari kode NIM (atur di Kelola Prodi)</p>
+                            <p>• Password default = NIM alumni</p>
+                            <p>• Lama tunggu kerja dihitung dari selisih tanggal lulus & tanggal masuk kerja pertama</p>
+                        </div>
+                    </div>
+
+                    {{-- Upload --}}
+                    <div>
+                        <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">File Excel / CSV</label>
+                        <input type="file" name="file" accept=".xlsx,.xls,.csv" required
+                            class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-none text-sm transition-all">
+                        <p class="text-[10px] text-gray-400 mt-1 ml-1">Format: .xlsx, .xls, .csv — Maks 10MB</p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50/80 p-4 flex justify-end gap-2 border-t border-gray-100">
+                    <button type="button" onclick="toggleModal('modalImport')" class="px-4 py-1.5 border border-gray-300 rounded-lg text-gray-600 text-xs font-bold hover:bg-white transition-all">Batal</button>
+                    <button type="submit" class="px-4 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-bold hover:bg-emerald-700 shadow-md transition-all">Import</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     {{-- ===== MODAL TAMBAH ===== --}}
@@ -235,7 +307,6 @@
                         <input type="text" name="nama" value="{{ old('nama') }}" placeholder="Nama lengkap alumni" required
                             class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all">
                     </div>
-                    
 
                     <div>
                         <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Password <span class="normal-case text-gray-300">(default: NIM)</span></label>
@@ -245,7 +316,7 @@
 
                     <div>
                         <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Tahun Lulus</label>
-                        <input type="number" name="tahun_lulus" value="{{ old('tahun_lulus') }}" placeholder="Contoh: 2023" min="2000" max="2099"
+                        <input type="date" name="tahun_lulus" value="{{ old('tahun_lulus') }}"
                             class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all">
                     </div>
 
@@ -324,7 +395,7 @@
 
                     <div>
                         <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Tahun Lulus</label>
-                        <input type="number" name="tahun_lulus" id="editTahunLulus" placeholder="Contoh: 2023" min="2000" max="2099"
+                        <input type="date" name="tahun_lulus" id="editTahunLulus"
                             class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all">
                     </div>
 

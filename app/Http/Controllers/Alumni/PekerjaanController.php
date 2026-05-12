@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Alumni;
 use App\Http\Controllers\Controller;
 use App\Models\DataPekerjaan;
 use App\Models\DataAlumni;
+use App\Helpers\LamaTungguHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -71,6 +72,8 @@ class PekerjaanController extends Controller
 
         DataPekerjaan::create($data);
 
+        LamaTungguHelper::hitung($nim);
+
         return redirect()->route('alumni.pekerjaan.index')
             ->with('success', 'Pengalaman kerja berhasil ditambahkan.');
     }
@@ -133,6 +136,8 @@ class PekerjaanController extends Controller
 
         $pekerjaan->update($data);
 
+        LamaTungguHelper::hitung($nim);
+
         return redirect()->route('alumni.pekerjaan.index')
             ->with('success', 'Pengalaman kerja berhasil diperbarui.');
     }
@@ -150,6 +155,8 @@ class PekerjaanController extends Controller
         }
 
         $pekerjaan->delete();
+
+        LamaTungguHelper::hitung($nim);
 
         return redirect()->route('alumni.pekerjaan.index')
             ->with('success', 'Pengalaman kerja berhasil dihapus.');

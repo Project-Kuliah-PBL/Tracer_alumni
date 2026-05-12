@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\KelolaAkunController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProdiController;
 use App\Http\Controllers\Admin\BiodataController;
+use App\Http\Controllers\Admin\ImportAlumniController;
 use App\Http\Controllers\Alumni\DashboardController as AlumniDashboardController;
 use App\Http\Controllers\Alumni\ProfilController;
 use App\Http\Controllers\Alumni\PekerjaanController;
@@ -55,6 +56,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/admin/kelola-akun',         [KelolaAkunController::class, 'store'])  ->name('admin.kelola_akun.store');
         Route::put('/admin/kelola-akun/{nim}',    [KelolaAkunController::class, 'update']) ->name('admin.kelola_akun.update');
         Route::delete('/admin/kelola-akun/{nim}', [KelolaAkunController::class, 'destroy'])->name('admin.kelola_akun.destroy');
+        Route::post('/admin/kelola-akun/import',  [ImportAlumniController::class, 'store'])->name('admin.kelola_akun.import');
 
         // Kelola Prodi
         Route::get('/admin/kelola-prodi',          [ProdiController::class, 'index'])  ->name('admin.prodi');

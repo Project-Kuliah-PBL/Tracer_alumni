@@ -49,7 +49,7 @@
                     <span class="font-bold text-xs">Kelola Prodi</span>
                 </a>
 
-                <a href="/admin/edit-biodata-alumni" class="flex items-center gap-3 mx-3 px-4 py-3 rounded-xl bg-blue-50 text-blue-600 font-bold text-xs border-r-4 border-blue-600 transition-all"> 
+                <a href="/admin/edit-biodata" class="flex items-center gap-3 mx-3 px-4 py-3 rounded-xl bg-blue-50 text-blue-600 font-bold text-xs border-r-4 border-blue-600 transition-all"> 
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2M12 7v10m-7 4h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
@@ -113,7 +113,7 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-center text-slate-500 font-semibold">
-                                    {{ $item->tahun_lulus ? \Carbon\Carbon::parse($item->tahun_lulus)->format('Y') : '—' }}
+                                    {{ $item->angkatan ?? '—' }}
                                 </td>
                                 <td class="px-6 py-4 text-center text-slate-500 font-semibold">{{ $item->prodi ?? '—' }}</td>
                                 <td class="px-6 py-4 text-center">
