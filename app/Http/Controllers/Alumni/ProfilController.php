@@ -116,9 +116,9 @@ class ProfilController extends Controller
             ])->with('error', 'Password saat ini salah.');
         }
 
-        $user->update([
-            'password' => Hash::make($request->password),
-        ]);
+        // Update password
+        $user->password = Hash::make($request->password);
+        $user->save();
 
         return redirect()->route('alumni.manajemen_akun')
             ->with('success', 'Password berhasil diperbarui. Silakan login kembali.');

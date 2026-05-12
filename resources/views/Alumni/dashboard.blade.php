@@ -383,9 +383,9 @@
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-slate-800 font-bold text-sm">Riwayat Pendidikan</h3>
                         <div class="flex gap-2">
-                            <a href="{{ route('alumni.pendidikan.create') }}" class="text-slate-400 hover:text-blue-500">
+                            <button onclick="openModalTambahPendidikan()" class="text-slate-400 hover:text-blue-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
-                            </a>
+                            </button>
                             <a href="{{ route('alumni.pendidikan.index') }}" class="text-slate-400 hover:text-blue-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                             </a>
@@ -410,7 +410,7 @@
                             </div>
                         </div>
                         @empty
-                        <p class="text-xs text-slate-400 text-center py-4">Belum ada riwayat pendidikan. <a href="{{ route('alumni.pendidikan.create') }}" class="text-blue-500">Tambah</a></p>
+                        <p class="text-xs text-slate-400 text-center py-4">Belum ada riwayat pendidikan. <button onclick="openModalTambahPendidikan()" class="text-blue-500 hover:underline">Tambah</button></p>
                         @endforelse
                     </div>
                 </div>
@@ -420,9 +420,9 @@
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-slate-800 font-bold text-sm">Pengalaman & Detail Pekerjaan</h3>
                         <div class="flex gap-2 text-slate-400">
-                            <a href="{{ route('alumni.pekerjaan.create') }}" class="hover:text-blue-500">
+                            <button onclick="openModalTambahPekerjaan()" class="hover:text-blue-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
-                            </a>
+                            </button>
                             <a href="{{ route('alumni.pekerjaan.index') }}" class="hover:text-blue-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                             </a>
@@ -460,7 +460,7 @@
                             </div>
                         </div>
                         @empty
-                        <p class="text-xs text-slate-400 text-center py-4">Belum ada pengalaman kerja. <a href="{{ route('alumni.pekerjaan.create') }}" class="text-blue-500">Tambah</a></p>
+                        <p class="text-xs text-slate-400 text-center py-4">Belum ada pengalaman kerja. <button onclick="openModalTambahPekerjaan()" class="text-blue-500 hover:underline">Tambah</button></p>
                         @endforelse
                     </div>
                     @if($totalPekerjaan > 3)
@@ -481,9 +481,9 @@
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-slate-800 font-bold text-sm">Pencapaian & Sertifikasi</h3>
                         <div class="flex gap-2 text-slate-400">
-                            <a href="{{ route('alumni.sertifikasi.create') }}" class="hover:text-blue-500">
+                            <button onclick="openModalTambahSertifikasi()" class="hover:text-blue-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
-                            </a>
+                            </button>
                             <a href="{{ route('alumni.sertifikasi.index') }}" class="hover:text-blue-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                             </a>
@@ -512,7 +512,7 @@
                         @endforeach
                     </div>
                     @else
-                    <p class="text-xs text-slate-400 text-center py-4">Belum ada sertifikasi. <a href="{{ route('alumni.sertifikasi.create') }}" class="text-blue-500">Tambah</a></p>
+                    <p class="text-xs text-slate-400 text-center py-4">Belum ada sertifikasi. <button onclick="openModalTambahSertifikasi()" class="text-blue-500 hover:underline">Tambah</button></p>
                     @endif
                 </div>
 <!-- Social Media Card -->
@@ -839,5 +839,256 @@
     }, 4000);
 </script>
 @endif
+{{-- ===================== MODAL TAMBAH RIWAYAT PENDIDIKAN ===================== --}}
+<div id="modalTambahPendidikan" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[999] hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        <div class="flex justify-between items-center px-8 py-5 border-b border-slate-100 shrink-0">
+            <h3 class="text-[#005792] font-bold text-lg">Tambah Riwayat Pendidikan</h3>
+            <button onclick="closeModalTambahPendidikan()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+        <form action="{{ route('alumni.pendidikan.store') }}" method="POST" class="flex flex-col flex-1 overflow-hidden">
+            @csrf
+            <div class="px-8 py-6 overflow-y-auto flex-1 space-y-4">
+                @if ($errors->any())
+                <div class="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+                    <ul class="list-disc pl-4 space-y-1">@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
+                </div>
+                @endif
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-600 mb-1.5">Nama Instansi / Sekolah <span class="text-red-500">*</span></label>
+                    <input type="text" name="nama_instansi" value="{{ old('nama_instansi') }}" placeholder="Contoh: Politeknik Negeri Jember" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-600 mb-1.5">Jenjang Pendidikan <span class="text-red-500">*</span></label>
+                        <select name="jenjang_pendidikan" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium bg-white">
+                            <option value="">-- Pilih Jenjang --</option>
+                            @foreach(['SD','SMP','SMA/SMK','D1','D2','D3','D4','S1','S2','S3'] as $j)
+                            <option value="{{ $j }}" {{ old('jenjang_pendidikan') == $j ? 'selected' : '' }}>{{ $j }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-600 mb-1.5">Jurusan / Program Studi</label>
+                        <input type="text" name="jurusan" value="{{ old('jurusan') }}" placeholder="Contoh: Teknik Informatika" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-600 mb-1.5">Tahun Masuk</label>
+                        <input type="date" name="tahun_masuk" value="{{ old('tahun_masuk') }}" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-600 mb-1.5">Tahun Keluar <span class="text-slate-400 font-normal text-xs">(kosongkan jika masih aktif)</span></label>
+                        <input type="date" name="tahun_keluar" value="{{ old('tahun_keluar') }}" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-600 mb-1.5">Nilai Akhir (IPK)</label>
+                        <input type="number" name="nilai_akhir" value="{{ old('nilai_akhir') }}" step="0.01" min="0" max="4" placeholder="Contoh: 3.75" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
+                        <p class="text-xs text-slate-400 mt-1">Skala 0.00 – 4.00 untuk kuliah.</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-600 mb-1.5">Judul Skripsi / Tugas Akhir</label>
+                        <input type="text" name="judul_skripsi" value="{{ old('judul_skripsi') }}" placeholder="Kosongkan jika belum ada" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
+                    </div>
+                </div>
+            </div>
+            <div class="px-8 py-5 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
+                <button type="button" onclick="closeModalTambahPendidikan()" class="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold text-sm transition-all">Batal</button>
+                <button type="submit" class="px-6 py-2.5 bg-[#005792] hover:bg-[#004677] text-white rounded-xl font-bold text-sm transition-all">Simpan Pendidikan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{-- ===================== MODAL TAMBAH PENGALAMAN KERJA ===================== --}}
+<div id="modalTambahPekerjaan" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[999] hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        <div class="flex justify-between items-center px-8 py-5 border-b border-slate-100 shrink-0">
+            <h3 class="text-[#005792] font-bold text-lg">Tambah Pengalaman Kerja</h3>
+            <button onclick="closeModalTambahPekerjaan()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+        <form action="{{ route('alumni.pekerjaan.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col flex-1 overflow-hidden">
+            @csrf
+            <div class="px-8 py-6 overflow-y-auto flex-1 space-y-4">
+                @if ($errors->any())
+                <div class="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+                    <ul class="list-disc pl-4 space-y-1">@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
+                </div>
+                @endif
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-600 mb-1.5">Nama Perusahaan <span class="text-red-500">*</span></label>
+                        <input type="text" name="nama_perusahaan" value="{{ old('nama_perusahaan') }}" placeholder="Contoh: PT Telkom Indonesia" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-600 mb-1.5">Status Pekerjaan <span class="text-red-500">*</span></label>
+                        <select name="status_pekerjaan" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium bg-white">
+                            <option value="">-- Pilih Status --</option>
+                            @foreach(['Pekerjaan Tetap','Kontrak','Freelance','Magang','Part Time','Wirausaha'] as $status)
+                            <option value="{{ $status }}" {{ old('status_pekerjaan') == $status ? 'selected' : '' }}>{{ $status }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-600 mb-1.5">Posisi / Jobdesk</label>
+                    <input type="text" name="jobdesk" value="{{ old('jobdesk') }}" placeholder="Contoh: Software Engineer, Data Analyst" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-600 mb-1.5">Tanggal Mulai</label>
+                        <input type="date" name="tahun_masuk" value="{{ old('tahun_masuk') }}" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-600 mb-1.5">Tanggal Selesai <span class="text-slate-400 font-normal text-xs">(kosongkan jika masih aktif)</span></label>
+                        <input type="date" name="tahun_selesai" value="{{ old('tahun_selesai') }}" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-600 mb-1.5">Deskripsi Pekerjaan</label>
+                    <textarea name="deskripsi" rows="3" placeholder="Jelaskan tanggung jawab dan pencapaian Anda..." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium resize-none">{{ old('deskripsi') }}</textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-600 mb-1.5">Logo Perusahaan</label>
+                    <input type="file" name="logo_perusahaan" accept="image/jpg,image/jpeg,image/png,image/webp" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none text-slate-700 text-sm">
+                    <p class="text-xs text-slate-400 mt-1">Format JPG, PNG, WEBP. Maks 1MB.</p>
+                </div>
+            </div>
+            <div class="px-8 py-5 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
+                <button type="button" onclick="closeModalTambahPekerjaan()" class="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold text-sm transition-all">Batal</button>
+                <button type="submit" class="px-6 py-2.5 bg-[#005792] hover:bg-[#004677] text-white rounded-xl font-bold text-sm transition-all">Simpan Pengalaman</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{-- ===================== MODAL TAMBAH SERTIFIKASI ===================== --}}
+<div id="modalTambahSertifikasi" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[999] hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        <div class="flex justify-between items-center px-8 py-5 border-b border-slate-100 shrink-0">
+            <h3 class="text-[#005792] font-bold text-lg">Tambah Sertifikasi</h3>
+            <button onclick="closeModalTambahSertifikasi()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+        <form action="{{ route('alumni.sertifikasi.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col flex-1 overflow-hidden">
+            @csrf
+            <div class="px-8 py-6 overflow-y-auto flex-1 space-y-4">
+                @if ($errors->any())
+                <div class="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+                    <ul class="list-disc pl-4 space-y-1">@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
+                </div>
+                @endif
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-600 mb-1.5">Nama Sertifikasi <span class="text-red-500">*</span></label>
+                    <input type="text" name="nama" value="{{ old('nama') }}" placeholder="Contoh: Google Professional Cloud Architect" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-600 mb-1.5">Diterbitkan Oleh</label>
+                        <input type="text" name="diterbitkan_oleh" value="{{ old('diterbitkan_oleh') }}" placeholder="Contoh: Google, Microsoft" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-600 mb-1.5">Tanggal Terbit</label>
+                        <input type="date" name="tanggal_terbit" value="{{ old('tanggal_terbit') }}" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-600 mb-1.5">ID Kredensial</label>
+                    <input type="text" name="id_kredensial" value="{{ old('id_kredensial') }}" placeholder="Kosongkan jika tidak ada" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
+                    <p class="text-xs text-slate-400 mt-1">Nomor unik sertifikasi dari penerbit.</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-600 mb-1.5">Gambar Sertifikat</label>
+                    <input type="file" name="gambar_serti" accept="image/jpg,image/jpeg,image/png,image/webp" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none text-slate-700 text-sm" onchange="previewSertifikat(this)">
+                    <p class="text-xs text-slate-400 mt-1">Format JPG, PNG, WEBP. Maks 2MB.</p>
+                    <div id="sertifikatPreviewBox" class="hidden mt-3 aspect-video rounded-xl overflow-hidden border border-slate-200 bg-slate-50">
+                        <img id="sertifikatPreviewImg" src="" alt="Preview" class="w-full h-full object-cover">
+                    </div>
+                </div>
+            </div>
+            <div class="px-8 py-5 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
+                <button type="button" onclick="closeModalTambahSertifikasi()" class="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold text-sm transition-all">Batal</button>
+                <button type="submit" class="px-6 py-2.5 bg-[#005792] hover:bg-[#004677] text-white rounded-xl font-bold text-sm transition-all">Simpan Sertifikasi</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Modal Tambah Riwayat Pendidikan
+    function openModalTambahPendidikan() {
+        const m = document.getElementById('modalTambahPendidikan');
+        m.classList.remove('hidden'); m.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModalTambahPendidikan() {
+        const m = document.getElementById('modalTambahPendidikan');
+        m.classList.add('hidden'); m.classList.remove('flex');
+        document.body.style.overflow = 'auto';
+    }
+    document.getElementById('modalTambahPendidikan').addEventListener('click', function(e) { if (e.target === this) closeModalTambahPendidikan(); });
+
+    // Modal Tambah Pengalaman Kerja
+    function openModalTambahPekerjaan() {
+        const m = document.getElementById('modalTambahPekerjaan');
+        m.classList.remove('hidden'); m.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModalTambahPekerjaan() {
+        const m = document.getElementById('modalTambahPekerjaan');
+        m.classList.add('hidden'); m.classList.remove('flex');
+        document.body.style.overflow = 'auto';
+    }
+    document.getElementById('modalTambahPekerjaan').addEventListener('click', function(e) { if (e.target === this) closeModalTambahPekerjaan(); });
+
+    // Modal Tambah Sertifikasi
+    function openModalTambahSertifikasi() {
+        const m = document.getElementById('modalTambahSertifikasi');
+        m.classList.remove('hidden'); m.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModalTambahSertifikasi() {
+        const m = document.getElementById('modalTambahSertifikasi');
+        m.classList.add('hidden'); m.classList.remove('flex');
+        document.body.style.overflow = 'auto';
+    }
+    document.getElementById('modalTambahSertifikasi').addEventListener('click', function(e) { if (e.target === this) closeModalTambahSertifikasi(); });
+
+    // Preview gambar sertifikat
+    function previewSertifikat(input) {
+        const box = document.getElementById('sertifikatPreviewBox');
+        const img = document.getElementById('sertifikatPreviewImg');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = e => { img.src = e.target.result; box.classList.remove('hidden'); };
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            box.classList.add('hidden');
+        }
+    }
+
+    // Auto-buka modal jika ada error validasi (agar user tidak bingung)
+
 </body>
 </html>

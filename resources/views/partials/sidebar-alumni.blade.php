@@ -1,4 +1,4 @@
-<aside class="w-64 shrink-0 bg-white border-r border-slate-200 p-6 flex flex-col">
+<aside class="sidebar w-64 shrink-0 bg-white border-r border-slate-200 p-6 flex flex-col">
     <div class="mb-8">
         <h2 class="text-slate-800 font-bold text-sm">Alumni Portal</h2>
         <p class="text-slate-400 text-[10px] font-medium">Verified Member</p>
