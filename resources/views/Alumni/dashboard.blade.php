@@ -410,7 +410,7 @@
                             </div>
                         </div>
                         @empty
-                        <p class="text-xs text-slate-400 text-center py-4">Belum ada riwayat pendidikan. <button onclick="openModalTambahPendidikan()" class="text-blue-500 hover:underline">Tambah</button></p>
+                        <p class="text-xs text-slate-400 text-center py-4">Belum ada riwayat pendidikan. <a href="{{ route('alumni.pendidikan.create') }}" class="text-blue-500">Tambah</a></p>
                         @endforelse
                     </div>
                 </div>
@@ -460,7 +460,7 @@
                             </div>
                         </div>
                         @empty
-                        <p class="text-xs text-slate-400 text-center py-4">Belum ada pengalaman kerja. <button onclick="openModalTambahPekerjaan()" class="text-blue-500 hover:underline">Tambah</button></p>
+                        <p class="text-xs text-slate-400 text-center py-4">Belum ada pengalaman kerja. <a href="{{ route('alumni.pekerjaan.create') }}" class="text-blue-500">Tambah</a></p>
                         @endforelse
                     </div>
                     @if($totalPekerjaan > 3)
@@ -512,7 +512,7 @@
                         @endforeach
                     </div>
                     @else
-                    <p class="text-xs text-slate-400 text-center py-4">Belum ada sertifikasi. <button onclick="openModalTambahSertifikasi()" class="text-blue-500 hover:underline">Tambah</button></p>
+                    <p class="text-xs text-slate-400 text-center py-4">Belum ada sertifikasi. <a href="{{ route('alumni.sertifikasi.create') }}" class="text-blue-500">Tambah</a></p>
                     @endif
                 </div>
 <!-- Social Media Card -->
@@ -851,17 +851,10 @@
         <form action="{{ route('alumni.pendidikan.store') }}" method="POST" class="flex flex-col flex-1 overflow-hidden">
             @csrf
             <div class="px-8 py-6 overflow-y-auto flex-1 space-y-4">
-                @if ($errors->any())
-                <div class="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
-                    <ul class="list-disc pl-4 space-y-1">@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
-                </div>
-                @endif
-
                 <div>
                     <label class="block text-sm font-semibold text-slate-600 mb-1.5">Nama Instansi / Sekolah <span class="text-red-500">*</span></label>
                     <input type="text" name="nama_instansi" value="{{ old('nama_instansi') }}" placeholder="Contoh: Politeknik Negeri Jember" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
                 </div>
-
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold text-slate-600 mb-1.5">Jenjang Pendidikan <span class="text-red-500">*</span></label>
@@ -877,7 +870,6 @@
                         <input type="text" name="jurusan" value="{{ old('jurusan') }}" placeholder="Contoh: Teknik Informatika" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
                     </div>
                 </div>
-
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold text-slate-600 mb-1.5">Tahun Masuk</label>
@@ -888,12 +880,11 @@
                         <input type="date" name="tahun_keluar" value="{{ old('tahun_keluar') }}" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
                     </div>
                 </div>
-
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold text-slate-600 mb-1.5">Nilai Akhir (IPK)</label>
                         <input type="number" name="nilai_akhir" value="{{ old('nilai_akhir') }}" step="0.01" min="0" max="4" placeholder="Contoh: 3.75" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
-                        <p class="text-xs text-slate-400 mt-1">Skala 0.00 – 4.00 untuk kuliah.</p>
+                        <p class="text-xs text-slate-400 mt-1">Skala 0.00 – 4.00</p>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-slate-600 mb-1.5">Judul Skripsi / Tugas Akhir</label>
@@ -921,12 +912,6 @@
         <form action="{{ route('alumni.pekerjaan.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col flex-1 overflow-hidden">
             @csrf
             <div class="px-8 py-6 overflow-y-auto flex-1 space-y-4">
-                @if ($errors->any())
-                <div class="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
-                    <ul class="list-disc pl-4 space-y-1">@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
-                </div>
-                @endif
-
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold text-slate-600 mb-1.5">Nama Perusahaan <span class="text-red-500">*</span></label>
@@ -942,12 +927,10 @@
                         </select>
                     </div>
                 </div>
-
                 <div>
                     <label class="block text-sm font-semibold text-slate-600 mb-1.5">Posisi / Jobdesk</label>
                     <input type="text" name="jobdesk" value="{{ old('jobdesk') }}" placeholder="Contoh: Software Engineer, Data Analyst" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
                 </div>
-
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold text-slate-600 mb-1.5">Tanggal Mulai</label>
@@ -958,12 +941,10 @@
                         <input type="date" name="tahun_selesai" value="{{ old('tahun_selesai') }}" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
                     </div>
                 </div>
-
                 <div>
                     <label class="block text-sm font-semibold text-slate-600 mb-1.5">Deskripsi Pekerjaan</label>
                     <textarea name="deskripsi" rows="3" placeholder="Jelaskan tanggung jawab dan pencapaian Anda..." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium resize-none">{{ old('deskripsi') }}</textarea>
                 </div>
-
                 <div>
                     <label class="block text-sm font-semibold text-slate-600 mb-1.5">Logo Perusahaan</label>
                     <input type="file" name="logo_perusahaan" accept="image/jpg,image/jpeg,image/png,image/webp" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none text-slate-700 text-sm">
@@ -990,17 +971,10 @@
         <form action="{{ route('alumni.sertifikasi.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col flex-1 overflow-hidden">
             @csrf
             <div class="px-8 py-6 overflow-y-auto flex-1 space-y-4">
-                @if ($errors->any())
-                <div class="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
-                    <ul class="list-disc pl-4 space-y-1">@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
-                </div>
-                @endif
-
                 <div>
                     <label class="block text-sm font-semibold text-slate-600 mb-1.5">Nama Sertifikasi <span class="text-red-500">*</span></label>
                     <input type="text" name="nama" value="{{ old('nama') }}" placeholder="Contoh: Google Professional Cloud Architect" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
                 </div>
-
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold text-slate-600 mb-1.5">Diterbitkan Oleh</label>
@@ -1011,13 +985,11 @@
                         <input type="date" name="tanggal_terbit" value="{{ old('tanggal_terbit') }}" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
                     </div>
                 </div>
-
                 <div>
                     <label class="block text-sm font-semibold text-slate-600 mb-1.5">ID Kredensial</label>
                     <input type="text" name="id_kredensial" value="{{ old('id_kredensial') }}" placeholder="Kosongkan jika tidak ada" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
                     <p class="text-xs text-slate-400 mt-1">Nomor unik sertifikasi dari penerbit.</p>
                 </div>
-
                 <div>
                     <label class="block text-sm font-semibold text-slate-600 mb-1.5">Gambar Sertifikat</label>
                     <input type="file" name="gambar_serti" accept="image/jpg,image/jpeg,image/png,image/webp" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none text-slate-700 text-sm" onchange="previewSertifikat(this)">
@@ -1036,7 +1008,6 @@
 </div>
 
 <script>
-    // Modal Tambah Riwayat Pendidikan
     function openModalTambahPendidikan() {
         const m = document.getElementById('modalTambahPendidikan');
         m.classList.remove('hidden'); m.classList.add('flex');
@@ -1049,7 +1020,6 @@
     }
     document.getElementById('modalTambahPendidikan').addEventListener('click', function(e) { if (e.target === this) closeModalTambahPendidikan(); });
 
-    // Modal Tambah Pengalaman Kerja
     function openModalTambahPekerjaan() {
         const m = document.getElementById('modalTambahPekerjaan');
         m.classList.remove('hidden'); m.classList.add('flex');
@@ -1062,7 +1032,6 @@
     }
     document.getElementById('modalTambahPekerjaan').addEventListener('click', function(e) { if (e.target === this) closeModalTambahPekerjaan(); });
 
-    // Modal Tambah Sertifikasi
     function openModalTambahSertifikasi() {
         const m = document.getElementById('modalTambahSertifikasi');
         m.classList.remove('hidden'); m.classList.add('flex');
@@ -1075,7 +1044,6 @@
     }
     document.getElementById('modalTambahSertifikasi').addEventListener('click', function(e) { if (e.target === this) closeModalTambahSertifikasi(); });
 
-    // Preview gambar sertifikat
     function previewSertifikat(input) {
         const box = document.getElementById('sertifikatPreviewBox');
         const img = document.getElementById('sertifikatPreviewImg');
@@ -1087,8 +1055,6 @@
             box.classList.add('hidden');
         }
     }
-
-    // Auto-buka modal jika ada error validasi (agar user tidak bingung)
-
+</script>
 </body>
 </html>

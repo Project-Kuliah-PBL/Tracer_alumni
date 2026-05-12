@@ -32,10 +32,6 @@
         .nav-item.active { border-left-color: var(--color-primary-btn); border-radius: 0 var(--radius-md) var(--radius-md) 0; }
         .sidebar-submenu { display: flex; flex-direction: column; padding: 0 .75rem; gap: .1rem; }
         .sub-item { position: relative; display: flex; align-items: center; padding: .5rem .75rem .5rem 2.25rem; border-radius: var(--radius-md); text-decoration: none; color: var(--color-text-light); font-size: .825rem; font-weight: 500; transition: background .2s, color .2s; }
-        .sub-item::before { content: ''; position: absolute; left: 1.15rem; top: 50%; transform: translateY(-50%); width: 5px; height: 5px; border-radius: 50%; background: var(--color-text-light); transition: background .2s; }
-        .sub-item:hover, .sub-item.active { background: var(--color-primary-soft); color: var(--color-primary-btn); }
-        .sub-item:hover::before, .sub-item.active::before { background: var(--color-primary-btn); }
-        .sub-item.active { font-weight: 600; }
         .sidebar-bottom { margin-top: auto; padding: 1rem .75rem 1.5rem; border-top: 1px solid var(--color-border-sidebar); }
         .logout-btn { display: flex; align-items: center; justify-content: center; gap: .75rem; width: 100%; padding: .75rem 1rem; background: var(--color-danger); color: #fff; border: none; border-radius: var(--radius-md); font-weight: 600; font-size: .9rem; cursor: pointer; transition: background .2s; }
         .logout-btn:hover { background: #b91c1c; }
@@ -70,6 +66,51 @@
         .icon-btn.del:hover { background: #fee2e2; }
         .icon-btn svg { width: 1.125rem; height: 1.125rem; }
         .empty-state { text-align: center; padding: 4rem 2rem; background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius-lg); }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            backdrop-filter: blur(4px);
+            z-index: 99;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem; 
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-container {
+            background: white;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 1rem;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-title {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--color-primary);
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--color-muted);
+        }
         @media (max-width: 768px) { .sidebar { display: none; } .main-container { margin-left: 0; padding: 1.5rem; } .cert-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -79,7 +120,7 @@
     </div>
     <div class="flex flex-1 overflow-hidden w-full">
         @include('partials.sidebar-alumni', ['activeMenu' => 'profil'])
-        <main class="flex-1 overflow-y-auto p-8">
+        <main class="flex-1 overflow-y-auto pl-72 pr-8 pt-8 pb-16">
         <div class="content-area">
 
             @if(session('success'))
@@ -98,10 +139,10 @@
                         <p class="page-subtitle">Kelola sertifikasi dan pencapaian profesional Anda.</p>
                     </div>
                 </div>
-                <a href="{{ route('alumni.sertifikasi.create') }}" class="add-btn">
+                <button type="button" class="add-btn" onclick="openTambahModal()">
                     <svg viewBox="0 0 24 24" fill="none"><path d="M12 5V19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     Tambah Sertifikasi
-                </a>
+                </button>
             </div>
 
             @if($certifications->count() > 0)
@@ -157,7 +198,7 @@
                 </div>
 
                 {{-- Modal Edit untuk tiap sertifikat --}}
-                <div id="editModal-{{ $cert->id }}" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[99] hidden items-center justify-center p-4">
+                <div id="editModal-{{ $cert->id }}" style="display:none;position:relative;min-height:520px;background:rgba(0,0,0,0.45);border-radius:1rem;align-items:center;justify-content:center;padding:1rem;">
                     <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden">
                         <div class="flex justify-between items-center px-6 py-4 border-b">
                             <h3 style="font-family:var(--font-heading);font-weight:700;color:var(--color-primary);">Edit Sertifikasi</h3>
@@ -212,7 +253,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="#94a3b8" style="margin:0 auto;">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
                 </svg>
-                <p style="color:var(--color-muted);margin-top:.75rem;">Belum ada sertifikasi. <a href="{{ route('alumni.sertifikasi.create') }}" style="color:var(--color-primary-btn);">Tambah sertifikasi baru</a></p>
+                <p style="color:var(--color-muted);margin-top:.75rem;">Belum ada sertifikasi. <a href="#" onclick="openTambahModal();return false;" style="color:var(--color-primary-btn);">Tambah sertifikasi baru</a></p>
             </div>
             @endif
 
@@ -222,19 +263,73 @@
 
 <script>
 function openEditModal(id) {
-    document.getElementById('editModal-' + id).classList.remove('hidden');
-    document.getElementById('editModal-' + id).classList.add('flex');
+    document.getElementById('editModal-' + id).style.display = 'flex';
     document.body.style.overflow = 'hidden';
 }
 function closeEditModal(id) {
-    document.getElementById('editModal-' + id).classList.add('hidden');
-    document.getElementById('editModal-' + id).classList.remove('flex');
+    document.getElementById('editModal-' + id).style.display = 'none';
     document.body.style.overflow = 'auto';
 }
+function openTambahModal() {
+    document.getElementById('tambahModal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+function closeTambahModal() {
+    document.getElementById('tambahModal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        document.querySelectorAll('[id^="editModal-"]').forEach(m => m.style.display = 'none');
+        closeTambahModal();
+        document.body.style.overflow = 'auto';
+    }
+});
 </script>
 
+<!-- Modal Tambah Sertifikasi -->
+<div id="tambahModal" class="modal-overlay" onclick="closeEditModal(event)">
+        <div class="modal-container" onclick="event.stopPropagation()">
+        <div class="modal-header">
+             <h2 class="modal-title">Tambah Sertifikasi</h2>
+                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+            </div>
+        <form action="{{ route('alumni.sertifikasi.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
+            @csrf
+            <div>
+                <label class="block text-sm font-semibold text-gray-600 mb-1">Nama Sertifikasi <span class="text-red-500">*</span></label>
+                <input type="text" name="nama" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500" placeholder="Contoh: Google Professional Cloud Architect" required>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600 mb-1">Diterbitkan Oleh</label>
+                    <input type="text" name="diterbitkan_oleh" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500" placeholder="Contoh: Google, Microsoft">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600 mb-1">Tanggal Terbit</label>
+                    <input type="date" name="tanggal_terbit" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500">
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-600 mb-1">ID Kredensial</label>
+                <input type="text" name="id_kredensial" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500" placeholder="Kosongkan jika tidak ada">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-600 mb-1">Gambar Sertifikat</label>
+                <input type="file" name="gambar_serti" accept="image/jpg,image/jpeg,image/png,image/webp" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200">
+                <p style="font-size:.75rem;color:var(--color-muted);margin-top:.25rem;">Format JPG, PNG, WEBP. Maks 2MB.</p>
+            </div>
+            <div class="flex gap-3 pt-2">
+                <button type="button" onclick="closeTambahModal()" class="flex-1 py-2.5 rounded-lg bg-red-600 text-white font-bold text-sm hover:bg-red-700 transition-all">Batal</button>
+                <button type="submit" class="flex-1 py-2.5 rounded-lg bg-[#0061a4] text-white font-bold text-sm hover:bg-[#004f87] transition-all">Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Modal Konfirmasi Hapus -->
-<div id="modalHapus" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[999] hidden items-center justify-center">
+<div id="modalHapusWrapper" style="display:none;position:relative;min-height:240px;background:rgba(0,0,0,0.5);border-radius:1rem;align-items:center;justify-content:center;">
+<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden">
         <div class="p-6">
             <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -251,18 +346,15 @@ function closeEditModal(id) {
         </div>
     </div>
 </div>
+</div>
 <script>
     let _deleteFormTarget = null;
     function confirmHapus(form) {
         _deleteFormTarget = form;
-        const modal = document.getElementById('modalHapus');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
+        document.getElementById('modalHapusWrapper').style.display = 'flex';
     }
     function closeModalHapus() {
-        const modal = document.getElementById('modalHapus');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
+        document.getElementById('modalHapusWrapper').style.display = 'none';
         _deleteFormTarget = null;
     }
     function submitDeleteForm() {

@@ -18,6 +18,52 @@
             --font-heading: 'Plus Jakarta Sans', sans-serif; --font-body: 'Inter', sans-serif;
             --radius-md: 0.75rem; --radius-lg: 1rem; --sidebar-width: 256px; --header-height: 64px;
         }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            backdrop-filter: blur(4px);
+            z-index: 99;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem; 
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-container {
+            background: white;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 1rem;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-title {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--color-primary);
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--color-muted);
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: var(--font-body); background-color: var(--color-bg); color: var(--color-secondary); line-height: 1.5; }
         .sidebar { position: fixed; top: var(--header-height); left: 0; width: var(--sidebar-width); height: calc(100vh - var(--header-height)); background: #fff; border-right: 1px solid var(--color-border-sidebar); z-index: 40; display: flex; flex-direction: column; padding-top: 80px; overflow-y: auto; }
@@ -81,7 +127,7 @@
     </div>
     <div class="flex flex-1 overflow-hidden w-full">
         @include('partials.sidebar-alumni', ['activeMenu' => 'profil'])
-        <main class="flex-1 overflow-y-auto p-8">
+        <main class="flex-1 overflow-y-auto pl-72 pr-8 pt-8 pb-16">
         <div class="content-area">
 
             @if(session('success'))
@@ -100,10 +146,10 @@
                         <p class="page-subtitle">Kelola informasi seputar latar belakang pendidikan Anda.</p>
                     </div>
                 </div>
-                <a href="{{ route('alumni.pendidikan.create') }}" class="add-btn">
+                <button type="button" class="add-btn" onclick="openTambahModal()">
                     <svg viewBox="0 0 24 24" fill="none"><path d="M12 5V19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     Tambah Pendidikan
-                </a>
+                </button>
             </div>
 
             <div class="edu-list">
@@ -162,7 +208,7 @@
                 </article>
 
                 {{-- Modal Edit inline untuk setiap record --}}
-                <div id="editModal-{{ $edu->id }}" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[99] hidden items-center justify-center p-4">
+                <div id="editModal-{{ $edu->id }}" style="display:none;position:relative;min-height:540px;background:rgba(0,0,0,0.45);border-radius:1rem;align-items:center;justify-content:center;padding:1rem;">
                     <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden">
                         <div class="flex justify-between items-center px-6 py-4 border-b">
                             <h3 style="font-family:var(--font-heading);font-weight:700;color:var(--color-primary);">Edit Riwayat Pendidikan</h3>
@@ -223,7 +269,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l9-5-9-5-9 5 9 5z"/>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
                     </svg>
-                    <p style="color:var(--color-muted);margin-top:.75rem;">Belum ada riwayat pendidikan. <a href="{{ route('alumni.pendidikan.create') }}" style="color:var(--color-primary-btn);">Tambah sekarang</a></p>
+                    <p style="color:var(--color-muted);margin-top:.75rem;">Belum ada riwayat pendidikan. <a href="#" onclick="openTambahModal();return false;" style="color:var(--color-primary-btn);">Tambah sekarang</a></p>
                 </div>
                 @endforelse
             </div>
@@ -234,19 +280,89 @@
 <script>
 function openEditModal(id, event) {
     event.preventDefault();
-    document.getElementById('editModal-' + id).classList.remove('hidden');
-    document.getElementById('editModal-' + id).classList.add('flex');
+    document.getElementById('editModal-' + id).style.display = 'flex';
     document.body.style.overflow = 'hidden';
 }
 function closeEditModal(id) {
-    document.getElementById('editModal-' + id).classList.add('hidden');
-    document.getElementById('editModal-' + id).classList.remove('flex');
+    document.getElementById('editModal-' + id).style.display = 'none';
     document.body.style.overflow = 'auto';
 }
+function openTambahModal() {
+    document.getElementById('tambahModal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+function closeTambahModal() {
+    document.getElementById('tambahModal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        document.querySelectorAll('[id^="editModal-"]').forEach(m => m.style.display = 'none');
+        closeTambahModal();
+        document.body.style.overflow = 'auto';
+    }
+});
 </script>
 
+<!-- Modal Tambah Riwayat Pendidikan -->
+<div id="tambahModal" class="modal-overlay" onclick="closeEditModal(event)">
+        <div class="modal-container" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 class="modal-title">Tambah Riwayat Pendidikan</h2>
+                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+            </div>
+        <form action="{{ route('alumni.pendidikan.store') }}" method="POST" class="p-6 space-y-4">
+            @csrf
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600 mb-1">Nama Instansi <span class="text-red-500">*</span></label>
+                    <input type="text" name="nama_instansi" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500" placeholder="Contoh: Politeknik Negeri Jember" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600 mb-1">Jenjang <span class="text-red-500">*</span></label>
+                    <select name="jenjang_pendidikan" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500 bg-white" required>
+                        <option value="">-- Pilih Jenjang --</option>
+                        @foreach(['SD','SMP','SMA/SMK','D1','D2','D3','D4','S1','S2','S3'] as $j)
+                        <option value="{{ $j }}">{{ $j }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-600 mb-1">Jurusan / Program Studi</label>
+                <input type="text" name="jurusan" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500" placeholder="Contoh: Teknik Informatika">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600 mb-1">Tahun Masuk</label>
+                    <input type="date" name="tahun_masuk" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600 mb-1">Tahun Keluar</label>
+                    <input type="date" name="tahun_keluar" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500">
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600 mb-1">Nilai Akhir (IPK)</label>
+                    <input type="number" name="nilai_akhir" step="0.01" min="0" max="4" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500" placeholder="0.00 - 4.00">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600 mb-1">Judul Skripsi / TA</label>
+                    <input type="text" name="judul_skripsi" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500" placeholder="Kosongkan jika tidak ada">
+                </div>
+            </div>
+            <div class="flex gap-3 pt-2">
+                <button type="button" onclick="closeTambahModal()" class="flex-1 py-2.5 rounded-lg bg-red-600 text-white font-bold text-sm hover:bg-red-700 transition-all">Batal</button>
+                <button type="submit" class="flex-1 py-2.5 rounded-lg bg-[#0061a4] text-white font-bold text-sm hover:bg-[#004f87] transition-all">Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Modal Konfirmasi Hapus -->
-<div id="modalHapus" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[999] hidden items-center justify-center">
+<div id="modalHapusWrapper" style="display:none;position:relative;min-height:240px;background:rgba(0,0,0,0.5);border-radius:1rem;align-items:center;justify-content:center;">
+<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden">
         <div class="p-6">
             <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -263,18 +379,15 @@ function closeEditModal(id) {
         </div>
     </div>
 </div>
+</div>
 <script>
     let _deleteFormTarget = null;
     function confirmHapus(form) {
         _deleteFormTarget = form;
-        const modal = document.getElementById('modalHapus');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
+        document.getElementById('modalHapusWrapper').style.display = 'flex';
     }
     function closeModalHapus() {
-        const modal = document.getElementById('modalHapus');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
+        document.getElementById('modalHapusWrapper').style.display = 'none';
         _deleteFormTarget = null;
     }
     function submitDeleteForm() {

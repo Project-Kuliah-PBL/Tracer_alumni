@@ -83,7 +83,7 @@
     </div>
     <div class="flex flex-1 overflow-hidden w-full">
         @include('partials.sidebar-alumni', ['activeMenu' => 'profil'])
-        <main class="flex-1 overflow-y-auto p-8">
+        <main class="flex-1 overflow-y-auto pl-72 pr-8 pt-8 pb-16">>
         <div class="back-header">
             <button class="back-btn" onclick="history.back()">
                 <svg viewBox="0 0 24 24" fill="none"><path d="M19 12H5M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>

@@ -93,16 +93,24 @@
         .empty-state { text-align: center; padding: 4rem 2rem; background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius-lg); }
         .empty-state p { color: var(--color-muted); margin-top: .75rem; }
 
-        /* Modal Edit Styles */
+
         .modal-overlay {
-            display: none;
             position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            backdrop-filter: blur(4px);
+            z-index: 99;
+            display: none;
             align-items: center;
             justify-content: center;
+            padding: 1rem; 
         }
+        .modal-overlay.active {
+            display: flex;
+        }
+        
         .modal-container {
             background: white;
             width: 90%;
@@ -208,7 +216,7 @@
     </div>
     <div class="flex flex-1 overflow-hidden w-full">
         @include('partials.sidebar-alumni', ['activeMenu' => 'pekerjaan'])
-        <main class="flex-1 overflow-y-auto p-8">
+        <main class="flex-1 overflow-y-auto pl-72 pr-8 pt-8 pb-16">
         <div class="content-area">
 
             @if(session('success'))
@@ -229,13 +237,13 @@
                         <p class="page-subtitle">Kelola informasi seputar riwayat karir dan pekerjaan Anda.</p>
                     </div>
                 </div>
-                <a href="{{ route('alumni.pekerjaan.create') }}" class="add-btn">
+                <button type="button" class="add-btn" onclick="openTambahModal()">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 5V19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                     Tambah Pengalaman
-                </a>
+                </button>
             </div>
 
             <div class="experience-list">
@@ -302,7 +310,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="#94a3b8" style="margin:0 auto;">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
-                    <p>Belum ada data pengalaman kerja. <a href="{{ route('alumni.pekerjaan.create') }}" style="color:var(--color-primary-btn);">Tambah pengalaman baru</a></p>
+                    <p>Belum ada data pengalaman kerja. <a href="#" onclick="openTambahModal();return false;" style="color:var(--color-primary-btn);">Tambah pengalaman baru</a></p>
                 </div>
                 @endforelse
             </div>
@@ -429,7 +437,7 @@
             }
 
             // Tampilkan modal
-            document.getElementById('editModal').style.display = 'flex';
+            document.getElementById('editModal').classList.add('active');
             document.body.style.overflow = 'hidden';
         }
 
@@ -448,7 +456,7 @@
 
         function closeEditModal(event) {
             if (event && event.target !== event.currentTarget && event.target !== document.getElementById('editModal')) return;
-            document.getElementById('editModal').style.display = 'none';
+            document.getElementById('editModal').classList.remove('active');
             document.body.style.overflow = '';
             // Reset file input agar tidak carry-over ke edit berikutnya
             document.getElementById('edit_logo_input').value = '';
@@ -467,12 +475,93 @@
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeEditModal();
+                closeTambahModal();
             }
         });
+
+        function openTambahModal() {
+            document.getElementById('tambahModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeTambahModal(event) {
+            if (event && event.target !== event.currentTarget && event.target !== document.getElementById('tambahModal')) return;
+            document.getElementById('tambahModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        function toggleSelesaiTambah() {
+            const masih = document.getElementById('tambah_masih_bekerja').checked;
+            const selesai = document.getElementById('tambah_tahun_selesai');
+            selesai.disabled = masih;
+            if (masih) selesai.value = '';
+        }
     </script>
 
+    {{-- Modal Tambah Pengalaman Kerja --}}
+    <div id="tambahModal" class="modal-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[99] hidden items-center justify-center p-4" onclick="closeTambahModal(event)">
+        <div class="modal-container" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 class="modal-title">Tambah Pengalaman Kerja</h2>
+                <button class="modal-close" onclick="closeTambahModal()">&times;</button>
+            </div>
+            <form action="{{ route('alumni.pekerjaan.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Nama Perusahaan <span class="text-red-500">*</span></label>
+                        <input type="text" name="nama_perusahaan" class="form-input" required placeholder="Contoh: PT Telkom Indonesia">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Posisi / Jobdesk</label>
+                        <input type="text" name="jobdesk" class="form-input" placeholder="Contoh: Software Engineer">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status Pekerjaan <span class="text-red-500">*</span></label>
+                        <select name="status_pekerjaan" class="form-select" required>
+                            <option value="">-- Pilih Status --</option>
+                            <option value="Pekerjaan Tetap">Pekerjaan Tetap</option>
+                            <option value="Kontrak">Kontrak</option>
+                            <option value="Freelance">Freelance</option>
+                            <option value="Magang">Magang</option>
+                            <option value="Part Time">Part Time</option>
+                            <option value="Wirausaha">Wirausaha</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Tanggal Mulai</label>
+                            <input type="date" name="tahun_masuk" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tanggal Selesai</label>
+                            <input type="date" name="tahun_selesai" id="tambah_tahun_selesai" class="form-input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="tambah_masih_bekerja" onchange="toggleSelesaiTambah()">
+                            Saya masih bekerja di sini
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Deskripsi Pekerjaan</label>
+                        <textarea name="deskripsi" class="form-textarea" rows="3" placeholder="Jelaskan tanggung jawab dan pencapaian Anda..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Logo Perusahaan <span style="color:var(--color-muted);font-weight:400;">(Opsional, maks. 1MB)</span></label>
+                        <input type="file" name="logo_perusahaan" accept="image/*" class="form-input">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeTambahModal()">Batal</button>
+                    <button type="submit" class="btn-submit">Tambah Pengalaman</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 <!-- Modal Konfirmasi Hapus -->
-<div id="modalHapus" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[999] hidden items-center justify-center">
+<div id="modalHapusWrapper" style="display:none;position:relative;min-height:240px;background:rgba(0,0,0,0.5);border-radius:1rem;align-items:center;justify-content:center;">
+<div id="modalHapus" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden">
         <div class="p-6">
             <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -489,19 +578,16 @@
         </div>
     </div>
 </div>
+</div>
 
 <script>
     let _deleteFormTarget = null;
     function confirmHapus(form) {
         _deleteFormTarget = form;
-        const modal = document.getElementById('modalHapus');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
+        document.getElementById('modalHapusWrapper').style.display = 'flex';
     }
     function closeModalHapus() {
-        const modal = document.getElementById('modalHapus');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
+        document.getElementById('modalHapusWrapper').style.display = 'none';
         _deleteFormTarget = null;
     }
     function submitDeleteForm() {
