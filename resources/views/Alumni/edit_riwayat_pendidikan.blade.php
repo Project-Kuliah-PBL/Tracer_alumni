@@ -212,9 +212,7 @@
                     <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden">
                         <div class="flex justify-between items-center px-6 py-4 border-b">
                             <h3 style="font-family:var(--font-heading);font-weight:700;color:var(--color-primary);">Edit Riwayat Pendidikan</h3>
-                            <button onclick="closeEditModal({{ $edu->id }})" class="text-gray-400 hover:text-gray-600">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                            </button>
+                            button class="modal-close" onclick="closeEditModal()"></button>
                         </div>
                         <form action="{{ route('alumni.pendidikan.update', $edu->id) }}" method="POST" class="p-6 space-y-4">
                             @csrf @method('PUT')
@@ -283,10 +281,14 @@ function openEditModal(id, event) {
     document.getElementById('editModal-' + id).style.display = 'flex';
     document.body.style.overflow = 'hidden';
 }
-function closeEditModal(id) {
-    document.getElementById('editModal-' + id).style.display = 'none';
-    document.body.style.overflow = 'auto';
-}
+        function closeEditModal(event) {
+            if (event && event.target !== event.currentTarget && event.target !== document.getElementById('editModal')) return;
+            document.getElementById('editModal').classList.remove('active');
+            document.body.style.overflow = '';
+            // Reset file input agar tidak carry-over ke edit berikutnya
+            document.getElementById('edit_logo_input').value = '';
+        }
+
 function openTambahModal() {
     document.getElementById('tambahModal').style.display = 'flex';
     document.body.style.overflow = 'hidden';
@@ -305,11 +307,11 @@ document.addEventListener('keydown', function(e) {
 </script>
 
 <!-- Modal Tambah Riwayat Pendidikan -->
-<div id="tambahModal" class="modal-overlay" onclick="closeEditModal(event)">
+<div id="tambahModal" class="modal-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[99] hidden items-center justify-center p-4" onclick="closeTambahModal(event)">
         <div class="modal-container" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <h2 class="modal-title">Tambah Riwayat Pendidikan</h2>
-                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+                <h2 class="modal-title">Tambah riwayat pendidikan </h2>
+                <button class="modal-close" onclick="closeTambahModal()">&times;</button>
             </div>
         <form action="{{ route('alumni.pendidikan.store') }}" method="POST" class="p-6 space-y-4">
             @csrf

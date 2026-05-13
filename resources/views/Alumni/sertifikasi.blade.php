@@ -288,11 +288,11 @@ document.addEventListener('keydown', function(e) {
 </script>
 
 <!-- Modal Tambah Sertifikasi -->
-<div id="tambahModal" class="modal-overlay" onclick="closeEditModal(event)">
+<div id="tambahModal" class="modal-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[99] hidden items-center justify-center p-4" onclick="closeTambahModal(event)">
         <div class="modal-container" onclick="event.stopPropagation()">
         <div class="modal-header">
              <h2 class="modal-title">Tambah Sertifikasi</h2>
-                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+                <button class="modal-close" onclick="closeTambahModal()">x</button>
             </div>
         <form action="{{ route('alumni.sertifikasi.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
             @csrf

@@ -323,7 +323,7 @@
         <div class="modal-container" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <h2 class="modal-title">Edit Pengalaman Kerja</h2>
-                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+                <button class="modal-close" onclick="closeEditModal()">x</button>
             </div>
             <form id="editForm" action="" method="POST" enctype="multipart/form-data">
                 @csrf

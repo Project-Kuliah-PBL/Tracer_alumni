@@ -63,71 +63,77 @@
                     >
                 </div>
 
-                {{-- Filter Row --}}
-                <div class="flex flex-wrap justify-center gap-3 mt-6 mb-20">
+                {{-- Filter Row - auto submit tanpa tombol --}}
+<div class="flex flex-wrap justify-center gap-3 mt-6 mb-20">
 
-                    {{-- Tahun Lulus --}}
-                    <div class="relative flex items-center">
-                        <span class="absolute left-4 z-10 opacity-60 text-xs">📅</span>
-                        <select name="tahun_lulus" class="appearance-none bg-slate-100 hover:bg-slate-200 text-slate-600 pl-10 pr-10 py-2.5 rounded-full text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer border-none">
-                            <option value="" {{ !request('tahun_lulus') ? 'selected' : '' }}>Tahun Lulus</option>
-                            <option value="2024" {{ request('tahun_lulus') == '2024' ? 'selected' : '' }}>2024</option>
-                            <option value="2023" {{ request('tahun_lulus') == '2023' ? 'selected' : '' }}>2023</option>
-                            <option value="2022" {{ request('tahun_lulus') == '2022' ? 'selected' : '' }}>2022</option>
-                            <option value="2021" {{ request('tahun_lulus') == '2021' ? 'selected' : '' }}>2021</option>
-                            <option value="2020" {{ request('tahun_lulus') == '2020' ? 'selected' : '' }}>2020</option>
-                        </select>
-                        <div class="absolute right-4 pointer-events-none opacity-40">
-                            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
-                        </div>
-                    </div>
-
-                    {{-- Program Studi --}}
-                    <div class="relative flex items-center">
-                        <span class="absolute left-4 z-10 opacity-60 text-xs">🎓</span>
-                        <select name="program_studi" class="appearance-none bg-slate-100 hover:bg-slate-200 text-slate-600 pl-10 pr-10 py-2.5 rounded-full text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer border-none">
-                            <option value="" {{ !request('program_studi') ? 'selected' : '' }}>Program Studi</option>
-                            <option value="TI" {{ request('program_studi') == 'TI' ? 'selected' : '' }}>Teknik Informatika</option>
-                            <option value="MIF" {{ request('program_studi') == 'MIF' ? 'selected' : '' }}>Manajemen Informatika</option>
-                            <option value="MID" {{ request('program_studi') == 'MID' ? 'selected' : '' }}>Manajemen Agroindustri</option>
-                            <option value="TKK" {{ request('program_studi') == 'TKK' ? 'selected' : '' }}>Teknik Komputer</option>
-                        </select>
-                        <div class="absolute right-4 pointer-events-none opacity-40">
-                            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
-                        </div>
-                    </div>
-
-                    {{-- Lokasi --}}
-                    <div class="relative flex items-center">
-                        <span class="absolute left-4 z-10 opacity-60 text-xs">📍</span>
-                        <select name="lokasi" class="appearance-none bg-slate-100 hover:bg-slate-200 text-slate-600 pl-10 pr-10 py-2.5 rounded-full text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer border-none">
-                            <option value="" {{ !request('lokasi') ? 'selected' : '' }}>Lokasi</option>
-                            <option value="Jember" {{ request('lokasi') == 'Jember' ? 'selected' : '' }}>Jember</option>
-                            <option value="Sidoarjo" {{ request('lokasi') == 'Sidoarjo' ? 'selected' : '' }}>Sidoarjo</option>
-                            <option value="Surabaya" {{ request('lokasi') == 'Surabaya' ? 'selected' : '' }}>Surabaya</option>
-                            <option value="Nganjuk" {{ request('lokasi') == 'Nganjuk' ? 'selected' : '' }}>Nganjuk</option>
-                            <option value="Bondowoso" {{ request('lokasi') == 'Bondowoso' ? 'selected' : '' }}>Bondowoso</option>
-                            <option value="Banyuwangi" {{ request('lokasi') == 'Banyuwangi' ? 'selected' : '' }}>Banyuwangi</option>
-                        </select>
-                        <div class="absolute right-4 pointer-events-none opacity-40">
-                            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
-                        </div>
-                    </div>
-
-                    {{-- Submit --}}
-                    <button type="submit" class="bg-[#0067B1] text-white px-6 py-2.5 rounded-full text-xs font-bold hover:bg-blue-800 transition-all shadow-lg shadow-blue-900/20">
-                        Terapkan Filter
-                    </button>
-
-                    {{-- Reset --}}
-                    @if(request()->anyFilled(['search', 'tahun_lulus', 'program_studi', 'lokasi']))
-                    <a href="{{ route('alumni.search') }}" class="bg-slate-200 hover:bg-slate-300 text-slate-600 px-6 py-2.5 rounded-full text-xs font-bold transition-all">
-                        Reset
-                    </a>
-                    @endif
-                </div>
-            </form>
+    {{-- Tahun Lulus (dari database, dinamis) --}}
+    <div class="relative flex items-center">
+        <span class="absolute left-4 z-10 opacity-60 text-xs">📅</span>
+        <select name="tahun_lulus"
+            onchange="this.form.submit()"
+            class="appearance-none bg-slate-100 hover:bg-slate-200 text-slate-600 pl-10 pr-10 py-2.5 rounded-full text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer border-none">
+            <option value="">Tahun Lulus</option>
+            @foreach($tahunList as $tahun)
+                <option value="{{ $tahun }}" {{ request('tahun_lulus') == $tahun ? 'selected' : '' }}>
+                    {{ $tahun }}
+                </option>
+            @endforeach
+        </select>
+        <div class="absolute right-4 pointer-events-none opacity-40">
+            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/>
+            </svg>
         </div>
+    </div>
+
+    {{-- Program Studi (dari database, dinamis) --}}
+    <div class="relative flex items-center">
+        <span class="absolute left-4 z-10 opacity-60 text-xs">🎓</span>
+        <select name="program_studi"
+            onchange="this.form.submit()"
+            class="appearance-none bg-slate-100 hover:bg-slate-200 text-slate-600 pl-10 pr-10 py-2.5 rounded-full text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer border-none">
+            <option value="">Program Studi</option>
+            @foreach($prodiList as $prodi)
+                <option value="{{ $prodi }}" {{ request('program_studi') == $prodi ? 'selected' : '' }}>
+                    {{ $prodi }}
+                </option>
+            @endforeach
+        </select>
+        <div class="absolute right-4 pointer-events-none opacity-40">
+            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/>
+            </svg>
+        </div>
+    </div>
+
+    {{-- Lokasi (dari database, dinamis) --}}
+    <div class="relative flex items-center">
+        <span class="absolute left-4 z-10 opacity-60 text-xs">📍</span>
+        <select name="lokasi"
+            onchange="this.form.submit()"
+            class="appearance-none bg-slate-100 hover:bg-slate-200 text-slate-600 pl-10 pr-10 py-2.5 rounded-full text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer border-none">
+            <option value="">Lokasi</option>
+            @foreach($lokasiList as $lok)
+                <option value="{{ $lok }}" {{ request('lokasi') == $lok ? 'selected' : '' }}>
+                    {{ $lok }}
+                </option>
+            @endforeach
+        </select>
+        <div class="absolute right-4 pointer-events-none opacity-40">
+            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/>
+            </svg>
+        </div>
+    </div>
+
+    {{-- Tombol reset saja, tidak perlu "Terapkan Filter" --}}
+    @if(request()->anyFilled(['search', 'tahun_lulus', 'program_studi', 'lokasi']))
+    <a href="{{ route('alumni.search') }}"
+        class="bg-slate-200 hover:bg-slate-300 text-slate-600 px-6 py-2.5 rounded-full text-xs font-bold transition-all">
+        Reset
+    </a>
+    @endif
+</div>
 
         <hr class="border-slate-200 mb-10">
 
@@ -175,18 +181,36 @@
                         @endif
                     </div>
                     <h4 class="font-extrabold text-slate-800 text-lg mb-1">{{ $alumni->nama }}</h4>
-                    <p class="text-[#0067B1] font-bold text-xs mb-1 uppercase tracking-wider">
-                        {{ $alumni->jabatan_sekarang ?? 'Alumni' }}
-                    </p>
-                    <p class="text-slate-500 font-medium text-[11px] mb-3 uppercase tracking-tight">
-                        {{ $alumni->perusahaan_sekarang ?? 'Politeknik Negeri Jember' }}
-                    </p>
-                    <div class="flex items-center text-slate-400 text-[11px] font-bold uppercase tracking-wider mb-8">
-                        <span class="mr-2">🎓</span> Angkatan {{ $alumni->tahun_lulus }}
-                    </div>
-                    <a href="{{ route('alumni.show', $alumni->nim) }}" class="w-full py-3.5 border-2 border-slate-100 rounded-2xl text-slate-600 font-bold text-xs hover:bg-[#0067B1] hover:text-white hover:border-[#0067B1] transition-all text-center">
-                        Lihat Profil
-                    </a>
+
+{{-- ✅ PERBAIKAN: Ambil jobdesk dari pekerjaan aktif/terbaru --}}
+<p class="text-[#0067B1] font-bold text-xs mb-1 uppercase tracking-wider">
+    @php
+        // Ambil pekerjaan AKTIF atau terbaru
+        $pekerjaanAktif = $alumni->pekerjaan()
+            ->where(function($q) {
+                $q->whereNull('tahun_selesai')
+                  ->orWhere('tahun_selesai', '>=', now());
+            })
+            ->latest('tahun_masuk')
+            ->first();
+        
+        $pekerjaan = $pekerjaanAktif ?? $alumni->pekerjaan()->latest('tahun_masuk')->first();
+    @endphp
+    {{ $pekerjaan?->jobdesk ?? '-' }}
+</p>
+
+{{-- ✅ PERBAIKAN: Ambil nama_perusahaan dari pekerjaan yang sama --}}
+<p class="text-slate-500 font-medium text-[11px] mb-3 uppercase tracking-tight">
+    {{ $pekerjaan?->nama_perusahaan ?? '-' }}
+</p>
+
+<div class="flex items-center text-slate-400 text-[11px] font-bold uppercase tracking-wider mb-8">
+    <span class="mr-2">🎓</span> {{ $alumni->tahun_lulus ?? '-' }}
+</div>
+
+<a href="{{ route('alumni.show', $alumni->nim) }}" class="w-full py-3.5 border-2 border-slate-100 rounded-2xl text-slate-600 font-bold text-xs hover:bg-[#0067B1] hover:text-white hover:border-[#0067B1] transition-all text-center">
+    Lihat Profil
+</a>
                 </div>
             </div>
             @empty
@@ -220,12 +244,12 @@
                         <h4 class="font-extrabold text-slate-800 text-base leading-tight truncate">{{ $alumni->nama }}</h4>
                         <p class="text-[#0067B1] font-bold text-xs mt-0.5">
                             {{ $alumni->jabatan_sekarang ?? 'Alumni' }}
-                            @if($alumni->perusahaan_sekarang)
-                                <span class="text-slate-400 font-medium">at {{ $alumni->perusahaan_sekarang }}</span>
+                            @if($alumni->pekerjaan->first()?->nama_perusahaan)
+                                <span class="text-slate-400 font-medium">at {{ $alumni->pekerjaan->first()?->nama_perusahaan }}</span>
                             @endif
                         </p>
                         <div class="flex items-center text-slate-400 text-[11px] font-bold uppercase tracking-wider mt-1.5">
-                            <span class="mr-1.5">🎓</span> Angkatan {{ $alumni->tahun_lulus }}
+                            <span class="mr-1.5">🎓</span> {{ $alumni->tahun_lulus ?? '-' }}
                         </div>
                     </div>
                 </div>
