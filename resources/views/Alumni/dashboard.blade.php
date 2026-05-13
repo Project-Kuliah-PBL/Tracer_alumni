@@ -79,7 +79,20 @@
                             </button>
                         </div>
                         <h2 class="text-2xl font-bold text-slate-800">{{ $alumni->nama }}</h2>
-                        <p class="text-slate-500 text-sm font-medium">{{ $alumni->jabatan_sekarang ?? 'Belum diisi' }}</p>
+                        @php
+                            // jabatan_sekarang auto-diupdate oleh PekerjaanController::syncAlumniFromPekerjaan
+                            // Jika belum ada di DB, coba ambil langsung dari relasi pekerjaan aktif
+                            $jabatanTampil = $alumni->jabatan_sekarang;
+                            if (!$jabatanTampil) {
+                                $pekerjaanAktif = $alumni->pekerjaan->whereNull('tahun_selesai')->sortByDesc('tahun_masuk')->first()
+                                               ?? $alumni->pekerjaan->sortByDesc('tahun_masuk')->first();
+                                if ($pekerjaanAktif) {
+                                    $bagian = array_filter([$pekerjaanAktif->jobdesk, $pekerjaanAktif->nama_perusahaan]);
+                                    $jabatanTampil = implode(' – ', $bagian);
+                                }
+                            }
+                        @endphp
+                        <p class="text-slate-500 text-sm font-medium">{{ $jabatanTampil ?? 'Belum diisi' }}</p>
                         <div class="flex items-center gap-4 mt-3 text-[11px] text-slate-400 font-semibold flex-wrap">
                             @if($alumni->alamat)
                             <span class="flex items-center gap-1">
@@ -226,10 +239,7 @@
                                                         <option value="Perempuan" {{ old('jenis_kelamin', $alumni->jenis_kelamin) == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
                                                     </select>
                                                 </div>
-                                                <div class="space-y-1.5">
-                                                    <label class="text-sm font-semibold text-slate-600">Lama Tunggu Kerja Pertama</label>
-                                                    <input type="text" name="lama_tunggu_kerja" value="{{ old('lama_tunggu_kerja', $alumni->lama_tunggu_kerja) }}" placeholder="Contoh: 3 Bulan" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
-                                                </div>
+
                                             </div>
                                         </div>
                                     </div>
@@ -929,7 +939,17 @@
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-slate-600 mb-1.5">Posisi / Jobdesk</label>
-                    <input type="text" name="jobdesk" value="{{ old('jobdesk') }}" placeholder="Contoh: Software Engineer, Data Analyst" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
+                    <input type="text" name="jobdesk" placeholder="Contoh: Software Engineer, Data Analyst" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-600 mb-1.5">Divisi / Departemen</label>
+                        <input type="text" name="divisi" placeholder="Contoh: Engineering, Marketing" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-600 mb-1.5">Lokasi (Kota)</label>
+                        <input type="text" name="lokasi" placeholder="Contoh: Surabaya, Jakarta" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
+                    </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
@@ -1029,6 +1049,9 @@
         const m = document.getElementById('modalTambahPekerjaan');
         m.classList.add('hidden'); m.classList.remove('flex');
         document.body.style.overflow = 'auto';
+        // Reset semua input dalam form agar tidak ada isian lama saat dibuka lagi
+        const form = m.querySelector('form');
+        if (form) form.reset();
     }
     document.getElementById('modalTambahPekerjaan').addEventListener('click', function(e) { if (e.target === this) closeModalTambahPekerjaan(); });
 

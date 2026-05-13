@@ -335,7 +335,17 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Posisi / Jobdesk</label>
-                        <input type="text" name="jobdesk" id="edit_jobdesk" class="form-input">
+                        <input type="text" name="jobdesk" id="edit_jobdesk" class="form-input" placeholder="Contoh: Software Engineer">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Divisi / Departemen</label>
+                            <input type="text" name="divisi" id="edit_divisi" class="form-input" placeholder="Contoh: Engineering, Marketing">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Lokasi (Kota)</label>
+                            <input type="text" name="lokasi" id="edit_lokasi" class="form-input" placeholder="Contoh: Surabaya, Jakarta">
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Status Pekerjaan <span class="text-red-500">*</span></label>
@@ -411,6 +421,8 @@
             // Isi data ke form
             document.getElementById('edit_nama_perusahaan').value = pekerjaan.nama_perusahaan || '';
             document.getElementById('edit_jobdesk').value         = pekerjaan.jobdesk || '';
+            document.getElementById('edit_divisi').value          = pekerjaan.divisi  || '';
+            document.getElementById('edit_lokasi').value          = pekerjaan.lokasi  || '';
             document.getElementById('edit_deskripsi').value       = pekerjaan.deskripsi || '';
 
             // Status pekerjaan — value di DB dan value di <option> sudah sinkron
@@ -559,40 +571,64 @@
         </div>
     </div>
 
-<!-- Modal Konfirmasi Hapus -->
-<div id="modalHapusWrapper" style="display:none;position:relative;min-height:240px;background:rgba(0,0,0,0.5);border-radius:1rem;align-items:center;justify-content:center;">
-<div id="modalHapus" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden">
-        <div class="p-6">
-            <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+<!-- Modal Konfirmasi Hapus — fixed fullscreen overlay -->
+<div id="modalHapus"
+     style="display:none; position:fixed; inset:0; z-index:9999;
+            background:rgba(0,0,0,0.45); backdrop-filter:blur(4px);
+            align-items:center; justify-content:center; padding:1rem;">
+    <div style="background:#fff; border-radius:1rem; box-shadow:0 20px 60px rgba(0,0,0,0.2);
+                width:100%; max-width:380px; overflow:hidden;"
+         onclick="event.stopPropagation()">
+        <div style="padding:1.75rem 1.5rem 1.25rem; text-align:center;">
+            <div style="width:3rem; height:3rem; background:#fee2e2; border-radius:50%;
+                        display:flex; align-items:center; justify-content:center; margin:0 auto 1rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" style="width:1.5rem;height:1.5rem;color:#ef4444;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                 </svg>
             </div>
-            <h3 class="text-center font-bold text-slate-800 text-base mb-1">Hapus Pengalaman Kerja?</h3>
-            <p class="text-center text-slate-500 text-sm">Data yang dihapus tidak dapat dikembalikan.</p>
+            <h3 style="font-weight:700; font-size:1rem; color:#1e293b; margin-bottom:.4rem;">Hapus Pengalaman Kerja?</h3>
+            <p style="font-size:.875rem; color:#64748b;">Data yang dihapus tidak dapat dikembalikan.</p>
         </div>
-        <div class="flex border-t border-slate-100">
-            <button onclick="closeModalHapus()" class="flex-1 py-3.5 text-slate-600 font-semibold text-sm hover:bg-slate-50 transition-colors">Batal</button>
-            <button onclick="submitDeleteForm()" class="flex-1 py-3.5 text-red-600 font-bold text-sm hover:bg-red-50 transition-colors border-l border-slate-100">Hapus</button>
+        <div style="display:flex; border-top:1px solid #f1f5f9;">
+            <button onclick="closeModalHapus()"
+                    style="flex:1; padding:.875rem; font-size:.875rem; font-weight:600;
+                           color:#475569; background:none; border:none; cursor:pointer;"
+                    onmouseover="this.style.background='#f8fafc'"
+                    onmouseout="this.style.background='none'">Batal</button>
+            <button onclick="submitDeleteForm()"
+                    style="flex:1; padding:.875rem; font-size:.875rem; font-weight:700;
+                           color:#dc2626; background:none; border:none; border-left:1px solid #f1f5f9; cursor:pointer;"
+                    onmouseover="this.style.background='#fff5f5'"
+                    onmouseout="this.style.background='none'">Hapus</button>
         </div>
     </div>
-</div>
 </div>
 
 <script>
     let _deleteFormTarget = null;
+
     function confirmHapus(form) {
         _deleteFormTarget = form;
-        document.getElementById('modalHapusWrapper').style.display = 'flex';
+        const m = document.getElementById('modalHapus');
+        m.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
     }
     function closeModalHapus() {
-        document.getElementById('modalHapusWrapper').style.display = 'none';
+        const m = document.getElementById('modalHapus');
+        m.style.display = 'none';
+        document.body.style.overflow = '';
         _deleteFormTarget = null;
     }
     function submitDeleteForm() {
         if (_deleteFormTarget) _deleteFormTarget.submit();
     }
+
+    // Tutup saat klik backdrop
+    document.getElementById('modalHapus').addEventListener('click', function(e) {
+        if (e.target === this) closeModalHapus();
+    });
+
     document.querySelectorAll('[data-delete-form]').forEach(form => {
         form.addEventListener('submit', function(e) {
             e.preventDefault();

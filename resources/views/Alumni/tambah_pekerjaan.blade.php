@@ -138,6 +138,19 @@
 
                 <div class="form-grid">
                     <div class="form-group">
+                        <label>Divisi / Departemen</label>
+                        <input type="text" name="divisi" class="form-control" value="{{ old('divisi', $pekerjaan->divisi ?? '') }}" placeholder="Contoh: Engineering, Marketing, Finance">
+                        @error('divisi') <p class="error-msg">{{ $message }}</p> @enderror
+                    </div>
+                    <div class="form-group">
+                        <label>Lokasi (Kota)</label>
+                        <input type="text" name="lokasi" class="form-control" value="{{ old('lokasi', $pekerjaan->lokasi ?? '') }}" placeholder="Contoh: Surabaya, Jakarta, Bandung">
+                        @error('lokasi') <p class="error-msg">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
                         <label>Tanggal Mulai</label>
                         <input type="date" name="tahun_masuk" class="form-control"
                             value="{{ old('tahun_masuk', isset($pekerjaan) && $pekerjaan->tahun_masuk ? $pekerjaan->tahun_masuk->format('Y-m-d') : '') }}">
