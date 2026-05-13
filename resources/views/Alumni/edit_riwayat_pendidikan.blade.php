@@ -185,7 +185,8 @@
                                 @endif
                             </div>
                             <div class="action-group">
-                                <a href="{{ route('alumni.pendidikan.index') }}?edit={{ $edu->id }}" class="icon-btn edit" title="Edit" onclick="openEditModal({{ $edu->id }}, event)">
+                                <a href="#" class="icon-btn edit" title="Edit"
+                                   onclick="openEditModal({{ $edu->id }}, '{{ addslashes($edu->nama_instansi) }}', '{{ $edu->jenjang_pendidikan }}', '{{ addslashes($edu->jurusan ?? '') }}', '{{ $edu->tahun_masuk ? $edu->tahun_masuk->format('Y-m-d') : '' }}', '{{ $edu->tahun_keluar ? $edu->tahun_keluar->format('Y-m-d') : '' }}', '{{ $edu->nilai_akhir ?? '' }}', '{{ addslashes($edu->judul_skripsi ?? '') }}', event)">
                                     <svg viewBox="0 0 24 24" fill="none">
                                         <path d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                         <path d="M18.5 2.5C18.8978 2.10218 19.4374 1.87868 20 1.87868C20.5626 1.87868 21.1022 2.10218 21.5 2.5C21.8978 2.89782 22.1213 3.43739 22.1213 4C22.1213 4.56261 21.8978 5.10218 21.5 5.5L12 15L8 16L9 12L18.5 2.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -206,61 +207,6 @@
                         </div>
                     </div>
                 </article>
-
-                {{-- Modal Edit inline untuk setiap record --}}
-                <div id="editModal-{{ $edu->id }}" style="display:none;position:relative;min-height:540px;background:rgba(0,0,0,0.45);border-radius:1rem;align-items:center;justify-content:center;padding:1rem;">
-                    <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden">
-                        <div class="flex justify-between items-center px-6 py-4 border-b">
-                            <h3 style="font-family:var(--font-heading);font-weight:700;color:var(--color-primary);">Edit Riwayat Pendidikan</h3>
-                            button class="modal-close" onclick="closeEditModal()"></button>
-                        </div>
-                        <form action="{{ route('alumni.pendidikan.update', $edu->id) }}" method="POST" class="p-6 space-y-4">
-                            @csrf @method('PUT')
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-semibold text-gray-600 mb-1">Nama Instansi <span class="text-red-500">*</span></label>
-                                    <input type="text" name="nama_instansi" value="{{ $edu->nama_instansi }}" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold text-gray-600 mb-1">Jenjang <span class="text-red-500">*</span></label>
-                                    <select name="jenjang_pendidikan" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500 bg-white">
-                                        @foreach(['SD','SMP','SMA/SMK','D1','D2','D3','D4','S1','S2','S3'] as $j)
-                                        <option value="{{ $j }}" {{ $edu->jenjang_pendidikan == $j ? 'selected' : '' }}>{{ $j }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-600 mb-1">Jurusan / Program Studi</label>
-                                <input type="text" name="jurusan" value="{{ $edu->jurusan }}" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500" placeholder="Contoh: Teknik Informatika">
-                            </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-semibold text-gray-600 mb-1">Tahun Masuk</label>
-                                    <input type="date" name="tahun_masuk" value="{{ $edu->tahun_masuk ? $edu->tahun_masuk->format('Y-m-d') : '' }}" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold text-gray-600 mb-1">Tahun Keluar</label>
-                                    <input type="date" name="tahun_keluar" value="{{ $edu->tahun_keluar ? $edu->tahun_keluar->format('Y-m-d') : '' }}" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500">
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-semibold text-gray-600 mb-1">Nilai Akhir (IPK/Nilai)</label>
-                                    <input type="number" name="nilai_akhir" value="{{ $edu->nilai_akhir }}" step="0.01" min="0" max="4" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500" placeholder="0.00 - 4.00">
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-600 mb-1">Judul Skripsi / Tugas Akhir</label>
-                                <input type="text" name="judul_skripsi" value="{{ $edu->judul_skripsi }}" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500" placeholder="Kosongkan jika tidak ada">
-                            </div>
-                            <div class="flex gap-3 pt-2">
-                                <button type="button" onclick="closeEditModal({{ $edu->id }})" class="flex-1 py-2.5 rounded-lg bg-red-600 text-white font-bold text-sm hover:bg-red-700 transition-all">Batal</button>
-                                <button type="submit" class="flex-1 py-2.5 rounded-lg bg-[#0061a4] text-white font-bold text-sm hover:bg-[#004f87] transition-all">Simpan</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
                 @empty
                 <div class="empty-state">
                     <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="#94a3b8" style="margin:0 auto;">
@@ -276,18 +222,27 @@
     </div>
 
 <script>
-function openEditModal(id, event) {
+function openEditModal(id, nama_instansi, jenjang, jurusan, tahun_masuk, tahun_keluar, nilai_akhir, judul_skripsi, event) {
     event.preventDefault();
-    document.getElementById('editModal-' + id).style.display = 'flex';
+    const m = document.getElementById('editModal');
+    // Isi data ke form
+    const form = m.querySelector('form');
+    form.action = form.dataset.baseAction.replace('__ID__', id);
+    m.querySelector('[name="nama_instansi"]').value = nama_instansi;
+    const selJenjang = m.querySelector('[name="jenjang_pendidikan"]');
+    for (let opt of selJenjang.options) opt.selected = (opt.value === jenjang);
+    m.querySelector('[name="jurusan"]').value = jurusan;
+    m.querySelector('[name="tahun_masuk"]').value = tahun_masuk;
+    m.querySelector('[name="tahun_keluar"]').value = tahun_keluar;
+    m.querySelector('[name="nilai_akhir"]').value = nilai_akhir;
+    m.querySelector('[name="judul_skripsi"]').value = judul_skripsi;
+    m.style.display = 'flex';
     document.body.style.overflow = 'hidden';
 }
-        function closeEditModal(event) {
-            if (event && event.target !== event.currentTarget && event.target !== document.getElementById('editModal')) return;
-            document.getElementById('editModal').classList.remove('active');
-            document.body.style.overflow = '';
-            // Reset file input agar tidak carry-over ke edit berikutnya
-            document.getElementById('edit_logo_input').value = '';
-        }
+function closeEditModal() {
+    document.getElementById('editModal').style.display = 'none';
+    document.body.style.overflow = '';
+}
 
 function openTambahModal() {
     document.getElementById('tambahModal').style.display = 'flex';
@@ -299,8 +254,9 @@ function closeTambahModal() {
 }
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
-        document.querySelectorAll('[id^="editModal-"]').forEach(m => m.style.display = 'none');
+        closeEditModal();
         closeTambahModal();
+        closeModalHapus();
         document.body.style.overflow = 'auto';
     }
 });
@@ -362,34 +318,115 @@ document.addEventListener('keydown', function(e) {
     </div>
 </div>
 
-<!-- Modal Konfirmasi Hapus -->
-<div id="modalHapusWrapper" style="display:none;position:relative;min-height:240px;background:rgba(0,0,0,0.5);border-radius:1rem;align-items:center;justify-content:center;">
-<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden">
-        <div class="p-6">
-            <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
+<!-- Modal Edit Riwayat Pendidikan — fixed fullscreen overlay -->
+<div id="editModal"
+     style="display:none; position:fixed; inset:0; z-index:9999;
+            background:rgba(0,0,0,0.45); backdrop-filter:blur(4px);
+            align-items:center; justify-content:center; padding:1rem;"
+     onclick="if(event.target===this) closeEditModal()">
+    <div style="background:#fff; border-radius:1.5rem; box-shadow:0 20px 60px rgba(0,0,0,0.2);
+                width:100%; max-width:560px; overflow:hidden; max-height:90vh; display:flex; flex-direction:column;"
+         onclick="event.stopPropagation()">
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:1.25rem 1.75rem; border-bottom:1px solid #f1f5f9;">
+            <h3 style="font-weight:700; font-size:1.05rem; color:var(--color-primary); margin:0;">Edit Riwayat Pendidikan</h3>
+            <button onclick="closeEditModal()" style="background:none; border:none; cursor:pointer; color:#94a3b8; font-size:1.4rem; line-height:1;" title="Tutup">&times;</button>
+        </div>
+        <form data-base-action="{{ route('alumni.pendidikan.update', '__ID__') }}" method="POST"
+              style="padding:1.5rem 1.75rem; overflow-y:auto; flex:1;">
+            @csrf @method('PUT')
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600 mb-1">Nama Instansi <span class="text-red-500">*</span></label>
+                    <input type="text" name="nama_instansi" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600 mb-1">Jenjang <span class="text-red-500">*</span></label>
+                    <select name="jenjang_pendidikan" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500 bg-white">
+                        @foreach(['SD','SMP','SMA/SMK','D1','D2','D3','D4','S1','S2','S3'] as $j)
+                        <option value="{{ $j }}">{{ $j }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
-            <h3 class="text-center font-bold text-slate-800 text-base mb-1">Hapus Riwayat Pendidikan?</h3>
-            <p class="text-center text-slate-500 text-sm">Data yang dihapus tidak dapat dikembalikan.</p>
-        </div>
-        <div class="flex border-t border-slate-100">
-            <button onclick="closeModalHapus()" class="flex-1 py-3.5 text-slate-600 font-semibold text-sm hover:bg-slate-50 transition-colors">Batal</button>
-            <button onclick="submitDeleteForm()" class="flex-1 py-3.5 text-red-600 font-bold text-sm hover:bg-red-50 transition-colors border-l border-slate-100">Hapus</button>
-        </div>
+            <div style="margin-bottom:1rem;">
+                <label class="block text-sm font-semibold text-gray-600 mb-1">Jurusan / Program Studi</label>
+                <input type="text" name="jurusan" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500" placeholder="Contoh: Teknik Informatika">
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600 mb-1">Tahun Masuk</label>
+                    <input type="date" name="tahun_masuk" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600 mb-1">Tahun Keluar</label>
+                    <input type="date" name="tahun_keluar" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500">
+                </div>
+            </div>
+            <div style="margin-bottom:1rem;">
+                <label class="block text-sm font-semibold text-gray-600 mb-1">Nilai Akhir (IPK/Nilai)</label>
+                <input type="number" name="nilai_akhir" step="0.01" min="0" max="4" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500" placeholder="0.00 - 4.00">
+            </div>
+            <div style="margin-bottom:1.5rem;">
+                <label class="block text-sm font-semibold text-gray-600 mb-1">Judul Skripsi / Tugas Akhir</label>
+                <input type="text" name="judul_skripsi" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500" placeholder="Kosongkan jika tidak ada">
+            </div>
+            <div style="display:flex; gap:.75rem;">
+                <button type="button" onclick="closeEditModal()"
+                        style="flex:1; padding:.75rem; background:#dc2626; color:#fff; border:none; border-radius:.75rem; font-weight:700; font-size:.875rem; cursor:pointer;"
+                        onmouseover="this.style.background='#b91c1c'" onmouseout="this.style.background='#dc2626'">Batal</button>
+                <button type="submit"
+                        style="flex:1; padding:.75rem; background:#0061a4; color:#fff; border:none; border-radius:.75rem; font-weight:700; font-size:.875rem; cursor:pointer;"
+                        onmouseover="this.style.background='#004f87'" onmouseout="this.style.background='#0061a4'">Simpan</button>
+            </div>
+        </form>
     </div>
 </div>
+
+<!-- Modal Konfirmasi Hapus — fixed fullscreen overlay -->
+<div id="modalHapus"
+     style="display:none; position:fixed; inset:0; z-index:9999;
+            background:rgba(0,0,0,0.45); backdrop-filter:blur(4px);
+            align-items:center; justify-content:center; padding:1rem;"
+     onclick="if(event.target===this) closeModalHapus()">
+    <div style="background:#fff; border-radius:1rem; box-shadow:0 20px 60px rgba(0,0,0,0.2);
+                width:100%; max-width:380px; overflow:hidden;"
+         onclick="event.stopPropagation()">
+        <div style="padding:1.75rem 1.5rem 1.25rem; text-align:center;">
+            <div style="width:3rem; height:3rem; background:#fee2e2; border-radius:50%;
+                        display:flex; align-items:center; justify-content:center; margin:0 auto 1rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" style="width:1.5rem;height:1.5rem;color:#ef4444;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+            </div>
+            <h3 style="font-weight:700; font-size:1rem; color:#1e293b; margin-bottom:.4rem;">Hapus Riwayat Pendidikan?</h3>
+            <p style="font-size:.875rem; color:#64748b;">Data yang dihapus tidak dapat dikembalikan.</p>
+        </div>
+        <div style="display:flex; border-top:1px solid #f1f5f9;">
+            <button onclick="closeModalHapus()"
+                    style="flex:1; padding:.875rem; font-size:.875rem; font-weight:600;
+                           color:#475569; background:none; border:none; cursor:pointer;"
+                    onmouseover="this.style.background='#f8fafc'"
+                    onmouseout="this.style.background='none'">Batal</button>
+            <button onclick="submitDeleteForm()"
+                    style="flex:1; padding:.875rem; font-size:.875rem; font-weight:700;
+                           color:#dc2626; background:none; border:none; border-left:1px solid #f1f5f9; cursor:pointer;"
+                    onmouseover="this.style.background='#fff5f5'"
+                    onmouseout="this.style.background='none'">Hapus</button>
+        </div>
+    </div>
 </div>
 <script>
     let _deleteFormTarget = null;
     function confirmHapus(form) {
         _deleteFormTarget = form;
-        document.getElementById('modalHapusWrapper').style.display = 'flex';
+        const m = document.getElementById('modalHapus');
+        m.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
     }
     function closeModalHapus() {
-        document.getElementById('modalHapusWrapper').style.display = 'none';
+        document.getElementById('modalHapus').style.display = 'none';
+        document.body.style.overflow = '';
         _deleteFormTarget = null;
     }
     function submitDeleteForm() {

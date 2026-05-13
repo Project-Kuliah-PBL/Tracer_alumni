@@ -185,49 +185,9 @@
                                                 <input type="text" name="nama" value="{{ old('nama', $alumni->nama) }}" placeholder="Masukkan nama lengkap" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
                                             </div>
 
-                                            <div class="grid grid-cols-2 gap-4">
-                                                <div class="space-y-1.5">
-    <label class="text-sm font-semibold text-slate-600">Status Pekerjaan</label>
-    <div class="flex gap-4">
-        
-        <!-- Tombol Belum Bekerja -->
-        <label class="flex-1 cursor-pointer group">
-            <input type="radio" name="status_pekerjaan" value="belum" class="peer hidden" {{ old('status_pekerjaan') == 'belum' ? 'checked' : '' }}>
-            <div class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-slate-100 transition-all text-slate-500 
-                        peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-600">
-                
-                <!-- Lingkaran Indicator -->
-                <div class="w-5 h-5 rounded-full border-2 border-slate-200 flex items-center justify-center transition-all 
-                            peer-checked:border-blue-500 group-hover:border-blue-300">
-                    <div class="w-2.5 h-2.5 rounded-full bg-blue-500 scale-0 peer-checked:scale-100 transition-transform"></div>
-                </div>
-                
-                <span class="text-sm font-bold">Belum Bekerja</span>
-            </div>
-        </label>
-
-        <!-- Tombol Sudah Bekerja -->
-        <label class="flex-1 cursor-pointer group">
-            <input type="radio" name="status_pekerjaan" value="sudah" class="peer hidden" {{ old('status_pekerjaan', $alumni->jabatan_sekarang ? 'sudah' : '') == 'sudah' ? 'checked' : '' }}>
-            <div class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-slate-100 transition-all text-slate-500 
-                        peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-600">
-                
-                <!-- Lingkaran Indicator -->
-                <div class="w-5 h-5 rounded-full border-2 border-slate-200 flex items-center justify-center transition-all 
-                            peer-checked:border-blue-500 group-hover:border-blue-300">
-                    <div class="w-2.5 h-2.5 rounded-full bg-blue-500 scale-0 peer-checked:scale-100 transition-transform"></div>
-                </div>
-                
-                <span class="text-sm font-bold">Sudah Bekerja</span>
-            </div>
-        </label>
-
-    </div>
-</div>
-                                                <div class="space-y-1.5">
-                                                    <label class="text-sm font-semibold text-slate-600">Alamat</label>
-                                                    <input type="text" name="alamat" value="{{ old('alamat', $alumni->alamat) }}" placeholder="Contoh: Jember, Jawa Timur" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
-                                                </div>
+                                            <div class="space-y-1.5">
+                                                <label class="text-sm font-semibold text-slate-600">Alamat</label>
+                                                <input type="text" name="alamat" value="{{ old('alamat', $alumni->alamat) }}" placeholder="Contoh: Jember, Jawa Timur" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
                                             </div>
 
                                             <div class="grid grid-cols-2 gap-4">
@@ -1042,6 +1002,9 @@
 
     function openModalTambahPekerjaan() {
         const m = document.getElementById('modalTambahPekerjaan');
+        // Reset form dulu sebelum ditampilkan agar selalu kosong
+        const form = m.querySelector('form');
+        if (form) form.reset();
         m.classList.remove('hidden'); m.classList.add('flex');
         document.body.style.overflow = 'hidden';
     }
@@ -1049,9 +1012,6 @@
         const m = document.getElementById('modalTambahPekerjaan');
         m.classList.add('hidden'); m.classList.remove('flex');
         document.body.style.overflow = 'auto';
-        // Reset semua input dalam form agar tidak ada isian lama saat dibuka lagi
-        const form = m.querySelector('form');
-        if (form) form.reset();
     }
     document.getElementById('modalTambahPekerjaan').addEventListener('click', function(e) { if (e.target === this) closeModalTambahPekerjaan(); });
 
