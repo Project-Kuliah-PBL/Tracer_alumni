@@ -14,7 +14,7 @@ use App\Http\Controllers\Alumni\PendidikanController;
 use App\Http\Controllers\Alumni\SertifikasiController;
 use App\Http\Controllers\Alumni\MediaSosialController;
 use App\Http\Controllers\Alumni\AlumniController;
-
+use App\Http\Controllers\ForgotPasswordController;
 // ─────────────────────────────────────────────
 // PUBLIC ROUTES (tidak butuh login)
 // ─────────────────────────────────────────────
@@ -35,9 +35,16 @@ Route::get('/cari-alumni/{nim}', [AlumniController::class, 'show'])->name('alumn
 // AUTH ROUTES
 // ─────────────────────────────────────────────
 
+
+// Baris 1: Pintu masuk untuk melihat halaman
+Route::get('/forgot-password', [ForgotPasswordController::class, 'index'])->name('password.request');
+
+// Baris 2: Pintu kirim data saat tombol "Riset" ditekan
+Route::post('/forgot-password', [ForgotPasswordController::class, 'reset'])->name('password.reset');
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
 
 // ─────────────────────────────────────────────
 // PROTECTED ROUTES (butuh login)

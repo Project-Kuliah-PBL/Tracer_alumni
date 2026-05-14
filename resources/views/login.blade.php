@@ -77,7 +77,7 @@
         <label class="block text-[9px] font-black text-slate-400 uppercase tracking-[0.1em]">
             Password
         </label>
-        <a href="#" class="text-[9px] font-bold text-[#0067B1] hover:text-blue-700 transition-colors uppercase tracking-wider">
+        <a href="{{ route('password.request') }}"class="text-[9px] font-bold text-[#0067B1] hover:text-blue-700 transition-colors uppercase tracking-wider">
             Lupa Password?
         </a>
     </div>
