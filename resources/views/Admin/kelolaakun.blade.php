@@ -39,12 +39,14 @@
                     <span class="font-bold text-xs">Kelola Akun</span>
                 </a>
 
+                @if(auth()->user()->role === 'SuperAdmin')
                 <a href="/admin/kelola-prodi" class="flex items-center space-x-3 text-slate-500 hover:bg-slate-50 px-5 py-3 rounded-full transition-all group mx-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
                     </svg>
                     <span class="font-bold text-xs">Kelola Prodi</span>
                 </a>
+                @endif
 
                <a href="/admin/edit-biodata" class="flex items-center space-x-3 text-slate-500 hover:bg-slate-50 px-5 py-3 rounded-full transition-all group mx-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -100,10 +102,59 @@
                 </div>
             </div>
 
-            {{-- Card Total --}}
+            {{-- ===== TABEL AKUN ADMIN (SuperAdmin only) ===== --}}
+            @if($isSuperAdmin && $adminAccounts->isNotEmpty())
+            <div class="mb-6">
+                <h3 class="text-sm font-extrabold text-slate-700 mb-3 flex items-center gap-2">
+                    <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider">Admin Per Prodi</span>
+                    <span class="text-slate-400 font-medium text-xs">{{ $adminAccounts->count() }} akun</span>
+                </h3>
+                <div class="bg-white rounded-[30px] shadow-sm border border-purple-100 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="text-slate-400 text-[9px] font-black uppercase tracking-wider bg-purple-50/50">
+                                    <th class="px-6 py-4">Username</th>
+                                    <th class="px-6 py-4">Program Studi</th>
+                                    <th class="px-6 py-4">Role</th>
+                                    <th class="px-6 py-4 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-50">
+                                @foreach($adminAccounts as $adm)
+                                <tr class="hover:bg-purple-50/30 transition-all">
+                                    <td class="px-6 py-4 text-xs font-bold text-slate-700">{{ $adm->username }}</td>
+                                    <td class="px-6 py-4 text-xs text-slate-500">{{ $adm->prodi ?? '—' }}</td>
+                                    <td class="px-6 py-4">
+                                        <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-[10px] font-black">Admin</span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex justify-center items-center gap-1">
+                                            <form action="{{ route('admin.kelola_akun.admin.destroy', $adm->id) }}" method="POST"
+                                                onsubmit="return confirm('Hapus akun Admin {{ addslashes($adm->username) }}?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="p-1.5 text-red-400 hover:bg-red-50 rounded-lg transition-all" title="Hapus">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            {{-- Card Total Alumni --}}
             <div class="bg-white p-5 rounded-[25px] shadow-sm border border-slate-100 w-fit mb-6 pr-12 relative overflow-hidden">
                 <div class="absolute left-0 top-0 w-1 h-full bg-blue-600"></div>
-                <p class="text-slate-400 text-[9px] font-bold uppercase tracking-widest mb-0.5">Total Terdaftar</p>
+                <p class="text-slate-400 text-[9px] font-bold uppercase tracking-widest mb-0.5">Total Alumni Terdaftar</p>
                 <h3 class="text-2xl font-[800] text-slate-800">{{ $alumni->total() }}</h3>
             </div>
 
@@ -275,7 +326,7 @@
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
             <div class="p-5 pb-0 flex justify-between items-start">
                 <div>
-                    <h2 class="text-[#0067B1] text-lg font-bold tracking-tight">Tambah Akun Alumni</h2>
+                    <h2 class="text-[#0067B1] text-lg font-bold tracking-tight">Tambah Akun</h2>
                     <p class="text-gray-500 text-[11px] mt-0.5">NIM akan digunakan sebagai username login.</p>
                 </div>
                 <button onclick="toggleModal('modalTambah')" class="text-gray-400 hover:text-gray-600">
@@ -307,6 +358,20 @@
                         <input type="text" name="nama" value="{{ old('nama') }}" placeholder="Nama lengkap alumni" required
                             class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all">
                     </div>
+
+                    @if(auth()->user()->role === 'SuperAdmin')
+                    <div>
+                        <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Role</label>
+                        <select name="role" class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all bg-white">
+                            <option value="Alumni" {{ old('role', 'Alumni') === 'Alumni' ? 'selected' : '' }}>Alumni</option>
+                            <option value="Admin" {{ old('role') === 'Admin' ? 'selected' : '' }}>Admin</option>
+                        </select>
+                        <p class="text-[10px] text-gray-400 mt-1 ml-1">Pilih Admin untuk membuat akun admin per prodi.</p>
+                    </div>
+                    @else
+                        <input type="hidden" name="role" value="Alumni">
+                    @endif
+
 <div class="mb-4">
     <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">
         Password <span class="normal-case text-gray-300">(default: NIM)</span>
@@ -354,6 +419,7 @@
                             class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all">
                     </div>
 
+                    @if(auth()->user()->role === 'SuperAdmin')
                     <div>
                         <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Program Studi</label>
                         <select name="prodi" class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all bg-white">
@@ -363,6 +429,14 @@
                             @endforeach
                         </select>
                     </div>
+                    @else
+                    <div>
+                        <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Program Studi</label>
+                        <input type="text" value="{{ auth()->user()->prodi }}" disabled
+                            class="w-full px-3 py-2 border border-gray-200 rounded-lg bg-slate-50 text-slate-600 text-sm transition-all">
+                        <input type="hidden" name="prodi" value="{{ auth()->user()->prodi }}">
+                    </div>
+                    @endif
 
                     <div>
                         <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Jenis Kelamin</label>
@@ -439,6 +513,7 @@
                             class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all">
                     </div>
 
+                    @if(auth()->user()->role === 'SuperAdmin')
                     <div>
                         <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Program Studi</label>
                         <select name="prodi" id="editProdi" class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0067B1]/20 focus:border-[#0067B1] focus:outline-none text-sm transition-all bg-white">
@@ -448,6 +523,14 @@
                             @endforeach
                         </select>
                     </div>
+                    @else
+                    <div>
+                        <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Program Studi</label>
+                        <input type="text" value="{{ auth()->user()->prodi }}" disabled
+                            class="w-full px-3 py-2 border border-gray-200 rounded-lg bg-slate-50 text-slate-600 text-sm transition-all">
+                        <input type="hidden" name="prodi" id="editProdi" value="{{ auth()->user()->prodi }}">
+                    </div>
+                    @endif
 
                     <div>
                         <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Jenis Kelamin</label>

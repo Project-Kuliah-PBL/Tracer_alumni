@@ -59,12 +59,14 @@
                     <span class="font-bold text-xs">Kelola Akun</span>
                 </a>
 
+                @if($isSuperAdmin)
                 <a href="/admin/kelola-prodi" class="flex items-center space-x-3 text-slate-500 hover:bg-slate-50 px-5 py-3 rounded-full transition-all group mx-2"> 
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
                     </svg>
                     <span class="font-bold text-xs">Kelola Prodi</span>
                 </a>
+                @endif
 
                 <a href="/admin/edit-biodata" class="flex items-center space-x-3 text-slate-500 hover:bg-slate-50 px-5 py-3 rounded-full transition-all group mx-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -142,41 +144,39 @@
         </div>
     </div>
 
-    {{-- Grafik 3: Masa Kerja Rata-Rata per Angkatan --}}
+    {{-- Grafik 3: Rata-Rata Masa Kerja per 1 Tempat Kerja, per Angkatan --}}
     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 md:p-6 flex flex-col">
         <div class="flex items-start justify-between mb-4 gap-4 flex-wrap">
             <div class="border-l-4 border-blue-600 pl-4">
-                <h3 class="font-extrabold text-slate-800 text-base md:text-lg">Masa Kerja Rata-Rata</h3>
-                <p class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Rata-rata durasi kerja per angkatan (tahun)</p>
+                <h3 class="font-extrabold text-slate-800 text-base md:text-lg">Rata-Rata Masa Kerja per Tempat</h3>
+                <p class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Rata-rata lama di 1 tempat kerja per angkatan (tahun)</p>
             </div>
             @if(!empty($masaKerjaLabels))
-            {{-- Custom dropdown multi-select --}}
+            {{-- Custom dropdown multi-select angkatan --}}
             <div class="relative" id="dropdownWrapper">
-                {{-- Trigger button --}}
                 <button onclick="toggleDropdown()" type="button"
                     class="flex items-center gap-2 text-xs font-bold text-slate-600 border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:border-[#0067B1] transition-all min-w-[160px] justify-between">
-                    <span id="dropdownLabel">3 Angkatan Terakhir</span>
+                    <span id="dropdownLabel">Semua Angkatan</span>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                     </svg>
                 </button>
 
-                {{-- Dropdown panel --}}
                 <div id="dropdownPanel"
-                    class="hidden absolute right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg z-50 p-2 min-w-[180px]">
+                    class="hidden absolute right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg z-50 p-2 min-w-[160px]">
                     <div class="space-y-1">
                         @foreach($masaKerjaLabels as $label)
                         <label class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-50 cursor-pointer">
                             <input type="checkbox" class="filter-angkatan accent-[#0067B1] w-3.5 h-3.5"
                                 value="{{ $label }}" onchange="updateMasaKerjaChart()">
-                            <span class="text-xs font-semibold text-slate-700">{{ $label }}</span>
+                            <span class="text-xs font-semibold text-slate-700">Angkatan {{ $label }}</span>
                         </label>
                         @endforeach
                     </div>
                     <div class="border-t border-slate-100 mt-2 pt-2">
                         <button onclick="resetFilter()" type="button"
                             class="w-full text-[10px] font-bold text-slate-400 hover:text-blue-600 transition-all text-center py-1">
-                            Reset ke 3 Terakhir
+                            Tampilkan Semua
                         </button>
                     </div>
                 </div>
@@ -243,15 +243,10 @@
         }
     });
 
-    // ── 3. Masa Kerja Rata-Rata per Angkatan ──────────────────────
+    // ── 3. Rata-Rata Masa Kerja per 1 Tempat Kerja per Angkatan ──────────
     @if(!empty($masaKerjaLabels))
     const allMasaKerjaLabels = {!! json_encode($masaKerjaLabels) !!};
     const allMasaKerjaData   = {!! json_encode($masaKerjaData) !!};
-
-    // Default: tampilkan 3 angkatan terakhir
-    function getDefaultLabels() {
-        return allMasaKerjaLabels.slice(-3);
-    }
 
     function getFilteredData(labels) {
         return labels.map(label => {
@@ -263,10 +258,10 @@
     const masaKerjaChart = new Chart(document.getElementById('chartMasaKerja'), {
         type: 'line',
         data: {
-            labels: getDefaultLabels(),
+            labels: allMasaKerjaLabels,
             datasets: [{
-                label: 'Rata-rata (tahun)',
-                data: getFilteredData(getDefaultLabels()),
+                label: 'Rata-rata masa kerja (tahun)',
+                data: allMasaKerjaData,
                 borderColor: 'rgba(0, 103, 177, 0.9)',
                 backgroundColor: 'rgba(0, 103, 177, 0.1)',
                 borderWidth: 2.5,
@@ -284,18 +279,34 @@
                 legend: { display: false },
                 tooltip: {
                     callbacks: {
-                        label: ctx => ` ${ctx.parsed.y} Tahun`
+                        title: ctx => 'Angkatan ' + ctx[0].label,
+                        label: ctx => ` Rata-rata: ${ctx.parsed.y} Tahun per Tempat Kerja`
                     }
                 }
             },
             scales: {
-                x: { grid: { display: false }, ticks: { font: { size: 11, weight: '700' } } },
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { size: 11, weight: '700' } },
+                    title: {
+                        display: true,
+                        text: 'Angkatan',
+                        font: { size: 10, weight: '700' },
+                        color: '#94a3b8'
+                    }
+                },
                 y: {
                     beginAtZero: true,
                     grid: { color: '#f1f5f9' },
                     ticks: {
                         font: { size: 11 },
                         callback: val => val + ' Thn'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Rata-rata (tahun)',
+                        font: { size: 10, weight: '700' },
+                        color: '#94a3b8'
                     }
                 }
             }
@@ -318,20 +329,18 @@
         const checked = [...document.querySelectorAll('.filter-angkatan:checked')]
             .map(cb => cb.value);
 
-        // Update label tombol
         const label = document.getElementById('dropdownLabel');
         if (checked.length === 0) {
-            label.textContent = '3 Angkatan Terakhir';
+            label.textContent = 'Semua Angkatan';
         } else if (checked.length === 1) {
-            label.textContent = checked[0];
+            label.textContent = 'Angkatan ' + checked[0];
         } else {
             label.textContent = checked.length + ' Angkatan';
         }
 
-        // Jika tidak ada yang dicentang, tampilkan 3 terakhir
         const activeLabels = checked.length > 0
             ? allMasaKerjaLabels.filter(l => checked.includes(l))
-            : getDefaultLabels();
+            : allMasaKerjaLabels;
 
         masaKerjaChart.data.labels = activeLabels;
         masaKerjaChart.data.datasets[0].data = getFilteredData(activeLabels);

@@ -73,7 +73,7 @@ class PendidikanController extends Controller
             ['nim' => $nim]
         ));
 
-        return redirect()->route('alumni.pendidikan.index')
+        return redirect()->route('alumni.dashboard')
             ->with('success', 'Riwayat pendidikan berhasil ditambahkan.');
     }
 

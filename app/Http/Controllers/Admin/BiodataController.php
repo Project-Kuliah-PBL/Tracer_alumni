@@ -15,11 +15,14 @@ class BiodataController extends Controller
     public function index(Request $request)
     {
         $search = $request->get('search');
+        $isSuperAdmin = auth()->user()->role === 'SuperAdmin';
+        $prodiFilter  = $isSuperAdmin ? null : auth()->user()->prodi;
 
         $alumni = DataAlumni::when($search, function ($query) use ($search) {
             $query->where('nim', 'like', "%{$search}%")
                   ->orWhere('nama', 'like', "%{$search}%");
-        })->orderBy('nama')->paginate(15)->withQueryString();
+        })->when($prodiFilter, fn($q) => $q->where('prodi', $prodiFilter))
+          ->orderBy('nama')->paginate(15)->withQueryString();
 
         return view('Admin.editbiodata', compact('alumni', 'search'));
     }
@@ -27,7 +30,13 @@ class BiodataController extends Controller
     // Detail biodata satu alumni
     public function show(string $nim)
     {
-        $alumni = DataAlumni::with(['pekerjaan', 'riwayatPendidikan'])->where('nim', $nim)->firstOrFail();
+        $query = DataAlumni::with(['pekerjaan', 'riwayatPendidikan'])->where('nim', $nim);
+
+        if (auth()->user()->role !== 'SuperAdmin') {
+            $query->where('prodi', auth()->user()->prodi);
+        }
+
+        $alumni = $query->firstOrFail();
 
         return view('Admin.biodata', compact('alumni'));
     }
@@ -35,6 +44,8 @@ class BiodataController extends Controller
     // Simpan pekerjaan baru
     public function storePekerjaan(Request $request, string $nim)
     {
+        $this->getAllowedAlumni($nim);
+
         $request->validate([
             'jobdesk'          => 'required|string|max:255',
             'nama_perusahaan'  => 'required|string|max:255',
@@ -66,6 +77,8 @@ class BiodataController extends Controller
     // Hapus pekerjaan
     public function destroyPekerjaan(string $nim, int $id)
     {
+        $this->getAllowedAlumni($nim);
+
         DataPekerjaan::where('id', $id)->where('nim', $nim)->delete();
 
         LamaTungguHelper::hitung($nim);
@@ -76,6 +89,8 @@ class BiodataController extends Controller
     // Simpan pendidikan baru
     public function storePendidikan(Request $request, string $nim)
     {
+        $this->getAllowedAlumni($nim);
+
         $request->validate([
             'nama_instansi'      => 'required|string|max:255',
             'jenjang_pendidikan' => 'required|string',
@@ -103,8 +118,21 @@ class BiodataController extends Controller
     // Hapus pendidikan
     public function destroyPendidikan(string $nim, int $id)
     {
+        $this->getAllowedAlumni($nim);
+
         RiwayatPendidikan::where('id', $id)->where('nim', $nim)->delete();
 
         return redirect()->route('admin.biodata', $nim)->with('success', 'Pendidikan berhasil dihapus.');
+    }
+
+    private function getAllowedAlumni(string $nim)
+    {
+        $query = DataAlumni::where('nim', $nim);
+
+        if (auth()->user()->role !== 'SuperAdmin') {
+            $query->where('prodi', auth()->user()->prodi);
+        }
+
+        return $query->firstOrFail();
     }
 }

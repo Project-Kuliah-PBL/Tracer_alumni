@@ -10,12 +10,8 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Akun Admin
-        User::create([
-            'username' => 'admin',
-            'password' => Hash::make('admin123'),
-            'role'     => 'Admin',
-        ]);
+        // 1. Akun SuperAdmin
+        $this->call(SuperAdminSeeder::class);
 
         // 2. Daftar NIM Alumni untuk pembuatan akun massal
         $alumniNims = [

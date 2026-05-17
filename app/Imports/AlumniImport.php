@@ -66,10 +66,11 @@ class AlumniImport implements ToCollection, WithHeadingRow
         }
 
         // Prioritas 2: scan SEMUA value — cari yang mengandung pola "Teks - NIM"
-        // Regex: di akhir string ada " - " diikuti huruf+digit (NIM)
+        // Regex: di akhir string ada " - " atau " – " diikuti huruf+digit (NIM)
+        // Mendukung hyphen (-) dan en-dash (–) dari Google Form
         foreach ($n as $k => $v) {
             if (empty($v)) continue;
-            if (preg_match('/^(.+?)\s+-\s+([A-Z]\d{5,})\s*$/i', $v, $m)) {
+            if (preg_match('/^(.+?)\s+[\-\x{2013}\x{2014}]\s+([A-Z]\d{5,})\s*$/iu', $v, $m)) {
                 if (empty($nim))  $nim  = strtoupper(trim($m[2]));
                 if (empty($nama)) $nama = trim($m[1]);
                 break;
@@ -122,7 +123,6 @@ class AlumniImport implements ToCollection, WithHeadingRow
         $email       = $this->get($n, ['email', 'email_address', 'surel']);
         $jenisKelamin= $this->get($n, ['jenis_kelamin', 'gender', 'kelamin', 'sex']);
         $prodi       = $this->get($n, ['prodi', 'program_studi', 'jurusan', 'departemen', 'major']);
-        $jabatan     = $this->get($n, ['jabatan_sekarang', 'jabatan', 'posisi', 'position', 'pekerjaan_sekarang']);
         $lamaTunggu  = $this->get($n, ['lama_tunggu_kerja', 'lama_tunggu', 'masa_tunggu', 'waiting_time']);
         $statusKerja = $this->get($n, ['status', 'status_kerja', 'status_pekerjaan_alumni', 'employment_status']);
 

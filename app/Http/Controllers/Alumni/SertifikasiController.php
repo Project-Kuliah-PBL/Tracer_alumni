@@ -74,7 +74,7 @@ class SertifikasiController extends Controller
 
         DataCertificate::create($data);
 
-        return redirect()->route('alumni.sertifikasi.index')
+        return redirect()->route('alumni.dashboard')
             ->with('success', 'Sertifikasi berhasil ditambahkan.');
     }
 
