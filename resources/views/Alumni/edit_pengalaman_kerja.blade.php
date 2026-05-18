@@ -550,6 +550,16 @@
                         <label class="form-label">Posisi / Jobdesk</label>
                         <input type="text" name="jobdesk" class="form-input" placeholder="Contoh: Software Engineer">
                     </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Divisi / Departemen</label>
+                            <input type="text" name="divisi" class="form-input" placeholder="Contoh: Engineering, Marketing">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Lokasi (Kota)</label>
+                            <input type="text" name="lokasi" class="form-input" placeholder="Contoh: Surabaya, Jakarta">
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label class="form-label">Status Pekerjaan <span class="text-red-500">*</span></label>
                         <select name="status_pekerjaan" class="form-select" required>
