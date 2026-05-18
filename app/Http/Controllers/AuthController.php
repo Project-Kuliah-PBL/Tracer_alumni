@@ -58,6 +58,10 @@ class AuthController extends Controller
     {
         $role = Auth::user()->role;
 
+        if ($role === 'SuperAdmin') {
+            return redirect()->route('admin.dashboard');
+        }
+
         if ($role === 'Admin') {
             return redirect()->route('admin.dashboard');
         }
@@ -66,7 +70,6 @@ class AuthController extends Controller
             return redirect()->route('alumni.dashboard');
         }
 
-        // Fallback jika role tidak dikenali
         Auth::logout();
         return redirect()->route('login')->withErrors(['username' => 'Role tidak dikenali.']);
     }

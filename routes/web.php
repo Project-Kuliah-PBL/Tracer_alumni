@@ -14,7 +14,7 @@ use App\Http\Controllers\Alumni\PendidikanController;
 use App\Http\Controllers\Alumni\SertifikasiController;
 use App\Http\Controllers\Alumni\MediaSosialController;
 use App\Http\Controllers\Alumni\AlumniController;
-
+use App\Http\Controllers\ForgotPasswordController;
 // ─────────────────────────────────────────────
 // PUBLIC ROUTES (tidak butuh login)
 // ─────────────────────────────────────────────
@@ -35,9 +35,16 @@ Route::get('/cari-alumni/{nim}', [AlumniController::class, 'show'])->name('alumn
 // AUTH ROUTES
 // ─────────────────────────────────────────────
 
+
+// Baris 1: Pintu masuk untuk melihat halaman
+Route::get('/forgot-password', [ForgotPasswordController::class, 'index'])->name('password.request');
+
+// Baris 2: Pintu kirim data saat tombol "Riset" ditekan
+Route::post('/forgot-password', [ForgotPasswordController::class, 'reset'])->name('password.reset');
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
 
 // ─────────────────────────────────────────────
 // PROTECTED ROUTES (butuh login)
@@ -45,32 +52,35 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
 
-    // ── Admin Only ────────────────────────────
+    // ── Admin Only (SuperAdmin + Admin per prodi) ─────────────────
     Route::middleware('admin')->group(function () {
 
         Route::get('/admin/dashboard', [DashboardController::class, 'index'])
             ->name('admin.dashboard');
 
-        // Kelola Akun
-        Route::get('/admin/kelola-akun',          [KelolaAkunController::class, 'index'])  ->name('admin.kelola_akun');
-        Route::post('/admin/kelola-akun',         [KelolaAkunController::class, 'store'])  ->name('admin.kelola_akun.store');
-        Route::put('/admin/kelola-akun/{nim}',    [KelolaAkunController::class, 'update']) ->name('admin.kelola_akun.update');
-        Route::delete('/admin/kelola-akun/{nim}', [KelolaAkunController::class, 'destroy'])->name('admin.kelola_akun.destroy');
-        Route::post('/admin/kelola-akun/import',  [ImportAlumniController::class, 'store'])->name('admin.kelola_akun.import');
+        // Kelola Akun (semua admin)
+        Route::get('/admin/kelola-akun',                [KelolaAkunController::class, 'index'])        ->name('admin.kelola_akun');
+        Route::post('/admin/kelola-akun',               [KelolaAkunController::class, 'store'])        ->name('admin.kelola_akun.store');
+        Route::put('/admin/kelola-akun/{nim}',          [KelolaAkunController::class, 'update'])       ->name('admin.kelola_akun.update');
+        Route::delete('/admin/kelola-akun/{nim}',       [KelolaAkunController::class, 'destroy'])      ->name('admin.kelola_akun.destroy');
+        Route::post('/admin/kelola-akun/import',        [ImportAlumniController::class, 'store'])      ->name('admin.kelola_akun.import');
+        Route::delete('/admin/kelola-akun/admin/{id}',  [KelolaAkunController::class, 'destroyAdmin']) ->name('admin.kelola_akun.admin.destroy');
 
-        // Kelola Prodi
-        Route::get('/admin/kelola-prodi',          [ProdiController::class, 'index'])  ->name('admin.prodi');
-        Route::post('/admin/kelola-prodi',         [ProdiController::class, 'store'])  ->name('admin.prodi.store');
-        Route::put('/admin/kelola-prodi/{prodi}',  [ProdiController::class, 'update']) ->name('admin.prodi.update');
-        Route::delete('/admin/kelola-prodi/{prodi}',[ProdiController::class, 'destroy'])->name('admin.prodi.destroy');
-
-        // Edit Biodata Alumni
+        // Edit Biodata Alumni (semua admin)
         Route::get('/admin/edit-biodata', [BiodataController::class, 'index'])->name('admin.editbiodata');
         Route::get('/admin/biodata/{nim}', [BiodataController::class, 'show'])->name('admin.biodata');
         Route::post('/admin/biodata/{nim}/pekerjaan', [BiodataController::class, 'storePekerjaan'])->name('admin.biodata.pekerjaan.store');
         Route::delete('/admin/biodata/{nim}/pekerjaan/{id}', [BiodataController::class, 'destroyPekerjaan'])->name('admin.biodata.pekerjaan.destroy');
         Route::post('/admin/biodata/{nim}/pendidikan', [BiodataController::class, 'storePendidikan'])->name('admin.biodata.pendidikan.store');
         Route::delete('/admin/biodata/{nim}/pendidikan/{id}', [BiodataController::class, 'destroyPendidikan'])->name('admin.biodata.pendidikan.destroy');
+
+        // Kelola Prodi — SuperAdmin only
+        Route::middleware('superadmin')->group(function () {
+            Route::get('/admin/kelola-prodi',           [ProdiController::class, 'index'])  ->name('admin.prodi');
+            Route::post('/admin/kelola-prodi',          [ProdiController::class, 'store'])  ->name('admin.prodi.store');
+            Route::put('/admin/kelola-prodi/{prodi}',   [ProdiController::class, 'update']) ->name('admin.prodi.update');
+            Route::delete('/admin/kelola-prodi/{prodi}',[ProdiController::class, 'destroy'])->name('admin.prodi.destroy');
+        });
     });
 
     // ── Alumni Only ───────────────────────────

@@ -36,24 +36,48 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: var(--font-body); background-color: var(--color-bg); color: var(--color-secondary); line-height: 1.5; }
 
-        .sidebar { position: fixed; top: var(--header-height); left: 0; width: var(--sidebar-width); height: calc(100vh - var(--header-height)); background: #fff; border-right: 1px solid var(--color-border-sidebar); z-index: 40; display: flex; flex-direction: column; padding-top: 80px; overflow-y: auto; }
-        .sidebar-header-block { position: absolute; top: 0; left: 0; width: 100%; padding: 1.5rem 1.25rem 1rem; border-bottom: 1px solid var(--color-border-sidebar); }
-        .sidebar-portal-name { font-family: var(--font-heading); font-weight: 700; font-size: 1rem; color: var(--color-secondary); margin-bottom: .2rem; }
-        .sidebar-portal-badge { font-size: .75rem; color: var(--color-muted); }
-        .sidebar-nav { display: flex; flex-direction: column; padding: .5rem .75rem; gap: .25rem; }
-        .nav-item { display: flex; align-items: center; gap: .75rem; padding: .625rem .75rem; border-radius: var(--radius-md); text-decoration: none; color: var(--color-text-light); font-size: .9rem; font-weight: 500; border-left: 3px solid transparent; transition: background .2s, color .2s; }
-        .nav-item svg { width: 1.125rem; height: 1.125rem; flex-shrink: 0; stroke: var(--color-text-light); transition: stroke .2s; }
-        .nav-item:hover, .nav-item.active { background: var(--color-primary-soft); color: var(--color-primary-btn); }
-        .nav-item:hover svg, .nav-item.active svg { stroke: var(--color-primary-btn); }
-        .nav-item.active { border-left-color: var(--color-primary-btn); border-radius: 0 var(--radius-md) var(--radius-md) 0; }
-        .sidebar-group-label { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: var(--color-muted); padding: .85rem 1rem .3rem; }
-        .sidebar-submenu { display: flex; flex-direction: column; padding: 0 .75rem; gap: .1rem; }
-        .sub-item { position: relative; display: flex; align-items: center; padding: .5rem .75rem .5rem 2.25rem; border-radius: var(--radius-md); text-decoration: none; color: var(--color-text-light); font-size: .825rem; font-weight: 500; transition: background .2s, color .2s; }
-        .sub-item::before { content: ''; position: absolute; left: 1.15rem; top: 50%; transform: translateY(-50%); width: 5px; height: 5px; border-radius: 50%; background: var(--color-text-light); transition: background .2s; }
-        .sub-item:hover, .sub-item.active { background: var(--color-primary-soft); color: var(--color-primary-btn); }
-        .sub-item:hover::before, .sub-item.active::before { background: var(--color-primary-btn); }
-        .sub-item.active { font-weight: 600; }
-        .sidebar-bottom { margin-top: auto; padding: 1rem .75rem 1.5rem; border-top: 1px solid var(--color-border-sidebar); }
+/* CSS Sidebar yang disamakan 100% */
+.sidebar { 
+    position: fixed; top: var(--header-height); left: 0; width: var(--sidebar-width); 
+    height: calc(100vh - var(--header-height)); background: #fff; 
+    border-right: 1px solid var(--color-border-sidebar); z-index: 40; 
+    display: flex; flex-direction: column; padding-top: 80px; overflow-y: auto; 
+}
+.sidebar-header-block { 
+    position: absolute; top: 0; left: 0; width: 100%; 
+    padding: 1.5rem 1.25rem 1rem; border-bottom: 1px solid var(--color-border-sidebar); 
+}
+.sidebar-portal-name { font-family: var(--font-heading); font-weight: 700; font-size: 1rem; color: var(--color-secondary); margin-bottom: .2rem; }
+.sidebar-portal-badge { font-size: .75rem; color: var(--color-muted); }
+.sidebar-nav { display: flex; flex-direction: column; padding: .5rem .75rem; gap: .25rem; }
+.nav-item { 
+    display: flex; align-items: center; gap: .75rem; padding: .625rem .75rem; 
+    border-radius: var(--radius-md); text-decoration: none; color: var(--color-text-light); 
+    font-size: .9rem; font-weight: 500; border-left: 3px solid transparent; transition: background .2s, color .2s; 
+}
+.nav-item svg { width: 1.125rem; height: 1.125rem; flex-shrink: 0; stroke: var(--color-text-light); transition: stroke .2s; }
+.nav-item:hover, .nav-item.active { background: var(--color-primary-soft); color: var(--color-primary-btn); }
+.nav-item:hover svg, .nav-item.active svg { stroke: var(--color-primary-btn); }
+.nav-item.active { 
+    border-left-color: var(--color-primary-btn); 
+    border-radius: 0 var(--radius-md) var(--radius-md) 0; 
+}
+/* Bagian Submenu */
+.sidebar-submenu { display: flex; flex-direction: column; padding: 0 .75rem; gap: .1rem; }
+.sub-item { 
+    position: relative; display: flex; align-items: center; 
+    padding: .5rem .75rem .5rem 2.25rem; border-radius: var(--radius-md); 
+    text-decoration: none; color: var(--color-text-light); font-size: .825rem; 
+    font-weight: 500; transition: background .2s, color .2s; 
+}
+.sub-item::before { 
+    content: ''; position: absolute; left: 1.15rem; top: 50%; transform: translateY(-50%); 
+    width: 5px; height: 5px; border-radius: 50%; background: var(--color-text-light); transition: background .2s; 
+}
+.sub-item:hover, .sub-item.active { background: var(--color-primary-soft); color: var(--color-primary-btn); }
+.sub-item:hover::before, .sub-item.active::before { background: var(--color-primary-btn); }
+.sub-item.active { font-weight: 600; }
+ .sidebar-bottom { margin-top: auto; padding: 1rem .75rem 1.5rem; border-top: 1px solid var(--color-border-sidebar); }
         .logout-btn { display: flex; align-items: center; justify-content: center; gap: .75rem; width: 100%; padding: .75rem 1rem; background: var(--color-danger); color: #fff; border: none; border-radius: var(--radius-md); font-weight: 600; font-size: .9rem; cursor: pointer; transition: background .2s; }
         .logout-btn:hover { background: #b91c1c; }
         .logout-btn svg { width: 1.125rem; height: 1.125rem; stroke: #fff; }
@@ -215,7 +239,7 @@
         @include('partials.header-admin')
     </div>
     <div class="flex flex-1 overflow-hidden w-full">
-        @include('partials.sidebar-alumni', ['activeMenu' => 'pekerjaan'])
+        @include('partials.sidebar-alumni', ['activeMenu' => 'profil'])
         <main class="flex-1 overflow-y-auto pl-72 pr-8 pt-8 pb-16">
         <div class="content-area">
 

@@ -21,63 +21,50 @@ class AlumniController extends Controller
                         ->orderByDesc('tahun_lulus')
                         ->pluck('tahun_lulus');
 
-        $prodiList = DataAlumni::whereNotNull('prodi')
-                        ->where('prodi', '<>', '')
-                        ->distinct()
-                        ->orderBy('prodi')
-                        ->pluck('prodi');
+    $prodiList = DataAlumni::whereNotNull('prodi')
+                    ->where('prodi', '<>', '')
+                    ->distinct()
+                    ->orderBy('prodi')
+                    ->pluck('prodi');
+                    
+    $lokasiList = DataPekerjaan::whereNotNull('lokasi_pekerjaan')
+                    ->where('lokasi_pekerjaan', '<>', '')
+                    ->distinct()
+                    ->orderBy('lokasi_pekerjaan')
+                    ->pluck('lokasi_pekerjaan');
 
-        $lokasiList = DataPekerjaan::whereNotNull('lokasi_pekerjaan')
-                        ->where('lokasi_pekerjaan', '<>', '')
-                        ->distinct()
-                        ->orderBy('lokasi_pekerjaan')
-                        ->pluck('lokasi_pekerjaan');
-
-        // Query utama dengan optimasi untuk multiple jobs
-        $alumnis = DataAlumni::with([
-        'pekerjaan' => function ($q) {
-            // Prioritaskan yang aktif (tahun_selesai null) dulu,
-            // lalu urutkan berdasarkan tahun_masuk terbaru
-            $q->orderByRaw('CASE WHEN tahun_selesai IS NULL THEN 0 ELSE 1 END ASC')
-              ->orderByDesc('tahun_masuk');
-        }
-    ])
-    ->withCount([
-        'pekerjaan as active_jobs_count' => function ($query) {
-            $query->where(function ($q) {
-                $q->whereNull('tahun_selesai')
-                  ->orWhere('status_pekerjaan', 'active');
+    $alumnis = DataAlumni::with(['pekerjaan' => function ($q) {
+            $q->orderByDesc('tahun_masuk');
+        }])
+        ->when($request->filled('search'), function ($q) use ($request) {
+            $search = '%' . $request->search . '%';
+            $q->where(function ($q2) use ($search) {
+                // 1. Search di tabel Alumni (nama, nim, jabatan)
+                $q2->where('nama', 'like', $search)
+                   ->orWhere('nim', 'like', $search) // <-- Menambahkan pencarian NIM
+                   
+                   
+                // 2. Search di tabel Pekerjaan (lokasi, perusahaan, status, jobdesk)
+                   ->orWhereHas('pekerjaan', function ($q3) use ($search) {
+                       $q3->where('lokasi_pekerjaan', 'like', $search)
+                          ->orWhere('nama_perusahaan', 'like', $search)
+                          ->orWhere('status_pekerjaan', 'like', $search)
+                          ->orWhere('jobdesk', 'like', $search); // <-- Menambahkan pencarian Jobdesk
+                   });
             });
-        }
-    ])
-    // ... sisa query tidak berubah
-            ->when($request->filled('search'), function ($q) use ($request) {
-                $search = '%' . $request->search . '%';
-                $q->where(function ($q2) use ($search) {
-                    $q2->where('nama', 'like', $search)
-                       ->orWhere('nim', 'like', $search)
-                       ->orWhereHas('pekerjaan', function ($q3) use ($search) {
-                           $q3->where('lokasi_pekerjaan', 'like', $search)
-                              ->orWhere('nama_perusahaan', 'like', $search)
-                              ->orWhere('status_pekerjaan', 'like', $search)
-                              ->orWhere('jobdesk', 'like', $search);
-                       });
-                });
-            })
-            ->when($request->filled('tahun_lulus'), function ($q) use ($request) {
-                $q->where('tahun_lulus', $request->tahun_lulus);
-            })
-            ->when($request->filled('program_studi'), function ($q) use ($request) {
-                $q->where('prodi', $request->program_studi);
-            })
-            ->when($request->filled('lokasi'), function ($q) use ($request) {
-                $q->whereHas('pekerjaan', function ($q2) use ($request) {
-                    $q2->where('lokasi_pekerjaan', $request->lokasi);
-                });
-            })
-            ->paginate(12)
-            // Append query string agar pagination tetap membawa filter
-            ->appends($request->except('page'));
+        })
+        ->when($request->filled('tahun_lulus'), function ($q) use ($request) {
+            $q->where('tahun_lulus', $request->tahun_lulus);
+        })
+        ->when($request->filled('program_studi'), function ($q) use ($request) {
+            $q->where('prodi', $request->program_studi);
+        })
+        ->when($request->filled('lokasi'), function ($q) use ($request) {
+            $q->whereHas('pekerjaan', function ($q2) use ($request) {
+                $q2->where('lokasi_pekerjaan', $request->lokasi);
+            });
+        })
+        ->paginate(12);
 
         return view('carialumni', compact('alumnis', 'tahunList', 'prodiList', 'lokasiList'));
     }

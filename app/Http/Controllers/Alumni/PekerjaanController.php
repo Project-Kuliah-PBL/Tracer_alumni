@@ -74,7 +74,7 @@ class PekerjaanController extends Controller
 
         LamaTungguHelper::hitung($nim);
 
-        return redirect()->route('alumni.pekerjaan.index')
+        return redirect()->route('alumni.dashboard')
             ->with('success', 'Pengalaman kerja berhasil ditambahkan.');
     }
 

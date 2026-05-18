@@ -23,15 +23,16 @@
         </a>
     </nav>
 
-    <div class="pt-6 border-t border-slate-100">
-        <form action="{{ route('logout') }}" method="POST">
-            @csrf
-            <button type="submit" class="flex items-center justify-start gap-3 bg-[#D32F2F] text-white w-full px-4 py-3 rounded-lg hover:bg-red-700 transition-all shadow-md shadow-red-200">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-                <span class="font-bold text-xs uppercase tracking-wider">Log Out</span>
-            </button>
-        </form>
-    </div>
+   <div class="pt-6 border-t border-slate-100">
+    <form action="{{ route('logout') }}" method="POST">
+        @csrf
+        <!-- Ubah justify-start menjadi justify-center di bawah ini -->
+        <button type="submit" class="flex items-center justify-center gap-3 bg-[#D32F2F] text-white w-full px-4 py-3 rounded-lg hover:bg-red-700 transition-all shadow-md shadow-red-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            <span class="font-bold text-xs uppercase tracking-wider">Log Out</span>
+        </button>
+    </form>
+</div>
 </aside>

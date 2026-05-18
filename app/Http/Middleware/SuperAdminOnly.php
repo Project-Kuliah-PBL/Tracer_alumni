@@ -7,14 +7,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminOnly
+class SuperAdminOnly
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $role = Auth::user()?->role;
-
-        if (!in_array($role, ['SuperAdmin', 'Admin'])) {
-            abort(403, 'Akses ditolak.');
+        if (Auth::user()?->role !== 'SuperAdmin') {
+            abort(403, 'Akses ditolak. Hanya SuperAdmin.');
         }
 
         return $next($request);
