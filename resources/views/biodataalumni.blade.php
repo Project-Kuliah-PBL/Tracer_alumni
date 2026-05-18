@@ -97,8 +97,7 @@
                             @if($alumni->foto_profile)
                                 <img src="{{ Storage::url($alumni->foto_profile) }}" alt="Foto Profil"
                                      class="w-24 h-24 rounded-full border-4 border-white shadow-sm object-cover"
-                                     onerror="this.onerror=null;this.src='{{ asset('images/default-avatar.png') }}'">
-                            @else
+                                    @else
                                 <div class="w-24 h-24 rounded-full border-4 border-white shadow-sm bg-[#005792] flex items-center justify-center">
                                     <span class="text-white text-2xl font-bold select-none">
                                         {{ strtoupper(substr($alumni->nama, 0, 1)) }}{{ strtoupper(substr(strstr($alumni->nama, ' ') ?: '', 1, 1)) }}
@@ -107,20 +106,37 @@
                             @endif
                         </div>
 
-                        <h2 class="text-2xl font-bold text-slate-800">{{ $alumni->nama }}</h2>
-                        <p class="text-slate-500 text-sm font-medium">{{ $alumni->jabatan_sekarang ?? 'Belum diisi' }}</p>
+                        {{-- ================= PROFILE NAME & CURRENT JOB (FIXED) ================= --}}
 
+                    
+                        <h2 class="text-2xl font-bold text-slate-800">
+                            {{ $alumni->nama }}
+                        </h2>
+
+                        <p class="text-[#0067B1] font-bold text-xs uppercase tracking-wider mt-1">
+                            @if($pekerjaanTerbaru)
+                                {{ $pekerjaanTerbaru->jobdesk }}
+                                @if($pekerjaanTerbaru->nama_perusahaan)
+                                    - {{ $pekerjaanTerbaru->nama_perusahaan }}
+                                @endif
+                            @else
+                                -
+                            @endif
+                        </p>
+                        
                         <div class="flex items-center gap-4 mt-3 text-[11px] text-slate-400 font-semibold flex-wrap">
                             @if($alumni->prodi)
                                 <span class="flex items-center gap-1 text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
                                     {{ $alumni->prodi }}
                                 </span>
                             @endif
+                        
                             @if($alumni->tahun_lulus)
                                 <span class="flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded-full">
                                     Angkatan {{ $alumni->tahun_lulus }}
                                 </span>
                             @endif
+                            
                             @if($alumni->alamat)
                                 <span class="flex items-center gap-1">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -129,6 +145,7 @@
                                     {{ $alumni->alamat }}
                                 </span>
                             @endif
+                            
                             @if($alumni->lama_tunggu_kerja)
                                 <span class="flex items-center gap-1 text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -240,70 +257,149 @@
                     </div>
                 </div>
 
-                {{-- Pengalaman Kerja — tanpa tombol tambah/edit, dengan toggle lihat lebih --}}
+                {{-- ================= PENGALAMAN KERJA ================= --}}
+
+                @php
+                    $totalPekerjaan = collect($exp)->count();
+                @endphp
+
                 <div class="col-span-12 lg:col-span-7 bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
-                    <h3 class="text-slate-800 font-bold text-sm mb-6">Pengalaman & Detail Pekerjaan</h3>
 
-                    @php $totalPekerjaan = $exp->count(); @endphp
+                    <h3 class="text-slate-800 font-bold text-sm mb-6">
+                        Pengalaman & Detail Pekerjaan
+                    </h3>
 
-                    <div id="pekerjaanList" class="space-y-6 overflow-hidden transition-all duration-300"
-                         style="{{ $totalPekerjaan > 3 ? 'max-height: 280px;' : '' }}">
+                    <div id="pekerjaanList"
+                         class="space-y-6 overflow-hidden transition-all duration-300"
+                         @if($totalPekerjaan > 3)
+                             style="max-height: 280px;"
+                         @endif>
+
                         @forelse($exp as $pekerjaan)
+
                             <div class="flex gap-4">
+
                                 <div class="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 overflow-hidden">
+
                                     @if($pekerjaan->logo_perusahaan)
-                                        <img src="{{ Storage::url($pekerjaan->logo_perusahaan) }}" alt="Logo"
+
+                                        <img src="{{ Storage::url($pekerjaan->logo_perusahaan) }}"
+                                             alt="Logo"
                                              class="w-full h-full object-cover"
-                                             onerror="this.onerror=null;this.style.display='none';this.parentElement.innerHTML='<svg xmlns=\'http://www.w3.org/2000/svg\' class=\'h-5 w-5 text-slate-400\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'currentColor\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z\' /></svg>'">
+                                             onerror="this.onerror=null;this.style.display='none';">
+
                                     @else
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                             class="h-5 w-5 text-slate-400"
+                                             fill="none"
+                                             viewBox="0 0 24 24"
+                                             stroke="currentColor">
+
+                                            <path stroke-linecap="round"
+                                                  stroke-linejoin="round"
+                                                  stroke-width="2"
+                                                  d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+
                                         </svg>
+
                                     @endif
+
                                 </div>
+
                                 <div class="flex-1">
+
                                     <div class="flex justify-between items-start">
+
                                         <div>
-                                            <h4 class="text-xs font-bold text-slate-800">{{ $pekerjaan->jobdesk ?? 'Posisi tidak diisi' }}</h4>
-                                            <p class="text-[11px] text-slate-400 font-medium">{{ $pekerjaan->nama_perusahaan }}</p>
-                                        </div>
-                                        <div class="text-right shrink-0 ml-3">
-                                            <p class="text-[9px] font-bold text-slate-300">
-                                                {{ $pekerjaan->tahun_masuk ? $pekerjaan->tahun_masuk->format('M Y') : '-' }} -
-                                                {{ $pekerjaan->tahun_selesai ? $pekerjaan->tahun_selesai->format('M Y') : 'Sekarang' }}
+
+                                            <h4 class="text-xs font-bold text-slate-800">
+                                                {{ $pekerjaan->jobdesk ?? 'Posisi tidak diisi' }}
+                                            </h4>
+
+                                            <p class="text-[11px] text-slate-400 font-medium">
+                                                {{ $pekerjaan->nama_perusahaan }}
                                             </p>
-                                            <span class="inline-block px-2 py-0.5 bg-blue-50 text-blue-600 text-[8px] font-bold rounded uppercase mt-1">
-                                                {{ $pekerjaan->status_pekerjaan }}
-                                            </span>
+
                                         </div>
+
+                                        <div class="text-right shrink-0 ml-3">
+
+                                            <p class="text-[9px] font-bold text-slate-300">
+
+                                                {{ $pekerjaan->tahun_masuk ? $pekerjaan->tahun_masuk->format('M Y') : '-' }}
+                                                -
+
+                                                {{ $pekerjaan->tahun_selesai ? $pekerjaan->tahun_selesai->format('M Y') : 'Sekarang' }}
+
+                                            </p>
+
+                                            <span class="inline-block px-2 py-0.5 bg-blue-50 text-blue-600 text-[8px] font-bold rounded uppercase mt-1">
+
+                                                {{ $pekerjaan->status_pekerjaan }}
+
+                                            </span>
+
+                                        </div>
+
                                     </div>
+
                                     @if($pekerjaan->deskripsi)
+
                                         <p class="text-[10px] text-slate-500 leading-relaxed mt-2">
-                                            {{ Str::limit($pekerjaan->deskripsi, 120) }}
+
+                                            {{ \Illuminate\Support\Str::limit($pekerjaan->deskripsi, 120) }}
+
                                         </p>
+
                                     @endif
+
                                 </div>
+
                             </div>
+
                         @empty
-                            <p class="text-xs text-slate-400 text-center py-4 italic">Belum ada pengalaman kerja.</p>
+
+                            <p class="text-xs text-slate-400 text-center py-4 italic">
+                                Belum ada pengalaman kerja.
+                            </p>
+
                         @endforelse
+
                     </div>
 
-                    {{-- Toggle Lihat Lebih — hanya tampil jika pekerjaan > 3 --}}
+                    {{-- Toggle --}}
                     @if($totalPekerjaan > 3)
+
                         <div class="mt-4 text-center">
-                            <button onclick="togglePekerjaan(this)" data-expanded="false"
-                                class="inline-flex items-center gap-1.5 text-[11px] font-bold text-blue-600
-                                       hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-full transition-all">
-                                <svg xmlns="http://www.w3.org/2000/svg" id="pekerjaanChevron"
+
+                            <button onclick="togglePekerjaan(this)"
+                                    data-expanded="false"
+                                    class="inline-flex items-center gap-1.5 text-[11px] font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-full transition-all">
+
+                                <svg xmlns="http://www.w3.org/2000/svg"
                                      class="h-3.5 w-3.5 transition-transform duration-300"
-                                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                                     fill="none"
+                                     viewBox="0 0 24 24"
+                                     stroke="currentColor">
+
+                                    <path stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                          stroke-width="2.5"
+                                          d="M19 9l-7 7-7-7" />
+
                                 </svg>
-                                Lihat {{ $totalPekerjaan - 3 }} pekerjaan lainnya
+
+                                <span>
+                                    Lihat {{ $totalPekerjaan - 3 }} pekerjaan lainnya
+                                </span>
+
                             </button>
+
                         </div>
+
                     @endif
+
                 </div>
 
                 {{-- ══════════════════════════════════════════
@@ -471,30 +567,39 @@
     </footer>
 
     <script>
-        function togglePekerjaan(btn) {
-            const list    = document.getElementById('pekerjaanList');
+        function togglePekerjaan(btn)
+        {
+            const list = document.getElementById('pekerjaanList');
+            const icon = btn.querySelector('svg');
+            const text = btn.querySelector('span');
+
             const expanded = btn.dataset.expanded === 'true';
 
-            if (expanded) {
+            if (expanded)
+            {
                 list.style.maxHeight = '280px';
-                list.style.overflow  = 'hidden';
+                list.style.overflow = 'hidden';
+
                 btn.dataset.expanded = 'false';
-                btn.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 transition-transform duration-300"
-                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
-                    </svg>
-                    Lihat lebih banyak`;
-            } else {
-                list.style.maxHeight = list.scrollHeight + 'px';
-                list.style.overflow  = 'visible';
+
+                icon.classList.remove('rotate-180');
+
+                text.innerText =
+                    'Lihat lebih banyak';
+            }
+            else
+            {
+                list.style.maxHeight =
+                    list.scrollHeight + 'px';
+
+                list.style.overflow = 'visible';
+
                 btn.dataset.expanded = 'true';
-                btn.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 rotate-180 transition-transform duration-300"
-                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7" />
-                    </svg>
-                    Sembunyikan`;
+
+                icon.classList.add('rotate-180');
+
+                text.innerText =
+                    'Sembunyikan';
             }
         }
     </script>

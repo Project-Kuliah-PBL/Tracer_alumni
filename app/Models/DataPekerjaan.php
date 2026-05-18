@@ -14,7 +14,7 @@ class DataPekerjaan extends Model
         'status_pekerjaan',
         'jobdesk',
         'divisi',
-        'lokasi',
+        'lokasi_pekerjaan',
         'tahun_masuk',
         'tahun_selesai',
         'deskripsi',

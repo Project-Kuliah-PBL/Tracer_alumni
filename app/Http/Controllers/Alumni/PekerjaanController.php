@@ -161,4 +161,9 @@ class PekerjaanController extends Controller
         return redirect()->route('alumni.pekerjaan.index')
             ->with('success', 'Pengalaman kerja berhasil dihapus.');
     }
+    // App/Models/DataAlumni.php
+public function pekerjaan()
+{
+    return $this->hasMany(DataPekerjaan::class, 'alumni_id');
+}
 }

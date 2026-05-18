@@ -64,76 +64,77 @@
                 </div>
 
                 {{-- Filter Row - auto submit tanpa tombol --}}
-<div class="flex flex-wrap justify-center gap-3 mt-6 mb-20">
+                <div class="flex flex-wrap justify-center gap-3 mt-6 mb-20">
 
-    {{-- Tahun Lulus (dari database, dinamis) --}}
-    <div class="relative flex items-center">
-        <span class="absolute left-4 z-10 opacity-60 text-xs">📅</span>
-        <select name="tahun_lulus"
-            onchange="this.form.submit()"
-            class="appearance-none bg-slate-100 hover:bg-slate-200 text-slate-600 pl-10 pr-10 py-2.5 rounded-full text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer border-none">
-            <option value="">Tahun Lulus</option>
-            @foreach($tahunList as $tahun)
-                <option value="{{ $tahun }}" {{ request('tahun_lulus') == $tahun ? 'selected' : '' }}>
-                    {{ $tahun }}
-                </option>
-            @endforeach
-        </select>
-        <div class="absolute right-4 pointer-events-none opacity-40">
-            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/>
-            </svg>
-        </div>
-    </div>
+                    {{-- Tahun Lulus --}}
+                    <div class="relative flex items-center">
+                        <span class="absolute left-4 z-10 opacity-60 text-xs">📅</span>
+                        <select name="tahun_lulus"
+                            onchange="this.form.submit()"
+                            class="appearance-none bg-slate-100 hover:bg-slate-200 text-slate-600 pl-10 pr-10 py-2.5 rounded-full text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer border-none">
+                            <option value="">Tahun Lulus</option>
+                            @foreach($tahunList as $tahun)
+                                <option value="{{ $tahun }}" {{ request('tahun_lulus') == $tahun ? 'selected' : '' }}>
+                                    {{ $tahun }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <div class="absolute right-4 pointer-events-none opacity-40">
+                            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </div>
+                    </div>
 
-    {{-- Program Studi (dari database, dinamis) --}}
-    <div class="relative flex items-center">
-        <span class="absolute left-4 z-10 opacity-60 text-xs">🎓</span>
-        <select name="program_studi"
-            onchange="this.form.submit()"
-            class="appearance-none bg-slate-100 hover:bg-slate-200 text-slate-600 pl-10 pr-10 py-2.5 rounded-full text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer border-none">
-            <option value="">Program Studi</option>
-            @foreach($prodiList as $prodi)
-                <option value="{{ $prodi }}" {{ request('program_studi') == $prodi ? 'selected' : '' }}>
-                    {{ $prodi }}
-                </option>
-            @endforeach
-        </select>
-        <div class="absolute right-4 pointer-events-none opacity-40">
-            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/>
-            </svg>
-        </div>
-    </div>
+                    {{-- Program Studi --}}
+                    <div class="relative flex items-center">
+                        <span class="absolute left-4 z-10 opacity-60 text-xs">🎓</span>
+                        <select name="program_studi"
+                            onchange="this.form.submit()"
+                            class="appearance-none bg-slate-100 hover:bg-slate-200 text-slate-600 pl-10 pr-10 py-2.5 rounded-full text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer border-none">
+                            <option value="">Program Studi</option>
+                            @foreach($prodiList as $prodi)
+                                <option value="{{ $prodi }}" {{ request('program_studi') == $prodi ? 'selected' : '' }}>
+                                    {{ $prodi }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <div class="absolute right-4 pointer-events-none opacity-40">
+                            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </div>
+                    </div>
 
-    {{-- Lokasi (dari database, dinamis) --}}
-    <div class="relative flex items-center">
-        <span class="absolute left-4 z-10 opacity-60 text-xs">📍</span>
-        <select name="lokasi"
-            onchange="this.form.submit()"
-            class="appearance-none bg-slate-100 hover:bg-slate-200 text-slate-600 pl-10 pr-10 py-2.5 rounded-full text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer border-none">
-            <option value="">Lokasi</option>
-            @foreach($lokasiList as $lok)
-                <option value="{{ $lok }}" {{ request('lokasi') == $lok ? 'selected' : '' }}>
-                    {{ $lok }}
-                </option>
-            @endforeach
-        </select>
-        <div class="absolute right-4 pointer-events-none opacity-40">
-            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/>
-            </svg>
-        </div>
-    </div>
+                    {{-- Lokasi --}}
+                    <div class="relative flex items-center">
+                        <span class="absolute left-4 z-10 opacity-60 text-xs">📍</span>
+                        <select name="lokasi"
+                            onchange="this.form.submit()"
+                            class="appearance-none bg-slate-100 hover:bg-slate-200 text-slate-600 pl-10 pr-10 py-2.5 rounded-full text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer border-none">
+                            <option value="">Lokasi</option>
+                            @foreach($lokasiList as $lok)
+                                <option value="{{ $lok }}" {{ request('lokasi') == $lok ? 'selected' : '' }}>
+                                    {{ $lok }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <div class="absolute right-4 pointer-events-none opacity-40">
+                            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </div>
+                    </div>
 
-    {{-- Tombol reset saja, tidak perlu "Terapkan Filter" --}}
-    @if(request()->anyFilled(['search', 'tahun_lulus', 'program_studi', 'lokasi']))
-    <a href="{{ route('alumni.search') }}"
-        class="bg-slate-200 hover:bg-slate-300 text-slate-600 px-6 py-2.5 rounded-full text-xs font-bold transition-all">
-        Reset
-    </a>
-    @endif
-</div>
+                    {{-- Reset button --}}
+                    @if(request()->anyFilled(['search', 'tahun_lulus', 'program_studi', 'lokasi']))
+                    <a href="{{ route('alumni.search') }}"
+                        class="bg-slate-200 hover:bg-slate-300 text-slate-600 px-6 py-2.5 rounded-full text-xs font-bold transition-all">
+                        Reset
+                    </a>
+                    @endif
+                </div>
+            </form>
 
         <hr class="border-slate-200 mb-10">
 
@@ -170,6 +171,10 @@
         {{-- ===== GRID VIEW ===== --}}
         <div id="view-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @forelse($alumnis as $alumni)
+            @php
+                // Pastikan kita mendapatkan pekerjaan terbaru
+                $pekerjaanTerbaru = $alumni->currentPekerjaan();
+            @endphp
             <div class="bg-white rounded-[40px] p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-slate-50 group">
                 <div class="flex flex-col items-center text-center">
                     <div class="relative mb-5">
@@ -182,35 +187,29 @@
                     </div>
                     <h4 class="font-extrabold text-slate-800 text-lg mb-1">{{ $alumni->nama }}</h4>
 
-{{-- ✅ PERBAIKAN: Ambil jobdesk dari pekerjaan aktif/terbaru --}}
+                   
+
+{{-- Menampilkan pekerjaan terbaru --}}
 <p class="text-[#0067B1] font-bold text-xs mb-1 uppercase tracking-wider">
-    @php
-        // Ambil pekerjaan AKTIF atau terbaru
-        $pekerjaanAktif = $alumni->pekerjaan()
-            ->where(function($q) {
-                $q->whereNull('tahun_selesai')
-                  ->orWhere('tahun_selesai', '>=', now());
-            })
-            ->latest('tahun_masuk')
-            ->first();
-        
-        $pekerjaan = $pekerjaanAktif ?? $alumni->pekerjaan()->latest('tahun_masuk')->first();
-    @endphp
-    {{ $pekerjaan?->jobdesk ?? '-' }}
+    @if($pekerjaanTerbaru)
+        {{ $pekerjaanTerbaru->jobdesk }}
+        @if($pekerjaanTerbaru->nama_perusahaan)
+            - {{ $pekerjaanTerbaru->nama_perusahaan }}
+        @endif
+    @else
+        -
+    @endif
 </p>
 
-{{-- ✅ PERBAIKAN: Ambil nama_perusahaan dari pekerjaan yang sama --}}
-<p class="text-slate-500 font-medium text-[11px] mb-3 uppercase tracking-tight">
-    {{ $pekerjaan?->nama_perusahaan ?? '-' }}
-</p>
 
-<div class="flex items-center text-slate-400 text-[11px] font-bold uppercase tracking-wider mb-8">
-    <span class="mr-2">🎓</span> {{ $alumni->tahun_lulus ?? '-' }}
-</div>
 
-<a href="{{ route('alumni.show', $alumni->nim) }}" class="w-full py-3.5 border-2 border-slate-100 rounded-2xl text-slate-600 font-bold text-xs hover:bg-[#0067B1] hover:text-white hover:border-[#0067B1] transition-all text-center">
-    Lihat Profil
-</a>
+                    <div class="flex items-center text-slate-400 text-[11px] font-bold uppercase tracking-wider mb-8">
+                        <span class="mr-2">🎓</span> {{ $alumni->tahun_lulus ?? '-' }}
+                    </div>
+
+                    <a href="{{ route('alumni.show', $alumni->nim) }}" class="w-full py-3.5 border-2 border-slate-100 rounded-2xl text-slate-600 font-bold text-xs hover:bg-[#0067B1] hover:text-white hover:border-[#0067B1] transition-all text-center">
+                        Lihat Profil
+                    </a>
                 </div>
             </div>
             @empty
@@ -227,51 +226,65 @@
             @endforelse
         </div>
 
-        {{-- ===== LIST VIEW ===== --}}
-        <div id="view-list" class="hidden flex-col gap-3">
-            @forelse($alumnis as $alumni)
-            <div class="bg-white rounded-2xl px-6 py-5 shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 group flex items-center justify-between gap-4">
-                {{-- Kiri: Avatar + Info --}}
-                <div class="flex items-center gap-5 min-w-0">
-                    <div class="relative shrink-0">
-                        @if($alumni->foto_profile)
-                            <img src="{{ Storage::url($alumni->foto_profile) }}" class="w-14 h-14 rounded-full border-2 border-white shadow-md object-cover" alt="{{ $alumni->nama }}">
-                        @else
-                            <img src="https://ui-avatars.com/api/?name={{ urlencode($alumni->nama) }}&background=0D8ABC&color=fff" class="w-14 h-14 rounded-full border-2 border-white shadow-md" alt="{{ $alumni->nama }}">
-                        @endif
-                    </div>
-                    <div class="min-w-0">
-                        <h4 class="font-extrabold text-slate-800 text-base leading-tight truncate">{{ $alumni->nama }}</h4>
-                        <p class="text-[#0067B1] font-bold text-xs mt-0.5">
-                            {{ $alumni->jabatan_sekarang ?? 'Alumni' }}
-                            @if($alumni->pekerjaan->first()?->nama_perusahaan)
-                                <span class="text-slate-400 font-medium">at {{ $alumni->pekerjaan->first()?->nama_perusahaan }}</span>
+            {{-- ===== LIST VIEW ===== --}}
+            <div id="view-list" class="hidden flex-col gap-3">
+                @forelse($alumnis as $alumni)
+                @php
+                    // Pastikan kita mendapatkan pekerjaan terbaru
+                    $pekerjaanTerbaru = $alumni->currentPekerjaan();
+                @endphp
+                <div class="bg-white rounded-2xl px-6 py-5 shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 group flex items-start justify-between gap-4">
+                    {{-- Kiri: Avatar + Info --}}
+                    <div class="flex items-start gap-5 min-w-0">
+                        <div class="relative shrink-0">
+                            @if($alumni->foto_profile)
+                                <img src="{{ Storage::url($alumni->foto_profile) }}" class="w-14 h-14 rounded-full border-2 border-white shadow-md object-cover" alt="{{ $alumni->nama }}">
+                            @else
+                                <img src="https://ui-avatars.com/api/?name={{ urlencode($alumni->nama) }}&background=0D8ABC&color=fff" class="w-14 h-14 rounded-full border-2 border-white shadow-md" alt="{{ $alumni->nama }}">
                             @endif
-                        </p>
-                        <div class="flex items-center text-slate-400 text-[11px] font-bold uppercase tracking-wider mt-1.5">
-                            <span class="mr-1.5">🎓</span> {{ $alumni->tahun_lulus ?? '-' }}
+                        </div>
+                        
+                        <div class="min-w-0 text-left space-y-1">
+                            <h4 class="font-extrabold text-slate-800 text-base leading-tight truncate">{{ $alumni->nama }}</h4>
+                            
+                           
+
+{{-- ✅ BENAR --}}
+<p class="text-[#0067B1] font-bold text-xs mb-0 uppercase tracking-wider">
+    @if($pekerjaanTerbaru)
+        {{ $pekerjaanTerbaru->jobdesk }}
+        @if($pekerjaanTerbaru->nama_perusahaan)
+            - {{ $pekerjaanTerbaru->nama_perusahaan }}
+        @endif
+    @else
+        -
+    @endif
+</p>
+
+                            <div class="flex items-center text-slate-400 text-[11px] font-bold uppercase tracking-wider mt-0">
+                                <span class="mr-1.5">🎓</span> {{ $alumni->tahun_lulus ?? '-' }}
+                            </div>
                         </div>
                     </div>
+                    {{-- Kanan: Tombol --}}
+                    <a href="{{ route('alumni.show', $alumni->nim) }}"
+                        class="shrink-0 px-6 py-2.5 border-2 border-slate-100 rounded-xl text-slate-600 font-bold text-xs hover:bg-[#0067B1] hover:text-white hover:border-[#0067B1] transition-all whitespace-nowrap">
+                        Lihat Profil
+                    </a>
                 </div>
-                {{-- Kanan: Tombol --}}
-                <a href="{{ route('alumni.show', $alumni->nim) }}"
-                    class="shrink-0 px-6 py-2.5 border-2 border-slate-100 rounded-xl text-slate-600 font-bold text-xs hover:bg-[#0067B1] hover:text-white hover:border-[#0067B1] transition-all whitespace-nowrap">
-                    Lihat Profil
-                </a>
+                @empty
+                <div class="py-20 text-center">
+                    <div class="text-5xl mb-4">🔍</div>
+                    <p class="text-slate-800 font-extrabold text-lg mb-2">Alumni Tidak Ditemukan</p>
+                    <p class="text-slate-400 font-medium text-sm">Coba ubah kata kunci atau filter pencarian Anda.</p>
+                    @if(request()->anyFilled(['search', 'tahun_lulus', 'program_studi', 'lokasi']))
+                    <a href="{{ route('alumni.search') }}" class="inline-block mt-6 bg-[#0067B1] text-white px-8 py-3 rounded-full text-xs font-bold hover:bg-blue-800 transition-all">
+                        Lihat Semua Alumni
+                    </a>
+                    @endif
+                </div>
+                @endforelse
             </div>
-            @empty
-            <div class="py-20 text-center">
-                <div class="text-5xl mb-4">🔍</div>
-                <p class="text-slate-800 font-extrabold text-lg mb-2">Alumni Tidak Ditemukan</p>
-                <p class="text-slate-400 font-medium text-sm">Coba ubah kata kunci atau filter pencarian Anda.</p>
-                @if(request()->anyFilled(['search', 'tahun_lulus', 'program_studi', 'lokasi']))
-                <a href="{{ route('alumni.search') }}" class="inline-block mt-6 bg-[#0067B1] text-white px-8 py-3 rounded-full text-xs font-bold hover:bg-blue-800 transition-all">
-                    Lihat Semua Alumni
-                </a>
-                @endif
-            </div>
-            @endforelse
-        </div>
 
         {{-- ===== PAGINATION ===== --}}
         @if($alumnis->hasPages())
