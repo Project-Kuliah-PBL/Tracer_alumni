@@ -66,15 +66,15 @@
                 {{-- Filter Row - auto submit tanpa tombol --}}
                 <div class="flex flex-wrap justify-center gap-3 mt-6 mb-20">
 
-                    {{-- Tahun Lulus --}}
+                    {{-- Angkatan --}}
                     <div class="relative flex items-center">
                         <span class="absolute left-4 z-10 opacity-60 text-xs">📅</span>
-                        <select name="tahun_lulus"
+                        <select name="angkatan"
                             onchange="this.form.submit()"
                             class="appearance-none bg-slate-100 hover:bg-slate-200 text-slate-600 pl-10 pr-10 py-2.5 rounded-full text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer border-none">
-                            <option value="">Tahun Lulus</option>
+                            <option value="">Angkatan</option>
                             @foreach($tahunList as $tahun)
-                                <option value="{{ $tahun }}" {{ request('tahun_lulus') == $tahun ? 'selected' : '' }}>
+                                <option value="{{ $tahun }}" {{ request('angkatan') == $tahun ? 'selected' : '' }}>
                                     {{ $tahun }}
                                 </option>
                             @endforeach
@@ -127,7 +127,7 @@
                     </div>
 
                     {{-- Reset button --}}
-                    @if(request()->anyFilled(['search', 'tahun_lulus', 'program_studi', 'lokasi']))
+                    @if(request()->anyFilled(['search', 'angkatan', 'program_studi', 'lokasi']))
                     <a href="{{ route('alumni.search') }}"
                         class="bg-slate-200 hover:bg-slate-300 text-slate-600 px-6 py-2.5 rounded-full text-xs font-bold transition-all">
                         Reset

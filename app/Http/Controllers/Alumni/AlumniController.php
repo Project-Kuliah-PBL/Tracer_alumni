@@ -15,11 +15,11 @@ class AlumniController extends Controller
     public function index(Request $request)
     {
         // Data untuk filter dropdown
-        $tahunList = DataAlumni::whereNotNull('tahun_lulus')
-                        ->where('tahun_lulus', '>', 0)
+        $tahunList = DataAlumni::whereNotNull('angkatan')
+                        ->where('angkatan', '>', 0)
                         ->distinct()
-                        ->orderByDesc('tahun_lulus')
-                        ->pluck('tahun_lulus');
+                        ->orderByDesc('angkatan')
+                        ->pluck('angkatan');
 
     $prodiList = DataAlumni::whereNotNull('prodi')
                     ->where('prodi', '<>', '')
@@ -53,8 +53,8 @@ class AlumniController extends Controller
                    });
             });
         })
-        ->when($request->filled('tahun_lulus'), function ($q) use ($request) {
-            $q->where('tahun_lulus', $request->tahun_lulus);
+        ->when($request->filled('angkatan'), function ($q) use ($request) {
+            $q->where('angkatan', $request->angkatan);
         })
         ->when($request->filled('program_studi'), function ($q) use ($request) {
             $q->where('prodi', $request->program_studi);

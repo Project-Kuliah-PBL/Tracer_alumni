@@ -14,15 +14,15 @@
 </head>
 <body class="bg-[#F1F5F9] h-screen flex flex-col">
 
-    <!-- Header -->
     <div class="shrink-0">
         @include('partials.header-admin')
     </div>
 
     <div class="flex flex-1 overflow-hidden w-full">
         @include('partials.sidebar-alumni', ['activeMenu' => 'profil'])
+        
+        <div id="sidebarOverlay" onclick="closeSidebar()" class="fixed inset-0 bg-black/40 z-40 hidden lg:hidden transition-opacity duration-300"></div>
 
-        <!-- Main Content -->
         <main class="flex-1 overflow-y-auto p-8 custom-scroll">
 
             {{-- Flash Messages --}}
@@ -35,9 +35,7 @@
 
             <div class="grid grid-cols-12 gap-6 w-full">
 
-                <!-- Profile Header Card -->
-                <div class="col-span-8 bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-200">
-                    <!-- Foto Sampul -->
+                <div class="col-span-12 lg:col-span-8 bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-200">
                     <div class="h-28 overflow-hidden relative">
                         @if($alumni->foto_sampul)
                             <img src="{{ Storage::url($alumni->foto_sampul) }}" alt="Foto Sampul" class="w-full h-full object-cover">
@@ -110,7 +108,6 @@
                     </div>
                 </div>
 
-                <!-- Modal Edit Profil -->
                 <div id="editProfileModal" class="fixed inset-0 z-[999] hidden">
                     <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
                     <div class="flex items-center justify-center min-h-screen p-4">
@@ -129,7 +126,6 @@
                                 <div class="px-8 py-6 overflow-y-auto flex-1">
                                     <div class="space-y-6">
 
-                                        <!-- Foto Sampul -->
                                         <div class="space-y-2">
                                             <label class="text-sm font-semibold text-slate-600">Foto Sampul</label>
                                             <div class="relative h-40 rounded-xl overflow-hidden bg-slate-100 border-2 border-dashed border-slate-300 group">
@@ -154,7 +150,6 @@
                                             </div>
                                         </div>
 
-                                        <!-- Foto Profil -->
                                         <div class="flex items-center gap-5">
                                             <label for="foto_profile" class="relative group cursor-pointer">
                                                 @if($alumni->foto_profile)
@@ -178,7 +173,6 @@
                                             </div>
                                         </div>
 
-                                        <!-- Input Fields -->
                                         <div class="space-y-4">
                                             <div class="space-y-1.5">
                                                 <label class="text-sm font-semibold text-slate-600">Nama Lengkap <span class="text-red-500">*</span></label>
@@ -218,8 +212,7 @@
                     </div>
                 </div>
 
-      <!-- Kontak Card -->
-<div class="col-span-4 bg-white rounded-3xl p-8 shadow-sm border border-slate-200">
+      <div class="col-span-12 lg:col-span-4 bg-white rounded-3xl p-8 shadow-sm border border-slate-200">
     <div class="flex justify-between items-center mb-6">
         <h3 class="text-slate-800 font-bold">Kontak</h3>
         <button onclick="openModalKontak()" class="text-slate-400 hover:text-slate-600">
@@ -230,7 +223,6 @@
     </div>
     
     <div class="space-y-4">
-        <!-- Email Item -->
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -243,7 +235,6 @@
             </div>
         </div>
 
-        <!-- Telepon Item -->
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -258,8 +249,7 @@
     </div>
 </div>
 
-             <!-- Modal Edit Kontak -->
-<div id="modalKontak" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[99] hidden items-center justify-center p-4">
+             <div id="modalKontak" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[99] hidden items-center justify-center p-4">
     <div class="bg-white w-full max-w-lg rounded-[28px] shadow-2xl overflow-hidden flex flex-col transform transition-all">
         <div class="px-8 py-6 flex justify-between items-center">
             <h3 class="text-[#0067B1] font-bold text-xl">Edit Kontak</h3>
@@ -280,14 +270,10 @@
         <div class="flex justify-between items-center">
             <label class="block text-sm font-semibold text-slate-600 ml-1">Email</label>
             
-           <!-- Checklist Visibilitas -->
-<label class="flex items-center gap-2 cursor-pointer group">
-    <!-- Input asli disembunyikan -->
+           <label class="flex items-center gap-2 cursor-pointer group">
     <input type="checkbox" name="show_email" value="1" class="peer hidden" {{ old('show_email', $alumni->show_email ?? false) ? 'checked' : '' }}>
     
-    <!-- Box Custom -->
     <div class="w-5 h-5 border-2 border-slate-200 rounded-md flex items-center justify-center peer-checked:bg-[#0067B1] peer-checked:border-[#0067B1] transition-colors">
-        <!-- Ikon Centang: Hidden secara default, Block saat peer-checked -->
         <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-white hidden peer-checked:block" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
         </svg>
@@ -306,19 +292,14 @@
         </div>
     </div>
 
-    <!-- Input Nomor Telepon -->
     <div class="space-y-3">
         <div class="flex justify-between items-center">
             <label class="block text-sm font-semibold text-slate-600 ml-1">Nomor Telepon</label>
             
-          <!-- Checklist Visibilitas -->
-<label class="flex items-center gap-2 cursor-pointer group">
-    <!-- Input asli disembunyikan -->
+          <label class="flex items-center gap-2 cursor-pointer group">
     <input type="checkbox" name="show_telepon" value="1" class="peer hidden" {{ old('show_telepon', $alumni->show_telepon ?? false) ? 'checked' : '' }}>
     
-    <!-- Box Custom -->
     <div class="w-5 h-5 border-2 border-slate-200 rounded-md flex items-center justify-center peer-checked:bg-[#0067B1] peer-checked:border-[#0067B1] transition-colors">
-        <!-- Ikon Centang: Hidden secara default, Block saat peer-checked -->
         <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-white hidden peer-checked:block" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
         </svg>
@@ -348,8 +329,7 @@
 </form>
     </div>
 </div>
-                <!-- Riwayat Pendidikan -->
-                <div class="col-span-5 bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
+                <div class="col-span-12 lg:col-span-5 bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-slate-800 font-bold text-sm">Riwayat Pendidikan</h3>
                         <div class="flex gap-2">
@@ -385,8 +365,7 @@
                     </div>
                 </div>
 
-                <!-- Pengalaman Kerja -->
-                <div class="col-span-7 bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
+                <div class="col-span-12 lg:col-span-7 bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-slate-800 font-bold text-sm">Pengalaman & Detail Pekerjaan</h3>
                         <div class="flex gap-2 text-slate-400">
@@ -446,8 +425,7 @@
                     @endif
                 </div>
 
-                <!-- Pencapaian & Sertifikasi -->
-                <div class="col-span-9 bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
+                <div class="col-span-12 lg:col-span-9 bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-slate-800 font-bold text-sm">Pencapaian & Sertifikasi</h3>
                         <div class="flex gap-2 text-slate-400">
@@ -485,8 +463,7 @@
                     <p class="text-xs text-slate-400 text-center py-4">Belum ada sertifikasi. <a href="{{ route('alumni.sertifikasi.create') }}" class="text-blue-500">Tambah</a></p>
                     @endif
                 </div>
-<!-- Social Media Card -->
-                @php
+@php
                     $medsosList = $alumni->mediaSosial->keyBy(fn($m) => strtolower(trim($m->nama_platform)));
                     
                     $linkedIn   = $medsosList->first(fn($m) => str_contains(strtolower($m->nama_platform), 'linkedin'));
@@ -497,7 +474,7 @@
                     $portfolio  = $medsosList->first(fn($m) => str_contains(strtolower($m->nama_platform), 'portfolio') || str_contains(strtolower($m->nama_platform), 'website'));
                 @endphp
 
-                <div class="col-span-3 bg-white rounded-3xl p-6 shadow-sm border border-slate-200 flex flex-col">
+                <div class="col-span-12 lg:col-span-3 bg-white rounded-3xl p-6 shadow-sm border border-slate-200 flex flex-col">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-slate-800 font-bold text-sm">Social</h3>
                         <button onclick="openModal()" class="text-slate-400 hover:text-blue-500">
@@ -567,11 +544,9 @@
                         @if($xTwitter) </a> @else </button> @endif
                     </div>
                 </div>
-<!-- Modal Edit Media Sosial -->
 <div id="modalSocial" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[99] hidden items-center justify-center p-4">
     <div class="bg-white w-full max-w-[400px] rounded-2xl shadow-2xl overflow-hidden flex flex-col">
         
-        <!-- Header -->
         <div class="px-5 py-4 flex justify-between items-center border-b border-slate-100">
             <div class="flex items-center gap-2">
                 <div class="w-1.5 h-4 bg-[#0063a7] rounded-full"></div>
@@ -664,7 +639,6 @@
                 </div>
             </div>
 
-            <!-- Info Box -->
             <div class="mt-4 bg-blue-50 border border-blue-100 rounded-xl p-3 flex gap-3">
                 <svg class="w-4 h-4 text-blue-500 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
                 <p class="text-[10px] text-blue-700 leading-tight">
@@ -672,7 +646,6 @@
                 </p>
             </div>
 
-            <!-- Action Buttons -->
             <div class="flex gap-3 mt-5">
                 <button type="button" onclick="closeModal()" class="flex-1 py-2.5 rounded-xl bg-slate-100 text-slate-600 font-bold text-xs hover:bg-slate-200 transition-all">Batal</button>
                 <button type="submit" class="flex-[2] py-2.5 rounded-xl bg-[#0063a7] text-white font-bold text-xs shadow-lg shadow-blue-900/20 hover:bg-[#004a7c] transition-all">Simpan Perubahan</button>
@@ -688,6 +661,31 @@
 </style>
 
     <script>
+        // === FUNGSI SIDEBAR HAMBURGER MENU ===
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebarMenu');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (!sidebar || !overlay) return;
+
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+            
+            // Matikan scroll body saat sidebar terbuka
+            if (!sidebar.classList.contains('-translate-x-full')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebarMenu');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebar) sidebar.classList.add('-translate-x-full');
+            if (overlay) overlay.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
         // Toggle Show More Pekerjaan
         function togglePekerjaan(btn) {
             const list = document.getElementById('pekerjaanList');
@@ -725,13 +723,17 @@
         const modalKontak = document.getElementById('modalKontak');
         function openModalKontak() { modalKontak.classList.remove('hidden'); modalKontak.classList.add('flex'); }
         function closeModalKontak() { modalKontak.classList.add('hidden'); modalKontak.classList.remove('flex'); }
-        window.addEventListener('click', (e) => { if (e.target == modalKontak) closeModalKontak(); });
+        // Note: event listener click window di-update agar tidak bentrok dengan overlay lain
+        window.addEventListener('click', (e) => { 
+            if (e.target == modalKontak) closeModalKontak(); 
+            const modal = document.getElementById('modalSocial');
+            if (e.target == modal) closeModal();
+        });
 
         // Social Modal
         const modal = document.getElementById('modalSocial');
         function openModal() { modal.classList.remove('hidden'); modal.classList.add('flex'); }
         function closeModal() { modal.classList.add('hidden'); modal.classList.remove('flex'); }
-        window.onclick = function(e) { if (e.target == modal) closeModal(); }
 
         // Preview foto
         function previewAvatar(input) {

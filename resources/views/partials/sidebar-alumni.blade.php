@@ -1,7 +1,14 @@
-<aside class="sidebar w-64 shrink-0 bg-white border-r border-slate-200 p-6 flex flex-col">
-    <div class="mb-8">
-        <h2 class="text-slate-800 font-bold text-sm">Alumni Portal</h2>
-        <p class="text-slate-400 text-[10px] font-medium">Verified Member</p>
+<aside id="sidebarMenu" class="sidebar w-64 shrink-0 bg-white border-r border-slate-200 p-6 flex flex-col fixed inset-y-0 left-0 z-50 transform -translate-x-full lg:translate-x-0 lg:static transition-transform duration-300 ease-in-out shadow-2xl lg:shadow-none">
+    <div class="mb-8 flex items-start justify-between gap-3">
+        <div>
+            <h2 class="text-slate-800 font-bold text-sm">Alumni Portal</h2>
+            <p class="text-slate-400 text-[10px] font-medium">Verified Member</p>
+        </div>
+        <button type="button" onclick="closeSidebar()" class="lg:hidden p-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 shadow-sm active:scale-95 transition-all focus:outline-none focus:ring-2 focus:ring-red-500/20">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
     </div>
 
     <nav class="space-y-2 flex-1">
@@ -23,16 +30,15 @@
         </a>
     </nav>
 
-   <div class="pt-6 border-t border-slate-100">
-    <form action="{{ route('logout') }}" method="POST">
-        @csrf
-        <!-- Ubah justify-start menjadi justify-center di bawah ini -->
-        <button type="submit" class="flex items-center justify-center gap-3 bg-[#D32F2F] text-white w-full px-4 py-3 rounded-lg hover:bg-red-700 transition-all shadow-md shadow-red-200">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-            <span class="font-bold text-xs uppercase tracking-wider">Log Out</span>
-        </button>
-    </form>
-</div>
+    <div class="pt-6 border-t border-slate-100">
+        <form action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button type="submit" class="flex items-center justify-center gap-3 bg-[#D32F2F] text-white w-full px-4 py-3 rounded-lg hover:bg-red-700 transition-all shadow-md shadow-red-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                <span class="font-bold text-xs uppercase tracking-wider">Log Out</span>
+            </button>
+        </form>
+    </div>
 </aside>
