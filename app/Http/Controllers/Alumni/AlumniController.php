@@ -27,11 +27,11 @@ class AlumniController extends Controller
                     ->orderBy('prodi')
                     ->pluck('prodi');
                     
-    $lokasiList = DataPekerjaan::whereNotNull('lokasi_pekerjaan')
-                    ->where('lokasi_pekerjaan', '<>', '')
+    $lokasiList = DataPekerjaan::whereNotNull('lokasi')
+                    ->where('lokasi', '<>', '')
                     ->distinct()
-                    ->orderBy('lokasi_pekerjaan')
-                    ->pluck('lokasi_pekerjaan');
+                    ->orderBy('lokasi')
+                    ->pluck('lokasi');
 
     $alumnis = DataAlumni::with(['pekerjaan' => function ($q) {
             $q->orderByDesc('tahun_masuk');
@@ -46,7 +46,7 @@ class AlumniController extends Controller
                    
                 // 2. Search di tabel Pekerjaan (lokasi, perusahaan, status, jobdesk)
                    ->orWhereHas('pekerjaan', function ($q3) use ($search) {
-                       $q3->where('lokasi_pekerjaan', 'like', $search)
+                       $q3->where('lokasi', 'like', $search)
                           ->orWhere('nama_perusahaan', 'like', $search)
                           ->orWhere('status_pekerjaan', 'like', $search)
                           ->orWhere('jobdesk', 'like', $search); // <-- Menambahkan pencarian Jobdesk
@@ -61,7 +61,7 @@ class AlumniController extends Controller
         })
         ->when($request->filled('lokasi'), function ($q) use ($request) {
             $q->whereHas('pekerjaan', function ($q2) use ($request) {
-                $q2->where('lokasi_pekerjaan', $request->lokasi);
+                $q2->where('lokasi', $request->lokasi);
             });
         })
         ->paginate(12);

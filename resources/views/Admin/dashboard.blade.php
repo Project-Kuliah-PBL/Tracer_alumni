@@ -41,10 +41,25 @@
         @include('partials.header-admin')
     </div>
 
-  <div class="flex flex-1 overflow-hidden w-full max-w-full">
-    <aside class="w-64 shrink-0 bg-white/90 backdrop-blur-sm border-r border-slate-100 flex flex-col justify-between h-full overflow-y-auto no-scrollbar">
+    <div class="flex flex-1 overflow-hidden w-full max-w-full relative">
+        
+        <!-- Backdrop Overlay untuk Mobile Sidebar -->
+        <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/40 z-40 hidden lg:hidden transition-opacity backdrop-blur-sm"></div>
+
+        <!-- SIDEBAR (Responsive: Tersembunyi di mobile, bergeser dari kiri ke kanan dengan animasi translate) -->
+        <aside id="sidebarAdmin" class="fixed inset-y-0 left-0 z-50 w-64 -translate-x-full lg:translate-x-0 lg:static bg-white/90 backdrop-blur-sm border-r border-slate-100 flex flex-col justify-between h-full overflow-y-auto no-scrollbar transition-transform duration-300 ease-in-out shrink-0">
             <div class="py-6 flex flex-col gap-3">
                 
+                <!-- Header khusus di Mobile untuk menutup sidebar -->
+                <div class="flex lg:hidden justify-between items-center px-5 mb-2">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Menu Navigasi</span>
+                    <button onclick="toggleSidebar()" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 mx-3 px-4 py-3 rounded-xl bg-blue-50 text-blue-600 font-bold text-xs border-r-4 border-blue-600 transition-all">  
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -93,6 +108,9 @@
 
         <!-- MAIN CONTENT -->
         <main class="flex-1 overflow-y-auto px-4 md:px-6 lg:px-8 py-4 md:py-6 no-scrollbar w-full min-w-0">
+            
+           
+
             <!-- Header Statistik -->
             <div class="mb-5 md:mb-7">
                 <h2 class="text-xl md:text-2xl font-extrabold text-slate-800 tracking-tight">Statistik Alumni</h2>
@@ -131,232 +149,243 @@
                     </div>
                 </div>
             </div>
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-    {{-- Grafik 2: Masa Tunggu Kerja --}}
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 md:p-6 flex flex-col">
-        <div class="border-l-4 border-emerald-500 pl-4 mb-4">
-            <h3 class="font-extrabold text-slate-800 text-base md:text-lg">Masa Tunggu Kerja</h3>
-            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Berdasarkan kategori tahun</p>
-        </div>
-        <div class="relative h-56">
-            <canvas id="chartMasaTunggu"></canvas>
-        </div>
-    </div>
-
-    {{-- Grafik 3: Rata-Rata Masa Kerja per 1 Tempat Kerja, per Angkatan --}}
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 md:p-6 flex flex-col">
-        <div class="flex items-start justify-between mb-4 gap-4 flex-wrap">
-            <div class="border-l-4 border-blue-600 pl-4">
-                <h3 class="font-extrabold text-slate-800 text-base md:text-lg">Rata-Rata Masa Kerja per Tempat</h3>
-                <p class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Rata-rata lama di 1 tempat kerja per angkatan (tahun)</p>
-            </div>
-            @if(!empty($masaKerjaLabels))
-            {{-- Custom dropdown multi-select angkatan --}}
-            <div class="relative" id="dropdownWrapper">
-                <button onclick="toggleDropdown()" type="button"
-                    class="flex items-center gap-2 text-xs font-bold text-slate-600 border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:border-[#0067B1] transition-all min-w-[160px] justify-between">
-                    <span id="dropdownLabel">Semua Angkatan</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </button>
-
-                <div id="dropdownPanel"
-                    class="hidden absolute right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg z-50 p-2 min-w-[160px]">
-                    <div class="space-y-1">
-                        @foreach($masaKerjaLabels as $label)
-                        <label class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-50 cursor-pointer">
-                            <input type="checkbox" class="filter-angkatan accent-[#0067B1] w-3.5 h-3.5"
-                                value="{{ $label }}" onchange="updateMasaKerjaChart()">
-                            <span class="text-xs font-semibold text-slate-700">Angkatan {{ $label }}</span>
-                        </label>
-                        @endforeach
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {{-- Grafik 2: Masa Tunggu Kerja --}}
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 md:p-6 flex flex-col">
+                    <div class="border-l-4 border-emerald-500 pl-4 mb-4">
+                        <h3 class="font-extrabold text-slate-800 text-base md:text-lg">Masa Tunggu Kerja</h3>
+                        <p class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Berdasarkan kategori tahun</p>
                     </div>
-                    <div class="border-t border-slate-100 mt-2 pt-2">
-                        <button onclick="resetFilter()" type="button"
-                            class="w-full text-[10px] font-bold text-slate-400 hover:text-blue-600 transition-all text-center py-1">
-                            Tampilkan Semua
-                        </button>
+                    <div class="relative h-56">
+                        <canvas id="chartMasaTunggu"></canvas>
                     </div>
                 </div>
+
+                {{-- Grafik 3: Rata-Rata Masa Kerja per 1 Tempat Kerja, per Angkatan --}}
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 md:p-6 flex flex-col">
+                    <div class="flex items-start justify-between mb-4 gap-4 flex-wrap">
+                        <div class="border-l-4 border-blue-600 pl-4">
+                            <h3 class="font-extrabold text-slate-800 text-base md:text-lg">Rata-Rata Masa Kerja per Tempat</h3>
+                            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Rata-rata lama di 1 tempat kerja per angkatan (tahun)</p>
+                        </div>
+                        @if(!empty($masaKerjaLabels))
+                        {{-- Custom dropdown multi-select angkatan --}}
+                        <div class="relative" id="dropdownWrapper">
+                            <button onclick="toggleDropdown()" type="button"
+                                class="flex items-center gap-2 text-xs font-bold text-slate-600 border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:border-[#0067B1] transition-all min-w-[160px] justify-between">
+                                <span id="dropdownLabel">Semua Angkatan</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+
+                            <div id="dropdownPanel"
+                                class="hidden absolute right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg z-50 p-2 min-w-[160px]">
+                                <div class="space-y-1">
+                                    @foreach($masaKerjaLabels as $label)
+                                    <label class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-50 cursor-pointer">
+                                        <input type="checkbox" class="filter-angkatan accent-[#0067B1] w-3.5 h-3.5"
+                                            value="{{ $label }}" onchange="updateMasaKerjaChart()">
+                                        <span class="text-xs font-semibold text-slate-700">Angkatan {{ $label }}</span>
+                                    </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+                    @if(empty($masaKerjaLabels))
+                        <p class="text-slate-400 text-xs text-center py-10">Belum ada data pekerjaan.</p>
+                    @else
+                    <div class="relative h-56">
+                        <canvas id="chartMasaKerja"></canvas>
+                    </div>
+                    @endif
+                </div>
             </div>
-            @endif
-        </div>
-        @if(empty($masaKerjaLabels))
-            <p class="text-slate-400 text-xs text-center py-10">Belum ada data pekerjaan.</p>
-        @else
-        <div class="relative h-56">
-            <canvas id="chartMasaKerja"></canvas>
-        </div>
-        @endif
-    </div>
-
-</div>
-
-{{-- Chart.js --}}
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script>
-    const fontFamily = "'Plus Jakarta Sans', sans-serif";
-    Chart.defaults.font.family = fontFamily;
-
-    // ── 2. Masa Tunggu Kerja ───────────────────────────────────────
-    new Chart(document.getElementById('chartMasaTunggu'), {
-        type: 'bar',
-        data: {
-            labels: {!! json_encode($masaTunggu->pluck('label')) !!},
-            datasets: [{
-                label: 'Jumlah Alumni',
-                data: {!! json_encode($masaTunggu->pluck('jumlah')) !!},
-                backgroundColor: [
-                    'rgba(16, 185, 129, 0.85)',
-                    'rgba(59, 130, 246, 0.85)',
-                    'rgba(239, 68, 68, 0.85)',
-                ],
-                borderRadius: 6,
-                borderSkipped: false,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: ctx => ` ${ctx.parsed.y} Alumni`
-                    }
-                }
-            },
-            scales: {
-                x: { grid: { display: false }, ticks: { font: { size: 11, weight: '700' } } },
-                y: {
-                    beginAtZero: true,
-                    grid: { color: '#f1f5f9' },
-                    ticks: {
-                        font: { size: 11 },
-                        stepSize: 1,
-                        callback: val => val + ' Alumni'
-                    }
-                }
-            }
-        }
-    });
-
-    // ── 3. Rata-Rata Masa Kerja per 1 Tempat Kerja per Angkatan ──────────
-    @if(!empty($masaKerjaLabels))
-    const allMasaKerjaLabels = {!! json_encode($masaKerjaLabels) !!};
-    const allMasaKerjaData   = {!! json_encode($masaKerjaData) !!};
-
-    function getFilteredData(labels) {
-        return labels.map(label => {
-            const idx = allMasaKerjaLabels.indexOf(label);
-            return idx !== -1 ? allMasaKerjaData[idx] : 0;
-        });
-    }
-
-    const masaKerjaChart = new Chart(document.getElementById('chartMasaKerja'), {
-        type: 'line',
-        data: {
-            labels: allMasaKerjaLabels,
-            datasets: [{
-                label: 'Rata-rata masa kerja (tahun)',
-                data: allMasaKerjaData,
-                borderColor: 'rgba(0, 103, 177, 0.9)',
-                backgroundColor: 'rgba(0, 103, 177, 0.1)',
-                borderWidth: 2.5,
-                pointBackgroundColor: 'rgba(0, 103, 177, 1)',
-                pointRadius: 5,
-                pointHoverRadius: 7,
-                fill: true,
-                tension: 0.4,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        title: ctx => 'Angkatan ' + ctx[0].label,
-                        label: ctx => ` Rata-rata: ${ctx.parsed.y} Tahun per Tempat Kerja`
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    grid: { display: false },
-                    ticks: { font: { size: 11, weight: '700' } },
-                    title: {
-                        display: true,
-                        text: 'Angkatan',
-                        font: { size: 10, weight: '700' },
-                        color: '#94a3b8'
-                    }
-                },
-                y: {
-                    beginAtZero: true,
-                    grid: { color: '#f1f5f9' },
-                    ticks: {
-                        font: { size: 11 },
-                        callback: val => val + ' Thn'
-                    },
-                    title: {
-                        display: true,
-                        text: 'Rata-rata (tahun)',
-                        font: { size: 10, weight: '700' },
-                        color: '#94a3b8'
-                    }
-                }
-            }
-        }
-    });
-
-    function toggleDropdown() {
-        document.getElementById('dropdownPanel').classList.toggle('hidden');
-    }
-
-    // Tutup dropdown jika klik di luar
-    document.addEventListener('click', function(e) {
-        const wrapper = document.getElementById('dropdownWrapper');
-        if (wrapper && !wrapper.contains(e.target)) {
-            document.getElementById('dropdownPanel').classList.add('hidden');
-        }
-    });
-
-    function updateMasaKerjaChart() {
-        const checked = [...document.querySelectorAll('.filter-angkatan:checked')]
-            .map(cb => cb.value);
-
-        const label = document.getElementById('dropdownLabel');
-        if (checked.length === 0) {
-            label.textContent = 'Semua Angkatan';
-        } else if (checked.length === 1) {
-            label.textContent = 'Angkatan ' + checked[0];
-        } else {
-            label.textContent = checked.length + ' Angkatan';
-        }
-
-        const activeLabels = checked.length > 0
-            ? allMasaKerjaLabels.filter(l => checked.includes(l))
-            : allMasaKerjaLabels;
-
-        masaKerjaChart.data.labels = activeLabels;
-        masaKerjaChart.data.datasets[0].data = getFilteredData(activeLabels);
-        masaKerjaChart.update();
-    }
-
-    function resetFilter() {
-        document.querySelectorAll('.filter-angkatan').forEach(cb => cb.checked = false);
-        updateMasaKerjaChart();
-        document.getElementById('dropdownPanel').classList.add('hidden');
-    }
-    @endif
-</script>
-
         </main>
     </div>
 
+    {{-- Chart.js --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        const fontFamily = "'Plus Jakarta Sans', sans-serif";
+        Chart.defaults.font.family = fontFamily;
+
+        // Fungsi Toggle Sidebar Hamburger Menu
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebarAdmin');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        // ── 2. Masa Tunggu Kerja ───────────────────────────────────────
+        new Chart(document.getElementById('chartMasaTunggu'), {
+            type: 'bar',
+            data: {
+                labels: {!! json_encode($masaTunggu->pluck('label')) !!},
+                datasets: [{
+                    label: 'Jumlah Alumni',
+                    data: {!! json_encode($masaTunggu->pluck('jumlah')) !!},
+                    backgroundColor: [
+                        'rgba(16, 185, 129, 0.85)',
+                        'rgba(59, 130, 246, 0.85)',
+                        'rgba(239, 68, 68, 0.85)',
+                    ],
+                    borderRadius: 6,
+                    borderSkipped: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => ` ${ctx.parsed.y} Alumni`
+                        }
+                    }
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { font: { size: 11, weight: '700' } } },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#f1f5f9' },
+                        ticks: {
+                            font: { size: 11 },
+                            stepSize: 1,
+                            callback: val => val + ' Alumni'
+                        }
+                    }
+                }
+            }
+        });
+
+        // ── 3. Rata-Rata Masa Kerja per 1 Tempat Kerja per Angkatan ──────────
+        @if(!empty($masaKerjaLabels))
+        const allMasaKerjaLabels = {!! json_encode($masaKerjaLabels) !!};
+        const allMasaKerjaData   = {!! json_encode($masaKerjaData) !!};
+
+        function getFilteredData(labels) {
+            return labels.map(label => {
+                const idx = allMasaKerjaLabels.indexOf(label);
+                return idx !== -1 ? allMasaKerjaData[idx] : 0;
+            });
+        }
+
+        const masaKerjaChart = new Chart(document.getElementById('chartMasaKerja'), {
+            type: 'line',
+            data: {
+                labels: allMasaKerjaLabels,
+                datasets: [{
+                    label: 'Rata-rata masa kerja (tahun)',
+                    data: allMasaKerjaData,
+                    borderColor: 'rgba(0, 103, 177, 0.9)',
+                    backgroundColor: 'rgba(0, 103, 177, 0.1)',
+                    borderWidth: 2.5,
+                    pointBackgroundColor: 'rgba(0, 103, 177, 1)',
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    fill: true,
+                    tension: 0.4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            title: ctx => 'Angkatan ' + ctx[0].label,
+                            label: ctx => ` Rata-rata: ${ctx.parsed.y} Tahun per Tempat Kerja`
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 11, weight: '700' } },
+                        title: {
+                            display: true,
+                            text: 'Angkatan',
+                            font: { size: 10, weight: '700' },
+                            color: '#94a3b8'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#f1f5f9' },
+                        ticks: {
+                            font: { size: 11 },
+                            callback: val => val + ' Thn'
+                        }
+                    }
+                }
+            }
+        });
+
+        function toggleDropdown() {
+            document.getElementById('dropdownPanel').classList.toggle('hidden');
+        }
+
+        // Tutup dropdown jika klik di luar
+        document.addEventListener('click', function(e) {
+            const wrapper = document.getElementById('dropdownWrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                document.getElementById('dropdownPanel').classList.add('hidden');
+            }
+        });
+
+        function updateMasaKerjaChart() {
+            const checked = [...document.querySelectorAll('.filter-angkatan:checked')]
+                .map(cb => cb.value);
+
+            const label = document.getElementById('dropdownLabel');
+            if (checked.length === 0) {
+                label.textContent = 'Semua Angkatan';
+            } else if (checked.length === 1) {
+                label.textContent = 'Angkatan ' + checked[0];
+            } else {
+                label.textContent = checked.length + ' Angkatan';
+            }
+
+            const activeLabels = checked.length > 0
+                ? allMasaKerjaLabels.filter(l => checked.includes(l))
+                : allMasaKerjaLabels;
+
+            masaKerjaChart.data.labels = activeLabels;
+            masaKerjaChart.data.datasets[0].data = getFilteredData(activeLabels);
+            masaKerjaChart.update();
+        }
+
+        function resetFilter() {
+            document.querySelectorAll('.filter-angkatan').forEach(cb => cb.checked = false);
+            updateMasaKerjaChart();
+            document.getElementById('dropdownPanel').classList.add('hidden');
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const lastThreeLabels = allMasaKerjaLabels.slice(-3);
+            
+            document.querySelectorAll('.filter-angkatan').forEach(cb => {
+                if (lastThreeLabels.includes(cb.value)) {
+                    cb.checked = true;
+                }
+            });
+
+            updateMasaKerjaChart();
+        });
+        @endif
+    </script>
 </body>
 </html>

@@ -6,16 +6,18 @@
 }">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Edit Biodata Alumni - Portal Alumni Polije</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; overflow: hidden; }
-        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         [x-cloak] { display: none !important; }
     </style>
 </head>
@@ -25,9 +27,22 @@
         @include('partials.header-admin')
     </div>
 
-    <div class="flex flex-1 overflow-hidden w-full">
-        <aside class="w-64 shrink-0 bg-white/90 backdrop-blur-sm border-r border-slate-100 flex flex-col justify-between h-full overflow-y-auto no-scrollbar">
+    <div class="flex flex-1 overflow-hidden w-full relative">
+        
+        <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/40 z-40 hidden lg:hidden transition-opacity backdrop-blur-sm"></div>
+
+        <aside id="sidebarAdmin" class="fixed inset-y-0 left-0 z-50 w-64 -translate-x-full lg:translate-x-0 lg:static bg-white/90 backdrop-blur-sm border-r border-slate-100 flex flex-col justify-between h-full overflow-y-auto no-scrollbar transition-transform duration-300 ease-in-out shrink-0">
             <div class="py-6 flex flex-col gap-3">
+                
+                <div class="flex lg:hidden justify-between items-center px-5 mb-2">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Menu Navigasi</span>
+                    <button onclick="toggleSidebar()" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 text-slate-500 hover:bg-slate-50 px-5 py-3 rounded-full transition-all group mx-2"> 
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -63,7 +78,7 @@
                 <form action="{{ route('logout') }}" method="POST" class="w-full">
                     @csrf
                     <button type="submit" class="flex items-center justify-center gap-3 bg-[#D32F2F] text-white w-full py-3 rounded-xl hover:bg-red-700 transition-all shadow-md group cursor-pointer">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0 transition-transform group-hover:scale-105" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                         </svg>
                         <span class="font-bold text-sm tracking-wide">LogOut</span>
@@ -72,15 +87,15 @@
             </div>
         </aside>
 
-        <main class="flex-1 p-8 overflow-y-auto custom-scroll bg-slate-50">
-            <div class="mb-8 flex justify-between items-end">
+        <main class="flex-1 p-4 md:p-8 overflow-y-auto custom-scroll bg-slate-50 w-full min-w-0">
+            <div class="mb-6 md:mb-8 flex justify-between items-end">
                 <div>
-                    <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight"> Biodata Alumni</h1>
-                    <p class="text-slate-500 text-sm">Biodata Alumni Politeknik Negeri Jember.</p>
+                    <h1 class="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight">Biodata Alumni</h1>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Biodata Alumni Politeknik Negeri Jember.</p>
                 </div>
             </div>
 
-            <div class="bg-white rounded-[24px] p-6 shadow-sm border border-slate-100">
+            <div class="bg-white rounded-2xl md:rounded-[24px] p-4 md:p-6 shadow-sm border border-slate-100">
                 <div class="flex flex-col md:flex-row justify-between gap-4 mb-6">
                     <form method="GET" action="{{ route('admin.editbiodata') }}" class="relative w-full max-w-sm">
                         <span class="absolute inset-y-0 left-4 flex items-center text-slate-400">
@@ -90,14 +105,15 @@
                     </form>
                 </div>
 
-                <div class="overflow-hidden rounded-xl border border-slate-100">
-                    <table class="w-full text-left">
+                {{-- Pembungkus tabel scrollable mobile --}}
+                <div class="overflow-x-auto custom-scroll rounded-xl border border-slate-100">
+                    <table class="w-full text-left min-w-[600px]">
                         <thead>
                             <tr class="bg-slate-50 text-slate-400 text-[10px] uppercase tracking-widest font-black border-b border-slate-100">
                                 <th class="px-6 py-4">Alumni</th>
-                                <th class="px-6 py-4 text-center">Angkatan</th>
+                                <th class="px-6 py-4 text-center w-24">Angkatan</th>
                                 <th class="px-6 py-4 text-center">Program Studi</th>
-                                <th class="px-6 py-4 text-center">Aksi</th>
+                                <th class="px-6 py-4 text-center w-28">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
@@ -108,19 +124,19 @@
                                         <div class="h-9 w-9 rounded-full bg-blue-100 flex items-center justify-center font-bold text-blue-600 text-xs shrink-0">
                                             {{ strtoupper(substr($item->nama, 0, 2)) }}
                                         </div>
-                                        <div>
-                                            <p class="font-bold text-slate-700">{{ $item->nama }}</p>
-                                            <p class="text-[10px] text-slate-400 uppercase font-medium">{{ $item->nim }}</p>
+                                        <div class="min-w-0">
+                                            <p class="font-bold text-slate-700 truncate max-w-[180px] xs:max-w-none">{{ $item->nama }}</p>
+                                            <p class="text-[10px] text-slate-400 uppercase font-medium tracking-wide mt-0.5">{{ $item->nim }}</p>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-center text-slate-500 font-semibold">
                                     {{ $item->angkatan ?? '—' }}
                                 </td>
-                                <td class="px-6 py-4 text-center text-slate-500 font-semibold">{{ $item->prodi ?? '—' }}</td>
+                                <td class="px-6 py-4 text-center text-slate-500 font-semibold break-words max-w-[200px]">{{ $item->prodi ?? '—' }}</td>
                                 <td class="px-6 py-4 text-center">
                                     <a href="{{ route('admin.biodata', $item->nim) }}"
-                                       class="inline-block px-6 py-1.5 bg-blue-50 text-blue-600 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition-all shadow-sm text-xs">
+                                       class="inline-block px-5 py-1.5 bg-blue-50 text-blue-600 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition-all shadow-sm text-xs whitespace-nowrap">
                                         Edit
                                     </a>
                                 </td>
@@ -134,12 +150,26 @@
                     </table>
                 </div>
 
-                <div class="mt-4">
+                <div class="mt-4 overflow-x-auto no-scrollbar max-w-full">
                     {{ $alumni->links() }}
                 </div>
             </div>
         </main>
     </div>
 
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebarAdmin');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+    </script>
 </body>
 </html>

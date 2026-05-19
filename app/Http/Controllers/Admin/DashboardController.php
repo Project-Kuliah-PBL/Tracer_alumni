@@ -119,6 +119,7 @@ class DashboardController extends Controller
 
         // Rata-ratakan semua alumni per angkatan, konversi ke tahun
         ksort($rataPerAngkatan);
+        
         $masaKerjaLabels = [];
         $masaKerjaData   = [];
         foreach ($rataPerAngkatan as $angkatan => $nilaiAlumni) {

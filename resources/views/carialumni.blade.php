@@ -204,7 +204,7 @@
 
 
                     <div class="flex items-center text-slate-400 text-[11px] font-bold uppercase tracking-wider mb-8">
-                        <span class="mr-2">🎓</span> {{ $alumni->tahun_lulus ?? '-' }}
+                        <span class="mr-2">🎓</span> {{ $alumni->angkatan ?? '-' }}
                     </div>
 
                     <a href="{{ route('alumni.show', $alumni->nim) }}" class="w-full py-3.5 border-2 border-slate-100 rounded-2xl text-slate-600 font-bold text-xs hover:bg-[#0067B1] hover:text-white hover:border-[#0067B1] transition-all text-center">
@@ -217,7 +217,7 @@
                 <div class="text-5xl mb-4">🔍</div>
                 <p class="text-slate-800 font-extrabold text-lg mb-2">Alumni Tidak Ditemukan</p>
                 <p class="text-slate-400 font-medium text-sm">Coba ubah kata kunci atau filter pencarian Anda.</p>
-                @if(request()->anyFilled(['search', 'tahun_lulus', 'program_studi', 'lokasi']))
+                @if(request()->anyFilled(['search', 'angkatan', 'program_studi', 'lokasi']))
                 <a href="{{ route('alumni.search') }}" class="inline-block mt-6 bg-[#0067B1] text-white px-8 py-3 rounded-full text-xs font-bold hover:bg-blue-800 transition-all">
                     Lihat Semua Alumni
                 </a>
@@ -262,7 +262,7 @@
 </p>
 
                             <div class="flex items-center text-slate-400 text-[11px] font-bold uppercase tracking-wider mt-0">
-                                <span class="mr-1.5">🎓</span> {{ $alumni->tahun_lulus ?? '-' }}
+                                <span class="mr-1.5">🎓</span> {{ $alumni->angkatan ?? '-' }}
                             </div>
                         </div>
                     </div>
@@ -277,7 +277,7 @@
                     <div class="text-5xl mb-4">🔍</div>
                     <p class="text-slate-800 font-extrabold text-lg mb-2">Alumni Tidak Ditemukan</p>
                     <p class="text-slate-400 font-medium text-sm">Coba ubah kata kunci atau filter pencarian Anda.</p>
-                    @if(request()->anyFilled(['search', 'tahun_lulus', 'program_studi', 'lokasi']))
+                    @if(request()->anyFilled(['search', 'angkatan', 'program_studi', 'lokasi']))
                     <a href="{{ route('alumni.search') }}" class="inline-block mt-6 bg-[#0067B1] text-white px-8 py-3 rounded-full text-xs font-bold hover:bg-blue-800 transition-all">
                         Lihat Semua Alumni
                     </a>
