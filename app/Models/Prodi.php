@@ -8,4 +8,9 @@ class Prodi extends Model
 {
     protected $table = 'prodi';
     protected $fillable = ['nama', 'kode_nim'];
+
+    public function alumni()
+    {
+        return $this->hasMany(DataAlumni::class, 'prodi', 'nama');
+    }
 }
