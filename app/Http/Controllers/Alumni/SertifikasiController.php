@@ -54,16 +54,18 @@ class SertifikasiController extends Controller
         $request->validate([
             'nama'             => 'required|string|max:255',
             'tanggal_terbit'   => 'nullable|date',
+            'tanggal_berakhir' => 'nullable|date|after_or_equal:tanggal_terbit',
             'diterbitkan_oleh' => 'nullable|string|max:255',
             'id_kredensial'    => 'nullable|string|max:255',
             'gambar_serti'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ], [
             'nama.required'    => 'Nama sertifikasi tidak boleh kosong.',
+            'tanggal_berakhir.after_or_equal' => 'Tanggal berakhir harus setelah atau sama dengan tanggal terbit.',
             'gambar_serti.max' => 'Ukuran gambar sertifikat maksimal 2MB.',
         ]);
 
         $data = $request->only([
-            'nama', 'tanggal_terbit', 'diterbitkan_oleh', 'id_kredensial',
+            'nama', 'tanggal_terbit', 'tanggal_berakhir', 'diterbitkan_oleh', 'id_kredensial',
         ]);
         $data['nim'] = $nim;
 
@@ -88,17 +90,19 @@ class SertifikasiController extends Controller
         $request->validate([
             'nama'             => 'required|string|max:255',
             'tanggal_terbit'   => 'nullable|date',
+            'tanggal_berakhir' => 'nullable|date|after_or_equal:tanggal_terbit',
             'diterbitkan_oleh' => 'nullable|string|max:255',
             'id_kredensial'    => 'nullable|string|max:255',
             'gambar_serti'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ], [
             'nama.required' => 'Nama sertifikasi tidak boleh kosong.',
+            'tanggal_berakhir.after_or_equal' => 'Tanggal berakhir harus setelah atau sama dengan tanggal terbit.',
         ]);
 
         $sertifikasi = DataCertificate::where('id', $id)->where('nim', $nim)->firstOrFail();
 
         $data = $request->only([
-            'nama', 'tanggal_terbit', 'diterbitkan_oleh', 'id_kredensial',
+            'nama', 'tanggal_terbit', 'tanggal_berakhir', 'diterbitkan_oleh', 'id_kredensial',
         ]);
 
         if ($request->hasFile('gambar_serti')) {

@@ -313,17 +313,36 @@
 
                                         <div>
 
-                                            <h4 class="text-xs font-bold text-slate-800">
-                                                {{ $pekerjaan->jobdesk ?? 'Posisi tidak diisi' }}
-                                            </h4>
+                                           <div class="flex items-center flex-wrap gap-2">
+        
+        <h4 class="text-sm font-semibold text-slate-800">
+            {{ $pekerjaan->jobdesk ?? 'Posisi tidak diisi' }}
+        </h4>
 
-                                            <p class="text-[11px] text-slate-400 font-medium">
-                                                {{ $pekerjaan->nama_perusahaan }}
-                                            </p>
+        @if($pekerjaan->divisi)
+            <span class="text-xs text-slate-400">
+                • {{ $pekerjaan->divisi }}
+            </span>
+        @endif
 
-                                        </div>
+      
 
-                                        <div class="text-right shrink-0 ml-3">
+    </div>
+    <div >
+        <p class="text-[11px] text-slate-500 mt-1">
+            {{ $pekerjaan->nama_perusahaan }}
+          @if($pekerjaan->lokasi)
+            <span class="text-xs text-slate-400">
+                • {{ $pekerjaan->lokasi }}
+            </span>
+        @endif
+    </div>
+    </p>
+</div>
+
+                                        
+
+                                        <div class="text-right">
 
                                             <p class="text-[9px] font-bold text-slate-300">
 

@@ -12,6 +12,7 @@ class DataCertificate extends Model
         'nim',
         'nama',
         'tanggal_terbit',
+        'tanggal_berakhir',
         'diterbitkan_oleh',
         'gambar_serti',
         'id_kredensial',
@@ -19,6 +20,7 @@ class DataCertificate extends Model
 
     protected $casts = [
         'tanggal_terbit' => 'date',
+        'tanggal_berakhir' => 'date',
     ];
 
     public function alumni()

@@ -392,9 +392,33 @@
                             <div class="flex-1">
                                 <div class="flex justify-between items-start">
                                     <div>
-                                        <h4 class="text-xs font-bold text-slate-800">{{ $pekerjaan->jobdesk ?? 'Posisi tidak diisi' }}</h4>
-                                        <p class="text-[11px] text-slate-400 font-medium">{{ $pekerjaan->nama_perusahaan }}</p>
-                                    </div>
+  <div class="flex items-center flex-wrap gap-2">
+        
+        <h4 class="text-sm font-semibold text-slate-800">
+            {{ $pekerjaan->jobdesk ?? 'Posisi tidak diisi' }}
+        </h4>
+
+        @if($pekerjaan->divisi)
+            <span class="text-xs text-slate-400">
+                • {{ $pekerjaan->divisi }}
+            </span>
+        @endif
+
+      
+
+    </div>
+    <div >
+        <p class="text-[11px] text-slate-500 mt-1">
+            {{ $pekerjaan->nama_perusahaan }}
+          @if($pekerjaan->lokasi)
+            <span class="text-xs text-slate-400">
+                • {{ $pekerjaan->lokasi }}
+            </span>
+        @endif
+    </div>
+    </p>
+</div>
+
                                     <div class="text-right">
                                         <p class="text-[9px] font-bold text-slate-300">
                                             {{ $pekerjaan->tahun_masuk ? $pekerjaan->tahun_masuk->format('M Y') : '-' }} -
@@ -454,6 +478,7 @@
                             <h4 class="text-xs font-bold text-slate-800">{{ $serti->nama }}</h4>
                             <p class="text-[9px] text-slate-400 font-semibold uppercase mt-1">
                                 {{ $serti->tanggal_terbit ? $serti->tanggal_terbit->format('M Y') : '-' }}
+                                {{ $serti->tanggal_berakhir ? ' • Berakhir: ' . $serti->tanggal_berakhir->format('M Y') : '' }}
                                 {{ $serti->diterbitkan_oleh ? '• ' . $serti->diterbitkan_oleh : '' }}
                             </p>
                         </div>
@@ -962,11 +987,17 @@
                         <label class="block text-sm font-semibold text-slate-600 mb-1.5">Diterbitkan Oleh</label>
                         <input type="text" name="diterbitkan_oleh" value="{{ old('diterbitkan_oleh') }}" placeholder="Contoh: Google, Microsoft" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
                     </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold text-slate-600 mb-1.5">Tanggal Terbit</label>
                         <input type="date" name="tanggal_terbit" value="{{ old('tanggal_terbit') }}" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
                     </div>
-                </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-600 mb-1.5">Tanggal Berakhir</label>
+                        <input type="date" name="tanggal_berakhir" value="{{ old('tanggal_berakhir') }}" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">
+                    </div>
+                    </div>
                 <div>
                     <label class="block text-sm font-semibold text-slate-600 mb-1.5">ID Kredensial</label>
                     <input type="text" name="id_kredensial" value="{{ old('id_kredensial') }}" placeholder="Kosongkan jika tidak ada" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 font-medium">

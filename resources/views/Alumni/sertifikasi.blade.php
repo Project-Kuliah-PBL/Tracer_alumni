@@ -135,6 +135,9 @@
                             @if($cert->tanggal_terbit)
                                 <p class="cert-date">Diterbitkan: {{ $cert->tanggal_terbit->format('d M Y') }}</p>
                             @endif
+                            @if($cert->tanggal_berakhir)
+                                <p class="cert-date">Berakhir: {{ $cert->tanggal_berakhir->format('d M Y') }}</p>
+                            @endif
                             @if($cert->id_kredensial)
                                 <span class="cert-credential">ID: {{ $cert->id_kredensial }}</span>
                             @endif
@@ -186,9 +189,15 @@
                                         <label class="block text-sm font-semibold text-gray-600 mb-1">Diterbitkan Oleh</label>
                                         <input type="text" name="diterbitkan_oleh" value="{{ $cert->diterbitkan_oleh }}" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500" placeholder="Contoh: Google, Microsoft">
                                     </div>
+</div>
+<div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-sm font-semibold text-gray-600 mb-1">Tanggal Terbit</label>
                                         <input type="date" name="tanggal_terbit" value="{{ $cert->tanggal_terbit ? $cert->tanggal_terbit->format('Y-m-d') : '' }}" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-600 mb-1">Tanggal Berakhir</label>
+                                        <input type="date" name="tanggal_berakhir" value="{{ $cert->tanggal_berakhir ? $cert->tanggal_berakhir->format('Y-m-d') : '' }}" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500">
                                     </div>
                                 </div>
 
@@ -234,36 +243,95 @@
                 <h2 class="modal-title">Tambah Sertifikasi</h2>
                 <button class="modal-close" onclick="closeTambahModal()">x</button>
             </div>
-            <form action="{{ route('alumni.sertifikasi.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
-                @csrf
-                <div>
-                    <label class="block text-sm font-semibold text-gray-600 mb-1">Nama Sertifikasi <span class="text-red-500">*</span></label>
-                    <input type="text" name="nama" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500" placeholder="Contoh: Google Professional Cloud Architect" required>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-600 mb-1">Diterbitkan Oleh</label>
-                        <input type="text" name="diterbitkan_oleh" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500" placeholder="Contoh: Google, Microsoft">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-600 mb-1">Tanggal Terbit</label>
-                        <input type="date" name="tanggal_terbit" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-600 mb-1">ID Kredensial</label>
-                    <input type="text" name="id_kredensial" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500" placeholder="Kosongkan jika tidak ada">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-600 mb-1">Gambar Sertifikat</label>
-                    <input type="file" name="gambar_serti" accept="image/jpg,image/jpeg,image/png,image/webp" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200">
-                    <p style="font-size:.75rem;color:var(--color-muted);margin-top:.25rem;">Format JPG, PNG, WEBP. Maks 2MB.</p>
-                </div>
-                <div class="flex gap-3 pt-2">
-                    <button type="button" onclick="closeTambahModal()" class="flex-1 py-2.5 rounded-lg bg-red-600 text-white font-bold text-sm hover:bg-red-700 transition-all">Batal</button>
-                    <button type="submit" class="flex-1 py-2.5 rounded-lg bg-[#0061a4] text-white font-bold text-sm hover:bg-[#004f87] transition-all">Simpan</button>
-                </div>
-            </form>
+           <form action="{{ route('alumni.sertifikasi.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
+    @csrf
+
+    <div>
+        <label class="block text-sm font-semibold text-gray-600 mb-1">
+            Nama Sertifikasi <span class="text-red-500">*</span>
+        </label>
+
+        <input type="text"
+               name="nama"
+               class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500"
+               placeholder="Contoh: Google Professional Cloud Architect"
+               required>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+            <label class="block text-sm font-semibold text-gray-600 mb-1">
+                Diterbitkan Oleh
+            </label>
+
+            <input type="text"
+                   name="diterbitkan_oleh"
+                   class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500"
+                   placeholder="Contoh: Google, Microsoft">
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold text-gray-600 mb-1">
+                ID Kredensial
+            </label>
+
+            <input type="text"
+                   name="id_kredensial"
+                   class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500"
+                   placeholder="Kosongkan jika tidak ada">
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+            <label class="block text-sm font-semibold text-gray-600 mb-1">
+                Tanggal Terbit
+            </label>
+
+            <input type="date"
+                   name="tanggal_terbit"
+                   class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500">
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold text-gray-600 mb-1">
+                Tanggal Berakhir
+            </label>
+
+            <input type="date"
+                   name="tanggal_berakhir"
+                   class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500">
+        </div>
+    </div>
+
+    <div>
+        <label class="block text-sm font-semibold text-gray-600 mb-1">
+            Gambar Sertifikat
+        </label>
+
+        <input type="file"
+               name="gambar_serti"
+               accept="image/jpg,image/jpeg,image/png,image/webp"
+               class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200">
+
+        <p style="font-size:.75rem;color:var(--color-muted);margin-top:.25rem;">
+            Format JPG, PNG, WEBP. Maks 2MB.
+        </p>
+    </div>
+
+    <div class="flex justify-end gap-3 pt-4 border-t mt-6">
+        <button type="button"
+                onclick="closeTambahModal()"
+                class="px-5 py-2.5 rounded-lg bg-red-600 text-white font-bold text-sm hover:bg-red-700 transition-all">
+            Batal
+        </button>
+
+        <button type="submit"
+                class="px-5 py-2.5 rounded-lg bg-[#0061a4] text-white font-bold text-sm hover:bg-[#004f87] transition-all">
+            Simpan
+        </button>
+    </div>
+</form>
         </div>
     </div>
 
@@ -365,4 +433,4 @@
         });
     </script>
 </body>
-</html>
+</html> w

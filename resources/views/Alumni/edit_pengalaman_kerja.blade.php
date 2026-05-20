@@ -54,6 +54,7 @@
         .exp-content { flex: 1; display: flex; flex-direction: column; gap: .75rem; }
         .exp-header-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
         .exp-role { font-family: var(--font-heading); font-weight: 700; font-size: 1.125rem; color: var(--color-secondary); margin-bottom: .25rem; }
+        .exp-devisi { font-size: .95rem; color: var(--color-muted); }
         .exp-company { font-weight: 600; color: var(--color-primary); font-size: 1rem; }
         .exp-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem; margin-top: .5rem; }
         .meta-item { display: flex; align-items: center; gap: .4rem; font-size: .9rem; color: var(--color-text-light); }
@@ -162,8 +163,21 @@
                         <div class="exp-content">
                             <div class="exp-header-row">
                                 <div>
-                                    <h2 class="exp-role">{{ $exp->jobdesk ?? 'Posisi tidak diisi' }}</h2>
+                                    <div>
+                                        <h3 class="exp-role">{{ $exp->jobdesk ?? 'Posisi / Jobdesk tidak diisi' }}</h3>
+                                        <h3 class="exp-devisi">Devisi : {{ $exp->divisi ?? 'Divisi tidak diisi' }}</h3>
+                                    </div>
+                                    
+                                    <div classname="company-row" style="display:flex; align-items:center; gap: .5rem;">
                                     <p class="exp-company">{{ $exp->nama_perusahaan }}</p>
+                                    @if($exp->lokasi)
+                                        <span class="meta-item">
+                                            -
+                                            {{ $exp->lokasi }}
+                                        </span>
+                                    @endif
+                                    </div>
+
                                     <div class="exp-meta">
                                         <span class="meta-item">
                                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
