@@ -57,7 +57,7 @@
                     <input
                         type="text"
                         name="search"
-                        value="{{ request('search') }}"
+                        value="{{ is_array(request('search')) ? implode(' ', request('search')) : request('search') }}"
                         placeholder="Cari nama, jabatan, lokasi...."
                         class="w-full bg-white border border-slate-100 py-5 pl-16 pr-8 rounded-full shadow-xl shadow-slate-200/50 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-sm font-medium"
                     >
@@ -74,7 +74,7 @@
                             class="appearance-none bg-slate-100 hover:bg-slate-200 text-slate-600 pl-10 pr-10 py-2.5 rounded-full text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer border-none">
                             <option value="">Angkatan</option>
                             @foreach($tahunList as $tahun)
-                                <option value="{{ $tahun }}" {{ request('angkatan') == $tahun ? 'selected' : '' }}>
+                                <option value="{{ $tahun }}" {{ in_array($tahun, (array) request('angkatan')) ? 'selected' : '' }}>
                                     {{ $tahun }}
                                 </option>
                             @endforeach
@@ -94,7 +94,7 @@
                             class="appearance-none bg-slate-100 hover:bg-slate-200 text-slate-600 pl-10 pr-10 py-2.5 rounded-full text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer border-none">
                             <option value="">Program Studi</option>
                             @foreach($prodiList as $prodi)
-                                <option value="{{ $prodi }}" {{ request('program_studi') == $prodi ? 'selected' : '' }}>
+                                <option value="{{ $prodi }}" {{ in_array($prodi, (array) request('program_studi')) ? 'selected' : '' }}>
                                     {{ $prodi }}
                                 </option>
                             @endforeach
@@ -113,8 +113,14 @@
                             onchange="this.form.submit()"
                             class="appearance-none bg-slate-100 hover:bg-slate-200 text-slate-600 pl-10 pr-10 py-2.5 rounded-full text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer border-none">
                             <option value="">Lokasi</option>
+                            @php
+                                $lokasiInput = request('lokasi');
+                                $lokasiValues = is_array($lokasiInput)
+                                    ? array_map(fn($value) => trim((string) $value), $lokasiInput)
+                                    : trim((string) $lokasiInput);
+                            @endphp
                             @foreach($lokasiList as $lok)
-                                <option value="{{ $lok }}" {{ request('lokasi') == $lok ? 'selected' : '' }}>
+                                <option value="{{ $lok }}" {{ is_array($lokasiValues) ? (in_array($lok, $lokasiValues) ? 'selected' : '') : ($lokasiValues === $lok ? 'selected' : '') }}>
                                     {{ $lok }}
                                 </option>
                             @endforeach

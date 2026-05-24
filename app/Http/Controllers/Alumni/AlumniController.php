@@ -24,19 +24,31 @@ class AlumniController extends Controller
                         ->where('angkatan', '>', 0)
                         ->distinct()
                         ->orderByDesc('angkatan')
-                        ->pluck('angkatan'),
+                        ->pluck('angkatan')
+                        ->map(fn ($value) => trim((string) $value))
+                        ->filter()
+                        ->values()
+                        ->all(),
 
                     DataAlumni::whereNotNull('prodi')
                         ->where('prodi', '<>', '')
                         ->distinct()
                         ->orderBy('prodi')
-                        ->pluck('prodi'),
+                        ->pluck('prodi')
+                        ->map(fn ($value) => trim((string) $value))
+                        ->filter()
+                        ->values()
+                        ->all(),
 
                     DataPekerjaan::whereNotNull('lokasi')
                         ->where('lokasi', '<>', '')
                         ->distinct()
                         ->orderBy('lokasi')
-                        ->pluck('lokasi'),
+                        ->pluck('lokasi')
+                        ->map(fn ($value) => trim((string) $value))
+                        ->filter()
+                        ->values()
+                        ->all(),
                 ];
             }
         );
@@ -67,8 +79,9 @@ class AlumniController extends Controller
                 $q->where('prodi', $request->program_studi);
             })
             ->when($request->filled('lokasi'), function ($q) use ($request) {
-                $q->whereHas('pekerjaan', function ($q2) use ($request) {
-                    $q2->where('lokasi', $request->lokasi);
+                $lokasi = trim((string) $request->lokasi);
+                $q->whereHas('pekerjaan', function ($q2) use ($lokasi) {
+                    $q2->whereRaw('TRIM(lokasi) = ?', [$lokasi]);
                 });
             })
             ->paginate(12);
