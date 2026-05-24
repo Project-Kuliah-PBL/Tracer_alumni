@@ -12,7 +12,7 @@
         :root {
             --color-primary: #003f87; --color-primary-soft: #eff6ff; --color-primary-btn: #0061a4;
             --color-secondary: #191c21; --color-muted: #64748b; --color-text: #424752;
-            --color-text-light: #727784; --color-border: #e1e2ea; --color-border-sidebar: #E2E8F0;
+            --color-text-light: #727784; --color-border: #e1e2ea;
             --color-bg: #f1f4f6; --color-card: #ffffff; --color-icon-bg: #e7e8f0;
             --color-badge-bg: #e7e8f0; --color-danger: #d12924;
             --font-heading: 'Plus Jakarta Sans', sans-serif; --font-body: 'Inter', sans-serif;
@@ -25,6 +25,23 @@
         .custom-scroll::-webkit-scrollbar { width: 4px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
 
+        /* Komponen Modals */
+        .modal-overlay {
+            position: fixed; top: 0; right: 0; bottom: 0; left: 0;
+            backdrop-filter: blur(4px); z-index: 99; display: none;
+            align-items: center; justify-content: center; padding: 1rem; 
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-container {
+            background: white; width: 90%; max-width: 600px;
+            border-radius: 1rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            max-height: 85vh; overflow-y: auto;
+        }
+        .modal-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; }
+        .modal-title { font-family: var(--font-heading); font-weight: 700; font-size: 1.25rem; color: var(--color-primary); }
+        .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--color-muted); }
+
+        /* Komponen Konten */
         .content-area { max-width: 75rem; display: flex; flex-direction: column; gap: 2rem; width: 100%; margin: 0 auto; }
         .header-section { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
         .header-left { display: flex; align-items: center; gap: 1.25rem; }
@@ -56,22 +73,11 @@
         .icon-btn svg { width: 1.125rem; height: 1.125rem; }
         .empty-state { text-align: center; padding: 4rem 2rem; background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius-lg); }
         .skripsi-text { font-size: .875rem; color: var(--color-text); font-style: italic; margin-top: .5rem; padding-top: .5rem; border-top: 1px dashed var(--color-border); }
-
-        .modal-overlay {
-            position: fixed; top: 0; right: 0; bottom: 0; left: 0;
-            backdrop-filter: blur(4px); z-index: 99; display: none;
-            align-items: center; justify-content: center; padding: 1rem; 
-        }
-        .modal-overlay.active { display: flex; }
-        .modal-container { background: white; width: 90%; max-width: 600px; border-radius: 1rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); max-height: 85vh; overflow-y: auto; }
-        .modal-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; }
-        .modal-title { font-family: var(--font-heading); font-weight: 700; font-size: 1.25rem; color: var(--color-primary); }
-        .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--color-muted); }
-
+        
         @media (max-width: 768px) { 
-            .edu-card { flex-direction: column; gap: 1rem; }
-            .edu-header-row { flex-direction: column; }
-            .action-group { align-self: flex-start; }
+            .edu-card { flex-direction: column; gap: 1rem; } 
+            .edu-header-row { flex-direction: column; } 
+            .action-group { align-self: flex-start; } 
         }
     </style>
 </head>
@@ -80,13 +86,13 @@
     <div class="shrink-0 z-50">
         @include('partials.header-admin')
     </div>
-    
+
     <div class="flex flex-1 overflow-hidden w-full relative">
         
         @include('partials.sidebar-alumni', ['activeMenu' => 'profil'])
         
         <div id="sidebarOverlay" onclick="closeSidebar()" class="fixed inset-0 bg-black/40 z-40 hidden lg:hidden transition-opacity duration-300"></div>
-        
+
         <main class="flex-1 overflow-y-auto p-6 md:p-8 custom-scroll">
             <div class="content-area">
 
@@ -181,7 +187,7 @@
         </main>
     </div>
 
-    <div id="tambahModal" class="modal-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[99] hidden items-center justify-center p-4" onclick="closeTambahModal(event)">
+    <div id="tambahModal" class="modal-overlay" onclick="closeTambahModal(event)">
         <div class="modal-container" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <h2 class="modal-title">Tambah riwayat pendidikan </h2>
@@ -189,7 +195,7 @@
             </div>
             <form action="{{ route('alumni.pendidikan.store') }}" method="POST" class="p-6 space-y-4">
                 @csrf
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold text-gray-600 mb-1">Nama Instansi <span class="text-red-500">*</span></label>
                         <input type="text" name="nama_instansi" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500" placeholder="Contoh: Politeknik Negeri Jember" required>
@@ -208,7 +214,7 @@
                     <label class="block text-sm font-semibold text-gray-600 mb-1">Jurusan / Program Studi</label>
                     <input type="text" name="jurusan" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500" placeholder="Contoh: Teknik Informatika">
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold text-gray-600 mb-1">Tahun Masuk</label>
                         <input type="date" name="tahun_masuk" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500">
@@ -218,7 +224,7 @@
                         <input type="date" name="tahun_keluar" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500">
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold text-gray-600 mb-1">Nilai Akhir (IPK)</label>
                         <input type="number" name="nilai_akhir" step="0.01" min="0" max="4" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500" placeholder="0.00 - 4.00">
@@ -312,4 +318,122 @@
                             display:flex; align-items:center; justify-content:center; margin:0 auto 1rem;">
                     <svg xmlns="http://www.w3.org/2000/svg" style="width:1.5rem;height:1.5rem;color:#ef4444;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                </div>
+                <h3 style="font-weight:700; font-size:1rem; color:#1e293b; margin-bottom:.4rem;">Hapus Riwayat Pendidikan?</h3>
+                <p style="font-size:.875rem; color:#64748b;">Data yang dihapus tidak dapat dikembalikan.</p>
+            </div>
+            <div style="display:flex; border-top:1px solid #f1f5f9;">
+                <button onclick="closeModalHapus()"
+                        style="flex:1; padding:.875rem; font-size:.875rem; font-weight:600;
+                               color:#475569; background:none; border:none; cursor:pointer;"
+                        onmouseover="this.style.background='#f8fafc'"
+                        onmouseout="this.style.background='none'">Batal</button>
+                <button onclick="submitDeleteForm()"
+                        style="flex:1; padding:.875rem; font-size:.875rem; font-weight:700;
+                               color:#dc2626; background:none; border:none; border-left:1px solid #f1f5f9; cursor:pointer;"
+                        onmouseover="this.style.background='#fff5f5'"
+                        onmouseout="this.style.background='none'">Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === FUNGSI SIDEBAR HAMBURGER MENU ===
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebarMenu');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (!sidebar || !overlay) return;
+
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+            
+            if (!sidebar.classList.contains('-translate-x-full')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebarMenu');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (sidebar) sidebar.classList.add('-translate-x-full');
+            if (overlay) overlay.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Script Modal Riwayat Pendidikan
+        function openEditModal(id, nama_instansi, jenjang, jurusan, tahun_masuk, tahun_keluar, nilai_akhir, judul_skripsi, event) {
+            event.preventDefault();
+            const m = document.getElementById('editModal');
+            const form = m.querySelector('form');
+            form.action = form.dataset.baseAction.replace('__ID__', id);
+            m.querySelector('[name="nama_instansi"]').value = nama_instansi;
+            
+            const selJenjang = m.querySelector('[name="jenjang_pendidikan"]');
+            for (let opt of selJenjang.options) opt.selected = (opt.value === jenjang);
+            
+            m.querySelector('[name="jurusan"]').value = jurusan;
+            m.querySelector('[name="tahun_masuk"]').value = tahun_masuk;
+            m.querySelector('[name="tahun_keluar"]').value = tahun_keluar;
+            m.querySelector('[name="nilai_akhir"]').value = nilai_akhir;
+            m.querySelector('[name="judul_skripsi"]').value = judul_skripsi;
+            
+            m.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function openTambahModal() {
+            document.getElementById('tambahModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeTambahModal() {
+            document.getElementById('tambahModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeEditModal();
+                closeTambahModal();
+                closeModalHapus();
+            }
+        });
+
+        // Script Hapus Data
+        let _deleteFormTarget = null;
+        function confirmHapus(form) {
+            _deleteFormTarget = form;
+            const m = document.getElementById('modalHapus');
+            m.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModalHapus() {
+            document.getElementById('modalHapus').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            _deleteFormTarget = null;
+        }
+        
+        function submitDeleteForm() {
+            if (_deleteFormTarget) _deleteFormTarget.submit();
+        }
+        
+        document.querySelectorAll('[data-delete-form]').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                confirmHapus(this);
+            });
+        });
+    </script>
+</body>
+</html>
