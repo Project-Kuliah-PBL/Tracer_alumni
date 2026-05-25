@@ -1,5 +1,9 @@
 <?php
 
+// Naikkan memory limit — default 128M tidak cukup untuk proses import Excel
+// dan loading framework dengan banyak relasi Eloquent.
+ini_set('memory_limit', '256M');
+
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -19,7 +23,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'api.admin' => \App\Http\Middleware\ApiAdminMiddleware::class,
         ]);
 
-    
+        // Security headers untuk semua response
+        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+
         $middleware->redirectGuestsTo('/login');
     })
     ->withExceptions(function (Exceptions $exceptions) {

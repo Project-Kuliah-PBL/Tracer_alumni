@@ -52,7 +52,7 @@ class PekerjaanController extends Controller
             'lokasi'           => 'nullable|string|max:255',
             'tahun_masuk'      => 'nullable|date',
             'tahun_selesai'    => 'nullable|date|after_or_equal:tahun_masuk',
-            'deskripsi'        => 'nullable|string',
+            'deskripsi'        => 'nullable|string|max:2000',
             'logo_perusahaan'  => 'nullable|image|mimes:jpg,jpeg,png,webp|max:1024',
         ], [
             'nama_perusahaan.required'  => 'Nama perusahaan tidak boleh kosong.',
@@ -116,7 +116,7 @@ class PekerjaanController extends Controller
             'lokasi'           => 'nullable|string|max:255',
             'tahun_masuk'      => 'nullable|date',
             'tahun_selesai'    => 'nullable|date|after_or_equal:tahun_masuk',
-            'deskripsi'        => 'nullable|string',
+            'deskripsi'        => 'nullable|string|max:2000',
             'logo_perusahaan'  => 'nullable|image|mimes:jpg,jpeg,png,webp|max:1024',
         ], [
             'nama_perusahaan.required'     => 'Nama perusahaan tidak boleh kosong.',

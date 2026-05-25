@@ -12,22 +12,22 @@ class DashboardController extends Controller
     {
         $nim = Auth::user()->username;
 
-        $alumni = DataAlumni::with([
+        $relations = [
             'pekerjaan'         => fn($q) => $q->orderByRaw('tahun_masuk IS NULL ASC')->orderBy('tahun_masuk', 'desc'),
             'riwayatPendidikan' => fn($q) => $q->orderByRaw('tahun_masuk IS NULL ASC')->orderBy('tahun_masuk', 'desc'),
             'sertifikasi'       => fn($q) => $q->orderBy('tanggal_terbit', 'desc'),
             'mediaSosial',
-        ])->firstOrCreate(
+        ];
+
+        $alumni = DataAlumni::with($relations)->firstOrCreate(
             ['nim' => $nim],
             ['nama' => Auth::user()->username]
         );
 
-        $alumni->load([
-            'pekerjaan'         => fn($q) => $q->orderByRaw('tahun_masuk IS NULL ASC')->orderBy('tahun_masuk', 'desc'),
-            'riwayatPendidikan' => fn($q) => $q->orderByRaw('tahun_masuk IS NULL ASC')->orderBy('tahun_masuk', 'desc'),
-            'sertifikasi'       => fn($q) => $q->orderBy('tanggal_terbit', 'desc'),
-            'mediaSosial',
-        ]);
+        // Jika baru dibuat (firstOrCreate), relasi belum ter-load — load sekali saja
+        if (!$alumni->relationLoaded('pekerjaan')) {
+            $alumni->load($relations);
+        }
 
         return response(view('Alumni.dashboard', compact('alumni')))->withHeaders([
             'Cache-Control' => 'no-store, no-cache, must-revalidate',

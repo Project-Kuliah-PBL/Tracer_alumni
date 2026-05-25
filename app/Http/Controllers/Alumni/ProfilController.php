@@ -39,14 +39,13 @@ class ProfilController extends Controller
             'jenis_kelamin'    => 'nullable|in:Laki-laki,Perempuan',
             'email'            => 'nullable|email|max:255|unique:data_alumni,email,' . $nim . ',nim',
             'no_telepon'       => 'nullable|string|max:20',
-            'lama_tunggu_kerja'=> 'nullable|string|max:100',
             'jabatan_sekarang' => 'nullable|string|max:255',
             'foto_profile'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'foto_sampul'      => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
         ], [
-            'nama.required'    => 'Nama tidak boleh kosong.',
-            'email.email'      => 'Format email tidak valid.',
-            'email.unique'     => 'Email sudah digunakan alumni lain.',
+            'nama.required'      => 'Nama tidak boleh kosong.',
+            'email.email'        => 'Format email tidak valid.',
+            'email.unique'       => 'Email sudah digunakan alumni lain.',
             'foto_profile.image' => 'File harus berupa gambar.',
             'foto_profile.max'   => 'Ukuran foto profil maksimal 2MB.',
             'foto_sampul.max'    => 'Ukuran foto sampul maksimal 4MB.',
@@ -56,7 +55,7 @@ class ProfilController extends Controller
 
         $data = $request->only([
             'nama', 'alamat', 'jenis_kelamin', 'email',
-            'no_telepon', 'lama_tunggu_kerja', 'jabatan_sekarang',
+            'no_telepon', 'jabatan_sekarang',
         ]);
 
         // Simpan preferensi visibilitas kontak HANYA jika request dari modal kontak.
