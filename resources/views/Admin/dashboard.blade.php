@@ -231,10 +231,10 @@
         new Chart(document.getElementById('chartMasaTunggu'), {
             type: 'bar',
             data: {
-                labels: {!! json_encode($masaTunggu->pluck('label')) !!},
+                labels: {!! json_encode(collect($masaTunggu)->pluck('label')) !!},
                 datasets: [{
                     label: 'Jumlah Alumni',
-                    data: {!! json_encode($masaTunggu->pluck('jumlah')) !!},
+                    data: {!! json_encode(collect($masaTunggu)->pluck('jumlah')) !!},
                     backgroundColor: [
                         'rgba(16, 185, 129, 0.85)',
                         'rgba(59, 130, 246, 0.85)',
