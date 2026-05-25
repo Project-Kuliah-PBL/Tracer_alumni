@@ -131,9 +131,9 @@
                                 </span>
                             @endif
                         
-                            @if($alumni->tahun_lulus)
+                            @if($alumni->angkatan)
                                 <span class="flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded-full">
-                                    Angkatan {{ $alumni->tahun_lulus }}
+                                    Angkatan {{ $alumni->angkatan }}
                                 </span>
                             @endif
                             
