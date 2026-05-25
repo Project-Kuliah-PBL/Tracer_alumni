@@ -1,35 +1,23 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Models\DataAlumni;
 use App\Models\DataPekerjaan;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
-class DashboardController extends Controller
+class DashboardApiController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $user         = auth()->user();
+        $user         = $request->user();
         $isSuperAdmin = $user->role === 'SuperAdmin';
         $prodiFilter  = $isSuperAdmin ? null : $user->prodi;
 
-        $data = $this->buildDashboardData($prodiFilter);
-
-        return response(view('Admin.dashboard', array_merge($data, ['isSuperAdmin' => $isSuperAdmin])))
-            ->withHeaders([
-                'Cache-Control' => 'no-store, no-cache, must-revalidate',
-                'Pragma'        => 'no-cache',
-                'Expires'       => '0',
-            ]);
-    }
-
-    private function buildDashboardData(?string $prodiFilter): array
-    {
-        // ── Card statistik ──────────────────────────────────────────
-
+        // ── Statistik Kartu ────────────────────────────────────────────
         $totalAlumni = DataAlumni::when($prodiFilter, fn($q) => $q->where('prodi', $prodiFilter))
             ->count();
 
@@ -41,8 +29,7 @@ class DashboardController extends Controller
             ? round(($terserapKerja / $totalAlumni) * 100, 1)
             : 0;
 
-        // ── Grafik pertumbuhan alumni per angkatan ─────────────────
-
+        // ── Grafik Pertumbuhan Alumni per Angkatan ─────────────────────
         $grafikRaw = DataAlumni::whereNotNull('angkatan')
             ->when($prodiFilter, fn($q) => $q->where('prodi', $prodiFilter))
             ->select('angkatan as tahun', DB::raw('COUNT(*) as jumlah'))
@@ -51,7 +38,6 @@ class DashboardController extends Controller
             ->get()
             ->keyBy('tahun');
 
-        // Simpan sebagai array biasa agar bisa di-cache (tidak pakai Collection/object)
         $grafik = [];
         if ($grafikRaw->isNotEmpty()) {
             $tahunMin = (int) $grafikRaw->keys()->min();
@@ -59,13 +45,12 @@ class DashboardController extends Controller
             for ($tahun = $tahunMin; $tahun <= $tahunMax; $tahun++) {
                 $grafik[] = [
                     'tahun'  => $tahun,
-                    'jumlah' => $grafikRaw->has($tahun) ? $grafikRaw[$tahun]->jumlah : 0,
+                    'jumlah' => $grafikRaw->has($tahun) ? (int) $grafikRaw[$tahun]->jumlah : 0,
                 ];
             }
         }
 
-        // ── Grafik masa tunggu kerja ───────────────────────────────
-
+        // ── Grafik Masa Tunggu Kerja ────────────────────────────────────
         $alumniDenganTunggu = DataAlumni::whereNotNull('lama_tunggu_kerja')
             ->where('lama_tunggu_kerja', '!=', '')
             ->when($prodiFilter, fn($q) => $q->where('prodi', $prodiFilter))
@@ -75,23 +60,21 @@ class DashboardController extends Controller
         $satuDuaTahun    = 0;
         $lebihDuaTahun   = 0;
 
-        foreach ($alumniDenganTunggu as $lamaTunggu) {
-            $bulan = $this->parseLamaTungguKeBulan($lamaTunggu);
+        foreach ($alumniDenganTunggu as $str) {
+            $bulan = $this->parseLamaTungguKeBulan($str);
             if ($bulan === null) continue;
-            if ($bulan < 12)       $kurangSatuTahun++;
-            elseif ($bulan <= 24)  $satuDuaTahun++;
-            else                   $lebihDuaTahun++;
+            if ($bulan < 12)      $kurangSatuTahun++;
+            elseif ($bulan <= 24) $satuDuaTahun++;
+            else                  $lebihDuaTahun++;
         }
 
-        // Array biasa — aman untuk cache
         $masaTunggu = [
             ['label' => '< 1 Tahun',   'jumlah' => $kurangSatuTahun],
             ['label' => '1 - 2 Tahun', 'jumlah' => $satuDuaTahun],
             ['label' => '> 2 Tahun',   'jumlah' => $lebihDuaTahun],
         ];
 
-        // ── Grafik rata-rata masa kerja per 1 tempat kerja per angkatan ──
-
+        // ── Grafik Rata-rata Masa Kerja per Angkatan ────────────────────
         $pekerjaanData = DataPekerjaan::join('data_alumni', 'data_pekerjaan.nim', '=', 'data_alumni.nim')
             ->whereNotNull('data_pekerjaan.tahun_masuk')
             ->whereNotNull('data_alumni.angkatan')
@@ -106,44 +89,42 @@ class DashboardController extends Controller
 
         $durasiPerAlumni = [];
         foreach ($pekerjaanData as $p) {
-            $nim     = $p->nim;
             $mulai   = Carbon::parse($p->tahun_masuk)->startOfMonth();
             $selesai = $p->tahun_selesai
                 ? Carbon::parse($p->tahun_selesai)->startOfMonth()
                 : now()->startOfMonth();
             $durasi  = max(0, $mulai->diffInMonths($selesai));
 
-            if (!isset($durasiPerAlumni[$nim])) {
-                $durasiPerAlumni[$nim] = ['angkatan' => (int) $p->angkatan, 'durasi' => []];
+            if (! isset($durasiPerAlumni[$p->nim])) {
+                $durasiPerAlumni[$p->nim] = ['angkatan' => (int) $p->angkatan, 'durasi' => []];
             }
-            $durasiPerAlumni[$nim]['durasi'][] = $durasi;
+            $durasiPerAlumni[$p->nim]['durasi'][] = $durasi;
         }
 
         $rataPerAngkatan = [];
-        foreach ($durasiPerAlumni as $alumniData) {
-            $angkatan   = $alumniData['angkatan'];
-            $rataAlumni = array_sum($alumniData['durasi']) / count($alumniData['durasi']);
+        foreach ($durasiPerAlumni as $data) {
+            $angkatan              = $data['angkatan'];
+            $rataAlumni            = array_sum($data['durasi']) / count($data['durasi']);
             $rataPerAngkatan[$angkatan][] = $rataAlumni;
         }
 
         ksort($rataPerAngkatan);
-        
-        $masaKerjaLabels = [];
-        $masaKerjaData   = [];
+        $masaKerja = [];
         foreach ($rataPerAngkatan as $angkatan => $nilaiAlumni) {
-            $masaKerjaLabels[] = (string) $angkatan;
-            $masaKerjaData[]   = round(array_sum($nilaiAlumni) / count($nilaiAlumni) / 12, 1);
+            $masaKerja[] = [
+                'angkatan'  => (string) $angkatan,
+                'rata_tahun' => round(array_sum($nilaiAlumni) / count($nilaiAlumni) / 12, 1),
+            ];
         }
 
-        return compact(
-            'totalAlumni',
-            'terserapKerja',
-            'persentaseTerserap',
-            'grafik',
-            'masaTunggu',
-            'masaKerjaLabels',
-            'masaKerjaData'
-        );
+        return response()->json([
+            'total_alumni'        => $totalAlumni,
+            'terserap_kerja'      => $terserapKerja,
+            'persentase_terserap' => $persentaseTerserap,
+            'grafik_alumni'       => $grafik,
+            'masa_tunggu'         => $masaTunggu,
+            'masa_kerja'          => $masaKerja,
+        ]);
     }
 
     private function parseLamaTungguKeBulan(string $str): ?int
@@ -156,17 +137,13 @@ class DashboardController extends Controller
             $total += (int) $m[1] * 12;
             $found  = true;
         }
-
         if (preg_match('/(\d+)\s*(bulan|month)/i', $str, $m)) {
             $total += (int) $m[1];
             $found  = true;
         }
-
-        if ($found) return $total;
-
-        if (preg_match('/^(\d+)$/', $str, $m)) return (int) $m[1];
-
-        if (str_contains($str, 'kurang')) return 0;
+        if ($found)                              return $total;
+        if (preg_match('/^(\d+)$/', $str, $m))  return (int) $m[1];
+        if (str_contains($str, 'kurang'))        return 0;
 
         return null;
     }

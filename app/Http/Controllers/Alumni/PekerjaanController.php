@@ -48,6 +48,8 @@ class PekerjaanController extends Controller
             'nama_perusahaan'  => 'required|string|max:255',
             'status_pekerjaan' => 'required|string|max:100',
             'jobdesk'          => 'nullable|string|max:255',
+            'divisi'           => 'nullable|string|max:255',
+            'lokasi'           => 'nullable|string|max:255',
             'tahun_masuk'      => 'nullable|date',
             'tahun_selesai'    => 'nullable|date|after_or_equal:tahun_masuk',
             'deskripsi'        => 'nullable|string|max:2000',
@@ -61,6 +63,7 @@ class PekerjaanController extends Controller
 
         $data = $request->only([
             'nama_perusahaan', 'status_pekerjaan', 'jobdesk',
+            'divisi', 'lokasi',
             'tahun_masuk', 'tahun_selesai', 'deskripsi',
         ]);
         $data['nim'] = $nim;
@@ -109,6 +112,8 @@ class PekerjaanController extends Controller
             'nama_perusahaan'  => 'required|string|max:255',
             'status_pekerjaan' => 'required|string|max:100',
             'jobdesk'          => 'nullable|string|max:255',
+            'divisi'           => 'nullable|string|max:255',
+            'lokasi'           => 'nullable|string|max:255',
             'tahun_masuk'      => 'nullable|date',
             'tahun_selesai'    => 'nullable|date|after_or_equal:tahun_masuk',
             'deskripsi'        => 'nullable|string|max:2000',
@@ -123,6 +128,7 @@ class PekerjaanController extends Controller
 
         $data = $request->only([
             'nama_perusahaan', 'status_pekerjaan', 'jobdesk',
+            'divisi', 'lokasi',
             'tahun_masuk', 'tahun_selesai', 'deskripsi',
         ]);
 
@@ -161,4 +167,9 @@ class PekerjaanController extends Controller
         return redirect()->route('alumni.pekerjaan.index')
             ->with('success', 'Pengalaman kerja berhasil dihapus.');
     }
+    // App/Models/DataAlumni.php
+public function pekerjaan()
+{
+    return $this->hasMany(DataPekerjaan::class, 'alumni_id');
+}
 }

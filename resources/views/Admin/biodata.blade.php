@@ -1,18 +1,26 @@
 <!DOCTYPE html>
-<html lang="id" x-data="{ openModal: false, openEduModal: false }">
+<html lang="id" x-data="{ 
+    openModal: false, 
+    openEduModal: false,
+    openDeleteModal: false,
+    deleteAction: '',
+    deleteTitle: '',
+    deleteTargetName: ''
+}">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Profil Alumni - Portal Alumni Polije</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; overflow: hidden; }
-        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         [x-cloak] { display: none !important; }
     </style>
 </head>
@@ -22,9 +30,22 @@
         @include('partials.header-admin')
     </div>
 
-    <div class="flex flex-1 overflow-hidden w-full">
-       <aside class="w-64 shrink-0 bg-white/90 backdrop-blur-sm border-r border-slate-100 flex flex-col justify-between h-full overflow-y-auto no-scrollbar">
+    <div class="flex flex-1 overflow-hidden w-full relative">
+        
+        <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/40 z-40 hidden lg:hidden transition-opacity backdrop-blur-sm"></div>
+
+        {{-- Sidebar --}}
+        <aside id="sidebarAdmin" class="fixed inset-y-0 left-0 z-50 w-64 -translate-x-full lg:translate-x-0 lg:static bg-white/90 backdrop-blur-sm border-r border-slate-100 flex flex-col justify-between h-full overflow-y-auto no-scrollbar transition-transform duration-300 ease-in-out shrink-0">
             <div class="py-6 flex flex-col gap-3">
+                
+                <div class="flex lg:hidden justify-between items-center px-5 mb-2">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Menu Navigasi</span>
+                    <button onclick="toggleSidebar()" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
                 
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 text-slate-500 hover:bg-slate-50 px-5 py-3 rounded-full transition-all group mx-2"> 
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -43,7 +64,7 @@
                 @if(auth()->user()->role === 'SuperAdmin')
                 <a href="/admin/kelola-prodi" class="flex items-center space-x-3 text-slate-500 hover:bg-slate-50 px-5 py-3 rounded-full transition-all group mx-2"> 
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z8" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
                     </svg>
                     <span class="font-bold text-xs">Kelola Prodi</span>
                 </a>
@@ -62,7 +83,7 @@
                 <form action="{{ route('logout') }}" method="POST" class="w-full">
                     @csrf
                     <button type="submit" class="flex items-center justify-center gap-3 bg-[#D32F2F] text-white w-full py-3 rounded-xl hover:bg-red-700 transition-all shadow-md group cursor-pointer">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0 transition-transform group-hover:scale-105" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                         </svg>
                         <span class="font-bold text-sm tracking-wide">LogOut</span>
@@ -71,18 +92,18 @@
             </div>
         </aside>
 
-        <main class="flex-1 overflow-y-auto custom-scroll p-8 bg-[#f8fafc]">
-            <div class="mb-8 flex justify-between items-end">
-                <div>
-                    <nav class="flex items-center gap-2 text-slate-400 text-[10px] uppercase font-black tracking-widest mb-2">
+        <main class="flex-1 overflow-y-auto custom-scroll p-4 md:p-8 bg-[#f8fafc] w-full min-w-0">
+            <div class="mb-6 md:mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+                <div class="min-w-0 flex-1">
+                    <nav class="flex items-center gap-2 text-slate-400 text-[10px] uppercase font-black tracking-widest mb-2 overflow-x-auto no-scrollbar whitespace-nowrap">
                         <a href="{{ route('admin.editbiodata') }}" class="hover:text-blue-600 transition-colors">Edit Biodata</a>
                         <span>›</span>
-                        <span class="text-slate-600">{{ $alumni->nama }}</span>
+                        <span class="text-slate-600 truncate">{{ $alumni->nama }}</span>
                     </nav>
-                    <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Detail Biodata</h1>
-                    <p class="text-slate-500 text-sm mt-1">NIM: {{ $alumni->nim }} · {{ $alumni->prodi ?? '—' }}</p>
+                    <h1 class="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight truncate">Detail Biodata</h1>
+                    <p class="text-slate-500 text-xs md:text-sm mt-1 truncate">NIM: {{ $alumni->nim }} · {{ $alumni->prodi ?? '—' }}</p>
                 </div>
-                <a href="{{ route('admin.editbiodata') }}" class="px-8 py-3.5 bg-white border border-slate-200 text-slate-500 rounded-2xl font-bold text-xs hover:bg-slate-50 transition-all shadow-sm">Kembali</a>
+                <a href="{{ route('admin.editbiodata') }}" class="w-full sm:w-auto text-center px-6 md:px-8 py-2.5 md:py-3.5 bg-white border border-slate-200 text-slate-500 rounded-2xl font-bold text-xs hover:bg-slate-50 transition-all shadow-sm">Kembali</a>
             </div>
 
             @if(session('success'))
@@ -91,50 +112,57 @@
             </div>
             @endif
 
-            <div class="bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden mb-8">
-                <div class="px-8 py-5 border-b border-slate-50 flex justify-between items-center bg-slate-50/20">
-                    <h3 class="font-extrabold text-slate-800 text-lg tracking-tight">💼 Pengalaman & Detail Pekerjaan</h3>
-                    <button type="button" @click="openModal = true" class="text-[#074799] text-xs font-bold hover:underline flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            {{-- Card Pekerjaan --}}
+            <div class="bg-white rounded-2xl md:rounded-[32px] shadow-sm border border-slate-100 overflow-hidden mb-6 md:mb-8">
+                <div class="px-5 md:px-8 py-4 md:py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/20 gap-2">
+                    <h3 class="font-extrabold text-slate-800 text-sm md:text-lg tracking-tight">💼 Pengalaman & Detail Pekerjaan</h3>
+                    <button type="button" @click="openModal = true" class="text-[#074799] text-xs font-bold hover:underline flex items-center gap-1 shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/xl" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
-                        Tambah Pekerjaan
+                        <span>Tambah <span class="hidden xs:inline">Pekerjaan</span></span>
                     </button>
                 </div>
 
-                <div class="p-8 space-y-10">
+                <div class="p-5 md:p-8 space-y-8 md:space-y-10">
                     @forelse($alumni->pekerjaan as $pek)
-                    <div class="flex gap-6 items-start group">
-                        <div class="h-14 w-14 bg-slate-100 rounded-2xl flex items-center justify-center shrink-0 border border-slate-50">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-[#074799]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div class="flex flex-col sm:flex-row gap-4 md:gap-6 items-start group">
+                        <div class="h-12 w-12 md:h-14 md:w-14 bg-slate-100 rounded-xl md:rounded-2xl flex items-center justify-center shrink-0 border border-slate-50">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:h-7 md:w-7 text-[#074799]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
                         </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-1">
+                        <div class="flex-1 min-w-0 w-full">
+                            <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
                                 <div>
-                                    <h4 class="text-xl font-bold text-slate-900 tracking-tight">{{ $pek->jobdesk ?? 'Posisi tidak diisi' }}</h4>
-                                    <div class="flex items-center gap-2 mt-1">
-                                        <span class="text-[#074799] font-bold text-sm">{{ $pek->nama_perusahaan }}</span>
-                                        <span class="text-slate-300">•</span>
-                                        <span class="text-slate-500 text-sm">
+                                    <h4 class="text-lg md:text-xl font-bold text-slate-900 tracking-tight break-words">{{ $pek->jobdesk ?? 'Posisi tidak diisi' }}</h4>
+                                    <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-1">
+                                        <span class="text-[#074799] font-bold text-sm break-all">{{ $pek->nama_perusahaan }}</span>
+                                        <span class="text-slate-300 hidden xs:inline">•</span>
+                                        <span class="text-slate-500 text-xs md:text-sm">
                                             {{ $pek->tahun_masuk ? \Carbon\Carbon::parse($pek->tahun_masuk)->format('M Y') : '—' }}
                                             –
                                             {{ $pek->tahun_selesai ? \Carbon\Carbon::parse($pek->tahun_selesai)->format('M Y') : 'Sekarang' }}
                                         </span>
                                     </div>
-                                    <span class="inline-block mt-1 text-[10px] font-bold bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">{{ $pek->status_pekerjaan }}</span>
+                                    <span class="inline-block mt-1.5 text-[10px] font-bold bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">{{ $pek->status_pekerjaan }}</span>
                                 </div>
-                                <form action="{{ route('admin.biodata.pekerjaan.destroy', [$alumni->nim, $pek->id]) }}" method="POST"
-                                    onsubmit="return confirm('Hapus pekerjaan ini?')">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="text-red-400 hover:text-red-600 text-xs font-bold mt-2 md:mt-0">Hapus</button>
-                                </form>
+                                
                             </div>
                             @if($pek->deskripsi)
-                            <p class="mt-4 text-slate-600 text-sm leading-relaxed max-w-3xl">{{ $pek->deskripsi }}</p>
+                            <p class="mt-3 md:mt-4 text-slate-600 text-xs md:text-sm leading-relaxed max-w-3xl break-words">{{ $pek->deskripsi }}</p>
                             @endif
                         </div>
+                        <button type="button" 
+                                    @click="
+                                        deleteAction = '{{ route('admin.biodata.pekerjaan.destroy', [$alumni->nim, $pek->id]) }}';
+                                        deleteTitle = 'Hapus Riwayat Pekerjaan';
+                                        deleteTargetName = '{{ addslashes($pek->jobdesk) }} di {{ addslashes($pek->nama_perusahaan) }}';
+                                        openDeleteModal = true;
+                                    "
+                                    class="text-red-400 hover:text-red-600 text-xs font-bold sm:mt-1 md:mt-0 self-start">
+                                    Hapus
+                                </button>
                     </div>
                     @empty
                     <p class="text-slate-400 text-sm text-center py-4">Belum ada data pekerjaan.</p>
@@ -142,50 +170,56 @@
                 </div>
             </div>
                         
-            <div class="bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden">
-                <div class="px-8 py-5 border-b border-slate-50 flex justify-between items-center bg-slate-50/20">
-                    <h3 class="font-extrabold text-slate-800 text-lg tracking-tight">🎓 Riwayat Pendidikan</h3>
-                    <button type="button" @click="openEduModal = true" class="text-[#074799] text-xs font-bold hover:underline flex items-center gap-1">
+            {{-- Card Pendidikan --}}
+            <div class="bg-white rounded-2xl md:rounded-[32px] shadow-sm border border-slate-100 overflow-hidden">
+                <div class="px-5 md:px-8 py-4 md:py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/20 gap-2">
+                    <h3 class="font-extrabold text-slate-800 text-sm md:text-lg tracking-tight">🎓 Riwayat Pendidikan</h3>
+                    <button type="button" @click="openEduModal = true" class="text-[#074799] text-xs font-bold hover:underline flex items-center gap-1 shrink-0">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
-                        Tambah Pendidikan
+                        <span>Tambah <span class="hidden xs:inline">Pendidikan</span></span>
                     </button>
                 </div>
 
-                <div class="p-8 space-y-10">
+                <div class="p-5 md:p-8 space-y-8 md:space-y-10">
                     @forelse($alumni->riwayatPendidikan as $edu)
-                    <div class="flex gap-6 items-start">
-                        <div class="h-14 w-14 bg-slate-100 rounded-2xl flex items-center justify-center shrink-0 border border-slate-50">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-[#074799]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div class="flex flex-col sm:flex-row gap-4 md:gap-6 items-start">
+                        <div class="h-12 w-12 md:h-14 md:w-14 bg-slate-100 rounded-xl md:rounded-2xl flex items-center justify-center shrink-0 border border-slate-50">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:h-7 md:w-7 text-[#074799]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path d="M12 14l9-5-9-5-9 5 9 5z" />
                                 <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
                             </svg>
                         </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h4 class="text-xl font-bold text-slate-800 tracking-tight">{{ $edu->jenjang_pendidikan }} - {{ $edu->jurusan ?? '—' }}</h4>
-                                    <p class="text-[#074799] font-bold text-base mt-0.5">{{ $edu->nama_instansi }}</p>
-                                    <p class="text-slate-500 text-sm mt-1">
+                        <div class="flex-1 min-w-0 w-full">
+                            <div class="flex flex-col sm:flex-row justify-between items-start gap-2">
+                                <div class="w-full">
+                                    <h4 class="text-lg md:text-xl font-bold text-slate-800 tracking-tight break-words">{{ $edu->jenjang_pendidikan }} - {{ $edu->jurusan ?? '—' }}</h4>
+                                    <p class="text-[#074799] font-bold text-sm md:text-base mt-0.5 break-words">{{ $edu->nama_instansi }}</p>
+                                    <p class="text-slate-500 text-xs md:text-sm mt-1">
                                         {{ $edu->tahun_masuk ? \Carbon\Carbon::parse($edu->tahun_masuk)->format('Y') : '—' }}
                                         – {{ $edu->tahun_keluar ? \Carbon\Carbon::parse($edu->tahun_keluar)->format('Y') : 'Sekarang' }}
                                     </p>
                                     @if($edu->nilai_akhir)
-                                    <div class="mt-3 inline-flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-full border border-slate-200">
+                                    <div class="mt-2.5 inline-flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-full border border-slate-200">
                                         <span class="text-slate-500 text-[10px] font-bold uppercase">IPK:</span>
                                         <span class="text-slate-800 text-xs font-black">{{ number_format($edu->nilai_akhir, 2) }}/4.00</span>
                                     </div>
                                     @endif
                                     @if($edu->judul_skripsi)
-                                    <p class="text-slate-500 text-xs mt-2 italic">📄 {{ $edu->judul_skripsi }}</p>
+                                    <p class="text-slate-500 text-xs mt-2 italic break-words">📄 {{ $edu->judul_skripsi }}</p>
                                     @endif
                                 </div>
-                                <form action="{{ route('admin.biodata.pendidikan.destroy', [$alumni->nim, $edu->id]) }}" method="POST"
-                                    onsubmit="return confirm('Hapus riwayat pendidikan ini?')">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="text-red-400 hover:text-red-600 text-xs font-bold">Hapus</button>
-                                </form>
+                                <button type="button" 
+                                    @click="
+                                        deleteAction = '{{ route('admin.biodata.pendidikan.destroy', [$alumni->nim, $edu->id]) }}';
+                                        deleteTitle = 'Hapus Riwayat Pendidikan';
+                                        deleteTargetName = '{{ $edu->jenjang_pendidikan }} di {{ addslashes($edu->nama_instansi) }}';
+                                        openDeleteModal = true;
+                                    "
+                                    class="text-red-400 hover:text-red-600 text-xs font-bold sm:mt-1 shrink-0">
+                                    Hapus
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -196,177 +230,177 @@
             </div>
         </main>
     </div>
-<div x-show="openModal" 
-     class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" 
-     x-cloak 
-     x-transition:enter="transition ease-out duration-300"
-     x-transition:enter-start="opacity-0 scale-95"
-     x-transition:enter-end="opacity-100 scale-100">
-    
-    <div @click.away="openModal = false" 
-         class="bg-white w-full max-w-xl rounded-[24px] shadow-2xl overflow-hidden border border-slate-100">
-        
-        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white">
-            <h3 class="text-[#074799] font-extrabold text-lg tracking-tight">💼 Tambah Pengalaman Kerja</h3>
-            <button @click="openModal = false" class="text-slate-400 hover:text-red-500 transition-all">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-        </div>
 
-        <form action="{{ route('admin.biodata.pekerjaan.store', $alumni->nim) }}" method="POST">
-        @csrf
-        <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto custom-scroll">
-            <div>
-                <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Jabatan / Posisi</label>
-                <input type="text" name="jobdesk" placeholder="Contoh: Senior Software Engineer" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-[#074799] outline-none transition-all">
-            </div>
-
-            <div>
-                <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Nama Perusahaan</label>
-                <input type="text" name="nama_perusahaan" placeholder="Contoh: Gojek Indonesia" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:border-[#074799] outline-none">
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Divisi / Departemen</label>
-                    <input type="text" name="divisi" placeholder="Contoh: IT Development" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
-                </div>
-                <div>
-                    <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Lokasi</label>
-                    <input type="text" name="lokasi" placeholder="Contoh: Jakarta (Hybrid)" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
-                </div>
-            </div>
-
-            <div>
-                <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Status Kerja <span class="text-red-400">*</span></label>
-                <select name="status_pekerjaan" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
-                    <option value="">-- Pilih Status --</option>
-                    <option>Pekerjaan Tetap</option>
-                    <option>Kontrak</option>
-                    <option>Freelance</option>
-                    <option>Magang (Internship)</option>
-                    <option>Part Time</option>
-                    <option>Wirausaha</option>
-                </select>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4" x-data="{ isCurrent: false }">
-                <div>
-                    <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Tahun Mulai</label>
-                    <div class="relative">
-                        <input type="date" name="tahun_masuk" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Tahun Selesai</label>
-                    <div class="relative">
-                        <input type="date" name="tahun_selesai"
-                               :disabled="isCurrent"
-                               :class="isCurrent ? 'bg-slate-100 text-slate-400' : 'bg-slate-50'"
-                               class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
-                    </div>
-                    <div class="flex items-center gap-2 mt-2">
-                        <input type="checkbox" id="stillWorking" x-model="isCurrent" class="w-4 h-4 rounded border-slate-300 text-[#074799] focus:ring-[#074799]">
-                        <label for="stillWorking" class="text-[11px] font-bold text-slate-500">Masih bekerja di sini</label>
-                    </div>
-                </div>
-            </div>
-
-            <div>
-                <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Deskripsi Pekerjaan (Opsional)</label>
-                <textarea name="deskripsi" rows="3" placeholder="Ceritakan tanggung jawab dan pencapaian Anda..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799] resize-none"></textarea>
-            </div>
-        </div>
-
-        <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-            <button @click="openModal = false" class="px-6 py-2.5 bg-white border border-slate-200 text-slate-500 rounded-xl font-bold text-xs hover:bg-slate-100 transition-all shadow-sm">Batal</button>
-            <button type="submit" class="px-6 py-2.5 bg-[#074799] text-white rounded-xl font-bold text-xs hover:bg-blue-900 transition-all shadow-md">Simpan Pekerjaan</button>
-        </div>
-        </form>
-    </div>
-</div>
-    <div x-show="openEduModal" 
-         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" 
-         x-cloak 
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0 scale-95"
-         x-transition:enter-end="opacity-100 scale-100">
-        
-        <div @click.away="openEduModal = false" 
-             class="bg-white w-full max-w-xl rounded-[24px] shadow-2xl overflow-hidden border border-slate-100">
-            
-            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white">
-                <h3 class="text-[#074799] font-extrabold text-lg tracking-tight">🎓 Tambah Riwayat Pendidikan</h3>
-                <button @click="openEduModal = false" class="text-slate-400 hover:text-red-500 transition-all">
+    {{-- Modal Tambah Kerja --}}
+    <div x-show="openModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-sm" x-cloak x-transition>
+        <div @click.away="openModal = false" class="bg-white w-full max-w-xl rounded-[24px] shadow-2xl overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col mx-2">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white flex-shrink-0">
+                <h3 class="text-[#074799] font-extrabold text-lg tracking-tight">💼 Tambah Pengalaman Kerja</h3>
+                <button @click="openModal = false" class="text-slate-400 hover:text-red-500 transition-all p-1">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
-
-            <form action="{{ route('admin.biodata.pendidikan.store', $alumni->nim) }}" method="POST">
-            @csrf
-            <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto custom-scroll">
-                <div>
-                    <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Nama Institusi / Universitas</label>
-                    <input type="text" name="nama_instansi" placeholder="Contoh: Politeknik Negeri Jember" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-[#074799] outline-none transition-all placeholder:text-slate-300">
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
+            <form action="{{ route('admin.biodata.pekerjaan.store', $alumni->nim) }}" method="POST" class="flex flex-col flex-1 overflow-hidden">
+                @csrf
+                <div class="p-6 space-y-4 flex-1 overflow-y-auto custom-scroll min-h-0">
                     <div>
-                        <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Jenjang</label>
-                        <select name="jenjang_pendidikan" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799] appearance-none">
-                            <option>SD</option>
-                            <option>SMP</option>
-                            <option>SMA/SMK</option>
-                            <option>D1</option>
-                            <option>D2</option>
-                            <option>D3</option>
-                            <option>D4</option>
-                            <option>S1</option>
-                            <option>S2</option>
-                            <option>S3</option>
+                        <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-1.5 ml-1">Jabatan / Posisi</label>
+                        <input type="text" name="jobdesk" placeholder="Contoh: Senior Software Engineer" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-[#074799] outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-1.5 ml-1">Nama Perusahaan</label>
+                        <input type="text" name="nama_perusahaan" placeholder="Contoh: Gojek Indonesia" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:border-[#074799] outline-none">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-1.5 ml-1">Divisi / Departemen</label>
+                            <input type="text" name="divisi" placeholder="Contoh: IT Development" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
+                        </div>
+                        <div>
+                            <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-1.5 ml-1">Lokasi</label>
+                            <input type="text" name="lokasi" placeholder="Contoh: Jakarta (Hybrid)" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-1.5 ml-1">Status Kerja <span class="text-red-400">*</span></label>
+                        <select name="status_pekerjaan" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799] bg-white">
+                            <option value="">-- Pilih Status --</option>
+                            <option>Pekerjaan Tetap</option>
+                            <option>Kontrak</option>
+                            <option>Freelance</option>
+                            <option>Magang (Internship)</option>
+                            <option>Part Time</option>
+                            <option>Wirausaha</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Jurusan / Prodi</label>
-                        <input type="text" name="jurusan" placeholder="Teknik Informatika" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Tahun Mulai</label>
-                        <div class="relative">
-                            <input type="date" name="tahun_masuk" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
-                            <svg class="w-4 h-4 absolute right-4 top-3.5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" x-data="{ isCurrent: false }">
+                        <div>
+                            <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-1.5 ml-1">Tahun Mulai</label>
+                            <input type="date" name="tahun_masuk" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
+                        </div>
+                        <div>
+                            <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-1.5 ml-1">Tahun Selesai</label>
+                            <input type="date" name="tahun_selesai" :disabled="isCurrent" :class="isCurrent ? 'bg-slate-100 text-slate-400' : 'bg-slate-50'" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
+                            <div class="flex items-center gap-2 mt-2 ml-1">
+                                <input type="checkbox" id="stillWorking" x-model="isCurrent" class="w-4 h-4 rounded border-slate-300 text-[#074799] focus:ring-[#074799]">
+                                <label for="stillWorking" class="text-[11px] font-bold text-slate-500 cursor-pointer">Masih bekerja di sini</label>
+                            </div>
                         </div>
                     </div>
                     <div>
-                        <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Tahun Lulus</label>
-                        <div class="relative">
-                            <input type="date" name="tahun_keluar" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
-                            <svg class="w-4 h-4 absolute right-4 top-3.5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                        </div>
+                        <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-1.5 ml-1">Deskripsi Pekerjaan (Opsional)</label>
+                        <textarea name="deskripsi" rows="3" placeholder="Ceritakan tanggung jawab..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799] resize-none custom-scroll"></textarea>
                     </div>
                 </div>
-
-                <div>
-                    <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Nilai Akhir / IPK</label>
-                    <input type="number" name="nilai_akhir" step="0.01" min="0" max="4" placeholder="Contoh: 3.85 / 4.00" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-[#074799] outline-none">
+                <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 flex-shrink-0">
+                    <button type="button" @click="openModal = false" class="px-5 py-2 bg-white border border-slate-200 text-slate-500 rounded-xl font-bold text-xs hover:bg-slate-100 transition-all shadow-sm">Batal</button>
+                    <button type="submit" class="px-5 py-2 bg-[#074799] text-white rounded-xl font-bold text-xs hover:bg-blue-900 transition-all shadow-md">Simpan Pekerjaan</button>
                 </div>
-
-                <div>
-                    <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-2">Judul Skripsi / Tugas Akhir (Opsional)</label>
-                    <textarea name="judul_skripsi" rows="3" placeholder="Masukkan judul skripsi Anda..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799] resize-none"></textarea>
-                </div>
-            </div>
-
-            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-                <button @click="openEduModal = false" class="px-6 py-2.5 bg-white border border-slate-200 text-slate-500 rounded-xl font-bold text-xs hover:bg-slate-100 transition-all shadow-sm">Batal</button>
-                <button type="submit" class="px-6 py-2.5 bg-[#074799] text-white rounded-xl font-bold text-xs hover:bg-blue-900 transition-all shadow-md">Simpan Pendidikan</button>
-            </div>
             </form>
         </div>
     </div>
 
+    {{-- Modal Tambah Pendidikan --}}
+    <div x-show="openEduModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-sm" x-cloak x-transition>
+        <div @click.away="openEduModal = false" class="bg-white w-full max-w-xl rounded-[24px] shadow-2xl overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col mx-2">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white flex-shrink-0">
+                <h3 class="text-[#074799] font-extrabold text-lg tracking-tight">🎓 Tambah Riwayat Pendidikan</h3>
+                <button @click="openEduModal = false" class="text-slate-400 hover:text-red-500 transition-all p-1">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <form action="{{ route('admin.biodata.pendidikan.store', $alumni->nim) }}" method="POST" class="flex flex-col flex-1 overflow-hidden">
+                @csrf
+                <div class="p-6 space-y-4 flex-1 overflow-y-auto custom-scroll min-h-0">
+                    <div>
+                        <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-1.5 ml-1">Nama Institusi / Universitas</label>
+                        <input type="text" name="nama_instansi" placeholder="Contoh: Politeknik Negeri Jember" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-[#074799] outline-none transition-all placeholder:text-slate-300">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-1.5 ml-1">Jenjang</label>
+                            <select name="jenjang_pendidikan" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799] bg-white">
+                                <option>SD</option>
+                                <option>SMP</option>
+                                <option>SMA/SMK</option>
+                                <option>D1</option>
+                                <option>D2</option>
+                                <option>D3</option>
+                                <option>D4</option>
+                                <option>S1</option>
+                                <option>S2</option>
+                                <option>S3</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-1.5 ml-1">Jurusan / Prodi</label>
+                            <input type="text" name="jurusan" placeholder="Teknik Informatika" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-1.5 ml-1">Tahun Mulai</label>
+                            <input type="date" name="tahun_masuk" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
+                        </div>
+                        <div>
+                            <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-1.5 ml-1">Tahun Lulus</label>
+                            <input type="date" name="tahun_keluar" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799]">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-1.5 ml-1">Nilai Akhir / IPK</label>
+                        <input type="number" name="nilai_akhir" step="0.01" min="0" max="4" placeholder="Contoh: 3.85" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-[#074799] outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-slate-600 font-bold text-[11px] uppercase tracking-widest mb-1.5 ml-1">Judul Skripsi / Tugas Akhir (Opsional)</label>
+                        <textarea name="judul_skripsi" rows="3" placeholder="Masukkan judul skripsi Anda..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-[#074799] resize-none custom-scroll"></textarea>
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 flex-shrink-0">
+                    <button type="button" @click="openEduModal = false" class="px-5 py-2 bg-white border border-slate-200 text-slate-500 rounded-xl font-bold text-xs hover:bg-slate-100 transition-all shadow-sm">Batal</button>
+                    <button type="submit" class="px-5 py-2 bg-[#074799] text-white rounded-xl font-bold text-xs hover:bg-blue-900 transition-all shadow-md">Simpan Pendidikan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- ── 🆕 MODAL GLOBAL KONFIRMASI HAPUS (Pekerjaan & Pendidikan) ── --}}
+    <div x-show="openDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" x-cloak x-transition>
+        <div @click.away="openDeleteModal = false" class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden mx-3">
+            <div class="p-6 text-center">
+                <div class="bg-red-50 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                </div>
+                <h3 class="text-slate-800 font-bold text-base mb-1" x-text="deleteTitle"></h3>
+                <p class="text-slate-500 text-xs mb-1">Apakah Anda yakin ingin menghapus data <span class="font-bold text-slate-700" x-text="deleteTargetName"></span>?</p>
+                <p class="text-slate-400 text-xs">Tindakan ini tidak dapat dibatalkan.</p>
+            </div>
+            <form :action="deleteAction" method="POST">
+                @csrf
+                @method('DELETE')
+                <div class="px-6 pb-6 flex gap-2 justify-center">
+                    <button type="button" @click="openDeleteModal = false" class="px-5 py-2 border border-gray-300 rounded-lg text-gray-600 text-xs font-bold hover:bg-white transition-all">Batal</button>
+                    <button type="submit" class="px-5 py-2 bg-red-500 text-white rounded-lg text-xs font-bold hover:bg-red-600 shadow-md transition-all">Hapus</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebarAdmin');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+    </script>
 </body>
 </html>

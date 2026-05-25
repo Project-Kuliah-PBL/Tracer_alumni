@@ -44,6 +44,27 @@ class DataAlumni extends Model
         return $this->hasMany(DataPekerjaan::class, 'nim', 'nim');
     }
 
+    public function currentPekerjaan()
+{
+    // Jika sudah di-eager-load, gunakan collection (hindari query tambahan)
+    if ($this->relationLoaded('pekerjaan')) {
+        return $this->pekerjaan
+            ->sortBy([
+                // Aktif (null) = 0, selesai = 1 → aktif duluan
+                fn($a) => is_null($a->tahun_selesai) ? 0 : 1,
+                // Lalu yang paling baru
+                fn($a) => $a->tahun_masuk ? -$a->tahun_masuk->timestamp : 0,
+            ])
+            ->first();
+    }
+
+    // Fallback kalau tidak di-eager-load
+    return $this->pekerjaan()
+        ->orderByRaw('CASE WHEN tahun_selesai IS NULL THEN 0 ELSE 1 END ASC')
+        ->orderByDesc('tahun_masuk')
+        ->first();
+}
+
     public function riwayatPendidikan()
     {
         return $this->hasMany(RiwayatPendidikan::class, 'nim', 'nim');

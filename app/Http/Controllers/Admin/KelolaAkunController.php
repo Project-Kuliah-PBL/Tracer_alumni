@@ -51,17 +51,25 @@ class KelolaAkunController extends Controller
         $isAdminRole = ($requestedRole === 'Admin');
 
         $rules = [
-            'nim'      => 'required|string|unique:users,username',
-            'password' => 'nullable|string|min:6',
-            'role'     => $isSuperAdmin ? 'required|in:Alumni,Admin' : 'nullable',
-            'prodi'    => 'required_if:role,Admin|nullable|string|exists:prodi,nama',
+        'nim'      => 'required|string|unique:users,username',
+        'password' => 'nullable|string|min:6',
+        'role'     => $isSuperAdmin ? 'required|in:Alumni,Admin' : 'nullable',
+        'prodi'    => 'required|string|exists:prodi,nama',
         ];
 
         // Nama hanya wajib untuk Alumni
         if (!$isAdminRole) {
-            $rules['nim'] .= '|unique:data_alumni,nim';
-            $rules['nama'] = 'required|string|max:255';
-        }
+
+    $rules['nim'] .= '|unique:data_alumni,nim';
+
+    $rules['nama'] = 'required|string|max:255';
+
+    $rules['angkatan'] = 'nullable|string|max:10';
+
+    $rules['tahun_lulus'] = 'nullable|date';
+
+    $rules['jenis_kelamin'] = 'nullable|in:Laki-laki,Perempuan';
+}
 
         $request->validate($rules, [
             'nim.required'      => 'NIM / Username tidak boleh kosong.',
@@ -78,11 +86,15 @@ class KelolaAkunController extends Controller
         $prodi = $isSuperAdmin ? $request->prodi : auth()->user()->prodi;
 
         User::create([
-            'username' => $request->nim,
-            'password' => Hash::make($request->filled('password') ? $request->password : $request->nim),
-            'role'     => $role,
-            'prodi'    => $role === 'Admin' ? $prodi : null,
-        ]);
+    'username' => $request->nim,
+    'password' => Hash::make(
+        $request->filled('password')
+            ? $request->password
+            : $request->nim
+    ),
+    'role'  => $role,
+    'prodi' => $prodi,
+]);
 
         // Hanya buat data_alumni jika role Alumni
         if ($role === 'Alumni') {
@@ -97,7 +109,7 @@ class KelolaAkunController extends Controller
         }
 
         return redirect()->route('admin.kelola_akun')
-            ->with('success', "Akun {$role} " . ($request->nama ?: $request->nim) . " berhasil ditambahkan.");
+           ->with('success', "Akun {$role} berhasil ditambahkan.");
     }
 
     public function update(Request $request, string $nim)
