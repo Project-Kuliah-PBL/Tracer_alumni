@@ -75,7 +75,7 @@ class SertifikasiController extends Controller
         }
 
         DataCertificate::create($data);
-
+        cache()->forget('alumni_filter_options');
         return redirect()->route('alumni.dashboard')
             ->with('success', 'Sertifikasi berhasil ditambahkan.');
     }
@@ -114,7 +114,7 @@ class SertifikasiController extends Controller
         }
 
         $sertifikasi->update($data);
-
+        cache()->forget('alumni_filter_options');
         return redirect()->route('alumni.sertifikasi.index')
             ->with('success', 'Sertifikasi berhasil diperbarui.');
     }
@@ -132,7 +132,7 @@ class SertifikasiController extends Controller
         }
 
         $sertifikasi->delete();
-
+        cache()->forget('alumni_filter_options');
         return redirect()->route('alumni.sertifikasi.index')
             ->with('success', 'Sertifikasi berhasil dihapus.');
     }

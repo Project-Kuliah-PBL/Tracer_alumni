@@ -72,7 +72,7 @@ class PendidikanController extends Controller
             ]),
             ['nim' => $nim]
         ));
-
+            cache()->forget('alumni_filter_options');
         return redirect()->route('alumni.dashboard')
             ->with('success', 'Riwayat pendidikan berhasil ditambahkan.');
     }
@@ -105,6 +105,7 @@ class PendidikanController extends Controller
             'tahun_masuk', 'tahun_keluar', 'nilai_akhir', 'judul_skripsi',
         ]));
 
+        cache()->forget('alumni_filter_options');
         return redirect()->route('alumni.pendidikan.index')
             ->with('success', 'Riwayat pendidikan berhasil diperbarui.');
     }
@@ -117,7 +118,7 @@ class PendidikanController extends Controller
         $nim        = Auth::user()->username;
         $pendidikan = RiwayatPendidikan::where('id', $id)->where('nim', $nim)->firstOrFail();
         $pendidikan->delete();
-
+        cache()->forget('alumni_filter_options');
         return redirect()->route('alumni.pendidikan.index')
             ->with('success', 'Riwayat pendidikan berhasil dihapus.');
     }

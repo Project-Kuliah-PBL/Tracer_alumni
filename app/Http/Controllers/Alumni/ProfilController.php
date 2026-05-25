@@ -85,7 +85,7 @@ class ProfilController extends Controller
         }
 
         $alumni->update($data);
-
+        cache()->forget('alumni_filter_options');
         return redirect()->route('alumni.dashboard')
             ->with('success_popup', 'Profil berhasil diperbarui.');
     }
@@ -118,7 +118,7 @@ class ProfilController extends Controller
         // Update password
         $user->password = Hash::make($request->password);
         $user->save();
-
+        cache()->forget('alumni_filter_options');
         return redirect()->route('alumni.manajemen_akun')
             ->with('success', 'Password berhasil diperbarui. Silakan login kembali.');
     }

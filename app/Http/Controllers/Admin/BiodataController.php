@@ -70,8 +70,9 @@ class BiodataController extends Controller
         ]);
 
         LamaTungguHelper::hitung($nim);
-
+        cache()->forget('alumni_filter_options');
         return redirect()->route('admin.biodata', $nim)->with('success', 'Pekerjaan berhasil ditambahkan.');
+        
     }
 
     // Hapus pekerjaan
@@ -82,8 +83,9 @@ class BiodataController extends Controller
         DataPekerjaan::where('id', $id)->where('nim', $nim)->delete();
 
         LamaTungguHelper::hitung($nim);
-
-        return redirect()->route('admin.biodata', $nim)->with('success', 'Pekerjaan berhasil dihapus.');
+            cache()->forget('alumni_filter_options');
+            return redirect()->route('admin.biodata', $nim)->with('success', 'Pekerjaan berhasil dihapus.');
+                
     }
 
     // Simpan pendidikan baru
@@ -112,6 +114,8 @@ class BiodataController extends Controller
             'judul_skripsi'      => $request->judul_skripsi,
         ]);
 
+        cache()->forget('alumni_filter_options');
+
         return redirect()->route('admin.biodata', $nim)->with('success', 'Pendidikan berhasil ditambahkan.');
     }
 
@@ -121,6 +125,8 @@ class BiodataController extends Controller
         $this->getAllowedAlumni($nim);
 
         RiwayatPendidikan::where('id', $id)->where('nim', $nim)->delete();
+
+        cache()->forget('alumni_filter_options');
 
         return redirect()->route('admin.biodata', $nim)->with('success', 'Pendidikan berhasil dihapus.');
     }

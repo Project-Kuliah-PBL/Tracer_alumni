@@ -107,7 +107,7 @@ class KelolaAkunController extends Controller
                 'jenis_kelamin'=> $request->jenis_kelamin,
             ]);
         }
-
+        cache()->forget('alumni_filter_options');
         return redirect()->route('admin.kelola_akun')
            ->with('success', "Akun {$role} berhasil ditambahkan.");
     }
@@ -144,7 +144,7 @@ class KelolaAkunController extends Controller
                 'password' => Hash::make($request->password),
             ]);
         }
-
+        cache()->forget('alumni_filter_options');
         return redirect()->route('admin.kelola_akun')
             ->with('success', "Akun alumni berhasil diperbarui.");
     }
@@ -158,6 +158,7 @@ class KelolaAkunController extends Controller
             ->delete();
 
         User::where('username', $nim)->delete();
+        cache()->forget('alumni_filter_options');
 
         return redirect()->route('admin.kelola_akun')
             ->with('success', "Akun alumni berhasil dihapus.");
@@ -168,6 +169,7 @@ class KelolaAkunController extends Controller
     {
         $user = User::where('id', $id)->where('role', 'Admin')->firstOrFail();
         $user->delete();
+        cache()->forget('alumni_filter_options');
 
         return redirect()->route('admin.kelola_akun')
             ->with('success', "Akun Admin berhasil dihapus.");

@@ -36,7 +36,8 @@ class ImportAlumniController extends Controller
         if (!empty($import->errors)) {
             $pesan .= ' Beberapa baris gagal: ' . implode('; ', array_slice($import->errors, 0, 3));
         }
-
+        cache()->forget('alumni_filter_options');
         return redirect()->route('admin.kelola_akun')->with('success', $pesan);
+        
     }
 }

@@ -48,7 +48,7 @@ class MediaSosialController extends Controller
             'nama_platform' => $request->nama_platform,
             'link_medsos'   => $request->link_medsos,
         ]);
-
+        cache()->forget('alumni_filter_options');
         return redirect()->back()->with('success', 'Media sosial berhasil ditambahkan.');
     }
 
@@ -69,7 +69,7 @@ class MediaSosialController extends Controller
 
         $medsos = MediaSosial::where('id', $id)->where('nim', $nim)->firstOrFail();
         $medsos->update($request->only(['nama_platform', 'link_medsos']));
-
+        cache()->forget('alumni_filter_options');
         return redirect()->route('alumni.dashboard')->with('success_popup', 'Media sosial berhasil diperbarui.');
     }
 
@@ -81,7 +81,7 @@ class MediaSosialController extends Controller
         $nim    = Auth::user()->username;
         $medsos = MediaSosial::where('id', $id)->where('nim', $nim)->firstOrFail();
         $medsos->delete();
-
+        cache()->forget('alumni_filter_options');
         return redirect()->back()->with('success', 'Media sosial berhasil dihapus.');
     }
 
@@ -141,6 +141,7 @@ class MediaSosialController extends Controller
             }
         }
 
+        cache()->forget('alumni_filter_options');
         return redirect()->route('alumni.dashboard')->with('success_popup', 'Media sosial berhasil diperbarui.');
     }
 }

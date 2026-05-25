@@ -29,7 +29,7 @@ class ProdiController extends Controller
             'nama'     => $request->nama,
             'kode_nim' => $request->kode_nim ? strtoupper(trim($request->kode_nim)) : null,
         ]);
-
+        cache()->forget('alumni_filter_options');
         return redirect()->route('admin.prodi')->with('success', "Prodi \"{$request->nama}\" berhasil ditambahkan.");
     }
 
@@ -47,13 +47,14 @@ class ProdiController extends Controller
             'nama'     => $request->nama,
             'kode_nim' => $request->kode_nim ? strtoupper(trim($request->kode_nim)) : null,
         ]);
-
+        cache()->forget('alumni_filter_options');
         return redirect()->route('admin.prodi')->with('success', "Prodi berhasil diperbarui.");
     }
 
     public function destroy(Prodi $prodi)
     {
         $prodi->delete();
+        cache()->forget('alumni_filter_options');
 
         return redirect()->route('admin.prodi')->with('success', "Prodi berhasil dihapus.");
     }

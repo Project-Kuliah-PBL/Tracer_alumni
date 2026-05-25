@@ -33,7 +33,7 @@ class PekerjaanController extends Controller
     {
         $nim   = Auth::user()->username;
         $alumni = DataAlumni::where('nim', $nim)->firstOrFail();
-
+       
         return view('Alumni.tambah_pekerjaan', compact('alumni'));
     }
 
@@ -75,6 +75,7 @@ class PekerjaanController extends Controller
 
         DataPekerjaan::create($data);
 
+        cache()->forget('alumni_filter_options');
         LamaTungguHelper::hitung($nim);
 
         return redirect()->route('alumni.dashboard')
@@ -143,7 +144,7 @@ class PekerjaanController extends Controller
         $pekerjaan->update($data);
 
         LamaTungguHelper::hitung($nim);
-
+        cache()->forget('alumni_filter_options');
         return redirect()->route('alumni.pekerjaan.index')
             ->with('success', 'Pengalaman kerja berhasil diperbarui.');
     }
@@ -163,7 +164,7 @@ class PekerjaanController extends Controller
         $pekerjaan->delete();
 
         LamaTungguHelper::hitung($nim);
-
+        cache()->forget('alumni_filter_options');
         return redirect()->route('alumni.pekerjaan.index')
             ->with('success', 'Pengalaman kerja berhasil dihapus.');
     }
