@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Alumni;
 use App\Http\Controllers\Controller;
 use App\Models\DataAlumni;
 use App\Models\DataPekerjaan;
-use Dflydev\DotAccessData\Data;
 use Illuminate\Http\Request;
 
 class AlumniController extends Controller
@@ -15,24 +14,20 @@ class AlumniController extends Controller
      */
 public function index(Request $request)
 {
-    // Ambil opsi filter DINAMIS dari database
-    $tahunList = DataAlumni::whereNotNull('tahun_lulus')
-                    ->where('tahun_lulus', '>', 0)
-                    ->distinct()
-                    ->orderByDesc('tahun_lulus')
-                    ->pluck('tahun_lulus');
-
-    $prodiList = DataAlumni::whereNotNull('prodi')
-                    ->where('prodi', '<>', '')
-                    ->distinct()
-                    ->orderBy('prodi')
-                    ->pluck('prodi');
-                    
-    $lokasiList = DataPekerjaan::whereNotNull('lokasi')
-                    ->where('lokasi', '<>', '')
-                    ->distinct()
-                    ->orderBy('lokasi')
-                    ->pluck('lokasi');
+    // Cache filter options 10 menit — data ini jarang berubah
+    [$tahunList, $prodiList, $lokasiList] = cache()->remember('alumni_filter_options', now()->addMinutes(10), function () {
+        return [
+            DataAlumni::whereNotNull('tahun_lulus')
+                ->where('tahun_lulus', '>', 0)
+                ->distinct()->orderByDesc('tahun_lulus')->pluck('tahun_lulus'),
+            DataAlumni::whereNotNull('prodi')
+                ->where('prodi', '<>', '')
+                ->distinct()->orderBy('prodi')->pluck('prodi'),
+            DataPekerjaan::whereNotNull('lokasi')
+                ->where('lokasi', '<>', '')
+                ->distinct()->orderBy('lokasi')->pluck('lokasi'),
+        ];
+    });
 
     $alumnis = DataAlumni::with(['pekerjaan' => function ($q) {
             $q->orderByDesc('tahun_masuk');
@@ -80,7 +75,6 @@ public function index(Request $request)
      */
     public function show(string $nim)
     {
-        // ✅ FIX: gunakan where+firstOrFail jika 'nim' bukan primary key integer default
         $alumni = DataAlumni::with([
             'pekerjaan',
             'riwayatPendidikan',
@@ -100,23 +94,5 @@ public function index(Request $request)
             'sertifikasi',
             'medsos',
         ));
-
-        $pekerjaanAktif = $alumni->pekerjaan()
-            ->where(function($query) {
-                $query->whereNull('tahun_selesai')  // Tidak ada tanggal selesai
-                      ->orWhere('tahun_selesai', '>=', now());  // Atau selesai di masa depan
-            })
-            ->latest('tahun_masuk')  // Ambil yang paling baru
-            ->first();
-        
-        // Fallback: jika tidak ada pekerjaan aktif, ambil pekerjaan terakhir saja
-        $pekerjaanTerbaru = $pekerjaanAktif ?? $alumni->pekerjaan()
-            ->latest('tahun_masuk')
-            ->first();
-        
-        return view('alumni.dashboard', [
-            'alumni'           => $alumni,
-            'pekerjaanTerbaru' => $pekerjaanTerbaru,  // ✅ Pass data ke blade
-        ]);
     }
 }

@@ -24,12 +24,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Cari Alumni – dapat diakses siapa saja (publik)
-Route::get('/cari-alumni', [AlumniController::class, 'index'])->name('alumni.search');
-
-// Biodata / Detail Alumni – dapat diakses siapa saja (publik)
-// Menggunakan nim sebagai parameter agar konsisten dengan model DataAlumni
-Route::get('/cari-alumni/{nim}', [AlumniController::class, 'show'])->name('alumni.show');
+// Cari Alumni – dapat diakses siapa saja (publik), throttle 30 request/menit per IP
+Route::middleware('throttle:30,1')->group(function () {
+    Route::get('/cari-alumni',       [AlumniController::class, 'index'])->name('alumni.search');
+    Route::get('/cari-alumni/{nim}', [AlumniController::class, 'show'])->name('alumni.show');
+});
 
 // ─────────────────────────────────────────────
 // AUTH ROUTES
@@ -39,10 +38,10 @@ Route::get('/cari-alumni/{nim}', [AlumniController::class, 'show'])->name('alumn
 // Baris 1: Pintu masuk untuk melihat halaman
 Route::get('/forgot-password', [ForgotPasswordController::class, 'index'])->name('password.request');
 
-// Baris 2: Pintu kirim data saat tombol "Riset" ditekan
-Route::post('/forgot-password', [ForgotPasswordController::class, 'reset'])->name('password.reset');
+// Baris 2: Pintu kirim data saat tombol "Reset" ditekan — max 5x per menit per IP
+Route::post('/forgot-password', [ForgotPasswordController::class, 'reset'])->name('password.reset')->middleware('throttle:5,1');
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
