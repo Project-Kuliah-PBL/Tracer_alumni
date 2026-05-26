@@ -33,9 +33,12 @@ class DashboardController extends Controller
         $totalAlumni = DataAlumni::when($prodiFilter, fn($q) => $q->where('prodi', $prodiFilter))
             ->count();
 
+        
+
         $terserapKerja = DataAlumni::whereHas('pekerjaan')
             ->when($prodiFilter, fn($q) => $q->where('prodi', $prodiFilter))
             ->count();
+        $belumBekerja = $totalAlumni - $terserapKerja;
 
         $persentaseTerserap = $totalAlumni > 0
             ? round(($terserapKerja / $totalAlumni) * 100, 1)
@@ -142,7 +145,9 @@ class DashboardController extends Controller
             'grafik',
             'masaTunggu',
             'masaKerjaLabels',
-            'masaKerjaData'
+            'masaKerjaData',
+            'belumBekerja'
+
         );
     }
 

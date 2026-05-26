@@ -87,6 +87,7 @@ Route::middleware('auth')->group(function () {
 
         // Dashboard
         Route::get('/dashboard', [AlumniDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboardlaki', [AlumniDashboardController::class, 'index'])->name('dashboardlaki');
 
         // Profil
         Route::get('/profil/edit',   [ProfilController::class, 'edit'])  ->name('profil.edit');
@@ -120,8 +121,13 @@ Route::middleware('auth')->group(function () {
         Route::put('/medsos/{id}',    [MediaSosialController::class, 'update'])    ->name('medsos.update');
         Route::delete('/medsos/{id}', [MediaSosialController::class, 'destroy'])   ->name('medsos.destroy');
 
-        // Manajemen Akun
-        Route::get('/manajemen-akun', [ProfilController::class, 'edit'])          ->name('manajemen_akun');
-        Route::put('/manajemen-akun', [ProfilController::class, 'updatePassword'])->name('manajemen_akun.update');
+     
+    Route::get('/manajemen-akun', [ProfilController::class, 'edit'])          ->name('manajemen_akun')->middleware('alumni-laki'); // Hanya alumni yang bisa mengakses halaman ini
+    Route::put('/manajemen-akun', [ProfilController::class, 'update'])        ->name('manajemen_akun.update');
+
+        
     });
+    
+
 });
+

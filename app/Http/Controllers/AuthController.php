@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\DataAlumni;
 
 class AuthController extends Controller
 {
@@ -57,6 +58,7 @@ class AuthController extends Controller
     private function redirectByRole()
     {
         $role = Auth::user()->role;
+        $jenis_kelamin = DataAlumni::where('jenis_kelamin', 'laki-laki')->exists() ? 'laki-laki' : 'perempuan';  
 
         if ($role === 'SuperAdmin') {
             return redirect()->route('admin.dashboard');
@@ -67,7 +69,12 @@ class AuthController extends Controller
         }
 
         if ($role === 'Alumni') {
+            
             return redirect()->route('alumni.dashboard');
+        }
+
+        if ($jenis_kelamin === 'laki-laki') {
+            return redirect()->route('alumni.dashboardlaki');
         }
 
         Auth::logout();
