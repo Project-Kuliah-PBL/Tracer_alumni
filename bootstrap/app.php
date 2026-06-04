@@ -7,6 +7,7 @@ ini_set('memory_limit', '256M');
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -20,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin'      => \App\Http\Middleware\AdminOnly::class,
             'superadmin' => \App\Http\Middleware\SuperAdminOnly::class,
             'alumni'     => \App\Http\Middleware\AlumniOnly::class,
+            'alumni-laki' => \App\Http\Middleware\loginlakilaki::class,
             'api.admin' => \App\Http\Middleware\ApiAdminMiddleware::class,
         ]);
 

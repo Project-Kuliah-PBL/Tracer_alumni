@@ -210,6 +210,10 @@
                             @forelse($alumni as $item)
                             <tr class="hover:bg-slate-50/50 transition-all">
                                 <td class="px-6 py-4 text-xs font-bold text-slate-700">{{ $item->nim }}</td>
+                                <!-- <td class="px-6 py-4">
+                                {!! DNS1D::getBarcodeHTML($item->nim, 'C128') !!}
+                                <div class="text-[10px] text-slate-500 mt-1">{{ $item->nim }}</div>
+                                </td> -->
                                 <td class="px-6 py-4 text-xs font-extrabold text-slate-800">{{ $item->nama }}</td>
                                 <td class="px-6 py-4 text-xs text-slate-500">{{ $item->prodi ?? '—' }}</td>
                                 <td class="px-6 py-4">

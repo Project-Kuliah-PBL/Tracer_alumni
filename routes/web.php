@@ -35,11 +35,13 @@ Route::middleware('throttle:30,1')->group(function () {
 // ─────────────────────────────────────────────
 
 
-// Baris 1: Pintu masuk untuk melihat halaman
 Route::get('/forgot-password', [ForgotPasswordController::class, 'index'])->name('password.request');
+Route::post('/forgot-password',            [ForgotPasswordController::class, 'checkUsername'])->name('password.check')->middleware('throttle:5,1');
+Route::get('/forgot-password-admin',  [ForgotPasswordController::class, 'showAdminEmailForm'])->name('password.admin.form');
+Route::post('/forgot-password-admin', [ForgotPasswordController::class, 'sendResetLink'])->name('password.email')->middleware('throttle:5,1');
+Route::get('/reset-password/{token}',  [ForgotPasswordController::class, 'showResetForm'])->name('password.reset.form');
+Route::post('/reset-password',         [ForgotPasswordController::class, 'resetPassword'])->name('password.update');
 
-// Baris 2: Pintu kirim data saat tombol "Reset" ditekan — max 5x per menit per IP
-Route::post('/forgot-password', [ForgotPasswordController::class, 'reset'])->name('password.reset')->middleware('throttle:5,1');
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -87,6 +89,7 @@ Route::middleware('auth')->group(function () {
 
         // Dashboard
         Route::get('/dashboard', [AlumniDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboardlaki', [AlumniDashboardController::class, 'index'])->name('dashboardlaki');
 
         // Profil
         Route::get('/profil/edit',   [ProfilController::class, 'edit'])  ->name('profil.edit');
@@ -120,8 +123,13 @@ Route::middleware('auth')->group(function () {
         Route::put('/medsos/{id}',    [MediaSosialController::class, 'update'])    ->name('medsos.update');
         Route::delete('/medsos/{id}', [MediaSosialController::class, 'destroy'])   ->name('medsos.destroy');
 
-        // Manajemen Akun
-        Route::get('/manajemen-akun', [ProfilController::class, 'edit'])          ->name('manajemen_akun');
-        Route::put('/manajemen-akun', [ProfilController::class, 'updatePassword'])->name('manajemen_akun.update');
+     
+    Route::get('/manajemen-akun', [ProfilController::class, 'edit'])          ->name('manajemen_akun')->middleware('alumni-laki'); // Hanya alumni yang bisa mengakses halaman ini
+    Route::put('/manajemen-akun', [ProfilController::class, 'update'])        ->name('manajemen_akun.update');
+
+        
     });
+    
+
 });
+

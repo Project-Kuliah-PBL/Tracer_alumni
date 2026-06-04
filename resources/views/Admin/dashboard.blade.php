@@ -202,7 +202,11 @@
                         <canvas id="chartMasaKerja"></canvas>
                     </div>
                     @endif
-                </div>
+                <!-- </div>
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 md:p-6 flex flex-col">
+                        <canvas id="chartStatusKerja"></canvas>
+
+                    </div> -->
             </div>
         </main>
     </div>
@@ -333,6 +337,39 @@
                 }
             }
         });
+
+//     const ctx = document.getElementById('chartStatusKerja');
+
+// new Chart(ctx, {
+//     type: 'pie',
+//     data: {
+//         labels: ['Sudah Bekerja', 'Belum Bekerja'],
+//         datasets: [{
+//             data: [
+//                 {{ $terserapKerja }},
+//                 {{ $belumBekerja }}
+//             ],
+//             backgroundColor: [
+//                 'rgba(34, 197, 94, 0.8)',
+//                 'rgba(239, 68, 68, 0.8)'
+//             ]
+//         }]
+//     },
+//     options: {
+//         plugins: {
+//             tooltip: {
+//                 callbacks: {
+//                     label: function(context) {
+//                         const total = context.dataset.data.reduce((a,b)=>a+b,0);
+//                         const value = context.parsed;
+//                         const percent = (value/total*100).toFixed(1);
+//                         return `${context.label}: ${value} (${percent}%)`;
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// });
 
         function toggleDropdown() {
             document.getElementById('dropdownPanel').classList.toggle('hidden');
