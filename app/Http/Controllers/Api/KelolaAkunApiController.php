@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
@@ -12,6 +11,10 @@ use Illuminate\Validation\Rule;
 
 class KelolaAkunApiController extends Controller
 {
+    // ══════════════════════════════════════════════════════════════════════════
+    // ALUMNI
+    // ══════════════════════════════════════════════════════════════════════════
+
     public function index(Request $request)
     {
         $user         = $request->user();
@@ -37,10 +40,10 @@ class KelolaAkunApiController extends Controller
         ]);
     }
 
-      public function store(Request $request)
+    public function store(Request $request)
     {
-        $user         = $request->user();
-        $isSuperAdmin = $user->role === 'SuperAdmin';
+        $user          = $request->user();
+        $isSuperAdmin  = $user->role === 'SuperAdmin';
         $requestedRole = $isSuperAdmin ? ($request->role ?? 'Alumni') : 'Alumni';
         $isAdminRole   = $requestedRole === 'Admin';
 
@@ -63,12 +66,12 @@ class KelolaAkunApiController extends Controller
         }
 
         $validated = $request->validate($rules, [
-            'nim.required'  => 'NIM tidak boleh kosong.',
-            'nim.unique'    => 'NIM sudah terdaftar.',
-            'nama.required' => 'Nama tidak boleh kosong.',
-            'password.min'  => 'Password minimal 6 karakter.',
-            'prodi.required'=> 'Program Studi harus dipilih untuk akun Admin.',
-            'prodi.exists'  => 'Program Studi tidak valid.',
+            'nim.required'   => 'NIM tidak boleh kosong.',
+            'nim.unique'     => 'NIM sudah terdaftar.',
+            'nama.required'  => 'Nama tidak boleh kosong.',
+            'password.min'   => 'Password minimal 6 karakter.',
+            'prodi.required' => 'Program Studi harus dipilih untuk akun Admin.',
+            'prodi.exists'   => 'Program Studi tidak valid.',
         ]);
 
         $role  = $isAdminRole ? 'Admin' : 'Alumni';
@@ -133,7 +136,7 @@ class KelolaAkunApiController extends Controller
             ]);
         }
 
-        return response()->json(['message' => 'Akun berhasil diperbarui.']);
+        return response()->json(['message' => 'Akun alumni berhasil diperbarui.']);
     }
 
     public function destroy(Request $request, string $nim)
@@ -148,6 +151,117 @@ class KelolaAkunApiController extends Controller
 
         User::where('username', $nim)->delete();
 
-        return response()->json(['message' => 'Akun berhasil dihapus.']);
+        return response()->json(['message' => 'Akun alumni berhasil dihapus.']);
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // ADMIN (SuperAdmin only)
+    // ══════════════════════════════════════════════════════════════════════════
+
+    /**
+     * List semua akun Admin per prodi.
+     * GET /api/admin-akun
+     */
+    public function indexAdmin(Request $request)
+    {
+        $this->requireSuperAdmin($request);
+
+        $search  = $request->get('search');
+        $perPage = min((int) $request->get('per_page', 15), 50);
+
+        $paginated = User::where('role', 'Admin')
+            ->when($search, fn($q) => $q->where('username', 'like', "%{$search}%")
+                ->orWhere('prodi', 'like', "%{$search}%"))
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
+
+        $items = $paginated->map(fn($u) => [
+            'id'         => $u->id,
+            'username'   => $u->username,
+            'prodi'      => $u->prodi,
+            'role'       => $u->role,
+            'created_at' => $u->created_at,
+        ]);
+
+        return response()->json([
+            'data'         => $items,
+            'total'        => $paginated->total(),
+            'current_page' => $paginated->currentPage(),
+            'last_page'    => $paginated->lastPage(),
+            'per_page'     => $paginated->perPage(),
+        ]);
+    }
+
+    /**
+     * Update akun Admin (username, password, prodi).
+     * PUT /api/admin-akun/{id}
+     */
+    public function updateAdmin(Request $request, int $id)
+    {
+        $this->requireSuperAdmin($request);
+
+        $admin = User::where('id', $id)->where('role', 'Admin')->firstOrFail();
+
+        $request->validate([
+            'username' => [
+                'required',
+                'string',
+                'max:100',
+                Rule::unique('users', 'username')->ignore($admin->id),
+            ],
+            'password' => 'nullable|string|min:6',
+            'prodi'    => 'required|string|exists:prodi,nama',
+        ], [
+            'username.required' => 'Username tidak boleh kosong.',
+            'username.unique'   => 'Username sudah digunakan.',
+            'password.min'      => 'Password minimal 6 karakter.',
+            'prodi.required'    => 'Program Studi harus dipilih.',
+            'prodi.exists'      => 'Program Studi tidak valid.',
+        ]);
+
+        $admin->username = $request->username;
+        $admin->prodi    = $request->prodi;
+
+        if ($request->filled('password')) {
+            $admin->password = Hash::make($request->password);
+        }
+
+        $admin->save();
+
+        return response()->json([
+            'message' => 'Akun Admin berhasil diperbarui.',
+            'data'    => [
+                'id'       => $admin->id,
+                'username' => $admin->username,
+                'prodi'    => $admin->prodi,
+                'role'     => $admin->role,
+            ],
+        ]);
+    }
+
+    /**
+     * Hapus akun Admin.
+     * DELETE /api/admin-akun/{id}
+     */
+    public function destroyAdmin(Request $request, int $id)
+    {
+        $this->requireSuperAdmin($request);
+
+        $admin = User::where('id', $id)->where('role', 'Admin')->firstOrFail();
+        $admin->tokens()->delete(); // cabut semua token aktif
+        $admin->delete();
+
+        return response()->json(['message' => 'Akun Admin berhasil dihapus.']);
+    }
+
+    // ── Helper ────────────────────────────────────────────────────────────────
+
+    private function requireSuperAdmin(Request $request): void
+    {
+        if ($request->user()->role !== 'SuperAdmin') {
+            abort(response()->json([
+                'message' => 'Hanya SuperAdmin yang dapat mengelola akun Admin.',
+            ], 403));
+        }
     }
 }
