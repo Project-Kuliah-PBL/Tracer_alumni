@@ -47,5 +47,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/prodi',         [ProdiApiController::class, 'store']);
         Route::put('/prodi/{id}',     [ProdiApiController::class, 'update']);
         Route::delete('/prodi/{id}',  [ProdiApiController::class, 'destroy']);
+
+        // Kelola Akun Admin (SuperAdmin saja, dicek di dalam controller)
+        Route::get('/admin-akun',           [KelolaAkunApiController::class, 'indexAdmin']);
+        Route::put('/admin-akun/{id}',      [KelolaAkunApiController::class, 'updateAdmin']);
+        Route::delete('/admin-akun/{id}',   [KelolaAkunApiController::class, 'destroyAdmin']);
     });
 });
